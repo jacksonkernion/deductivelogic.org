@@ -1,4 +1,4 @@
-import {connectToDatabase } from '$lib/db'
+/* import {connectToDatabase } from '$lib/db'
 import { ObjectId } from 'mongodb'
 
 export async function get(request){
@@ -52,3 +52,4 @@ export async function put(request){
 export async function del(request){
 
 }
+*/
