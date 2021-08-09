@@ -1,8 +1,9 @@
 <script>
-    import {parseLogStr} from '$lib/logic.js';
-    import {getLetterVars} from '$lib/logic.js';
-    import {validity} from '$lib/logic.js';
     import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+
+    import {validity, parseLogStr, getLetterVars} from '$lib/logic.js';
+    import { permutator } from '$lib/helpers.js';
 
     export let logStr;
     export let question;
@@ -10,7 +11,7 @@
     export let logStrSet = '';
     export let number;
 
-    let sentSetArr = sentSet.split(',')
+    let sentSetArr = sentSet.split('/')
     let logStrSetArr = logStrSet.split(',');
     let conclusionSent = question;
     let conclusionLogStr = logStr;
@@ -19,32 +20,10 @@
     let studentConclusionLogStr = '';
     let implication = false;
 
-    let submissionVerdict = '';
-    let submissionMessage = '';
+    let submission;
 
     $: correctLogStrArr = [...logStrSetArr, conclusionLogStr];
     $: studentLogStrArr = [...studentLogStrSet, studentConclusionLogStr];
-
-    function permutator(inputArr) {
-        var results = [];
-
-        function permute(arr, memo) {
-            var cur, memo = memo || [];
-
-            for (var i = 0; i < arr.length; i++) {
-            cur = arr.splice(i, 1);
-            if (arr.length === 0) {
-                results.push(memo.concat(cur));
-            }
-            permute(arr.slice(), memo.concat(cur));
-            arr.splice(i, 0, cur[0]);
-            }
-
-            return results;
-        }
-
-        return permute(inputArr);
-    }
 
     function findChars(haystack, needle, offset=0){
 
@@ -75,7 +54,7 @@
 		var studentVars = getLetterVars(studentLogStrArr.join(' . '));
 			
 		if(correctVars.length != studentVars.length){
-            submissionMessage = "Hmm...You don't seem to have the correct number of letters in your paraphrasing!";
+            submission.log('warn', "Hmm...You don't seem to have the correct number of letters in your paraphrasing.");
             return;
         }
  
@@ -85,22 +64,21 @@
             var correctStr = correctLogStrArr[i];
             var studentStr = studentLogStrArr[i];
 
+            var lineMarker = '(' + (i + 1) + ')';
+            if(i == (correctLogStrArr.length - 1)){
+                lineMarker = "(C)";
+            }
+
             if(!parseLogStr(studentStr)){
-                if(i < (correctLogStrArr.length - 1)){
-                    submissionMessage = "Schema (" + (i + 1) + ") could not be understood.";
-                    return;
-                }
-                else{
-                    submissionMessage = "Schema (C) could not be understood.";
-                    return;
-                }
+                submission.log('warn', "Schema "+lineMarker+" could not be understood.");
+                return;
             }
         
             var correctVars = getLetterVars(correctStr);
             var studentVars = getLetterVars(studentStr);
             
             if(correctVars.length != studentVars.length){
-                submissionMessage = "Hmm...You don't seem to have the correct number of letters in your paraphrasing.";
+                submission.log('warn', "Incorrect number of letters in your paraphrasing of schema " + lineMarker + ".");
                 return;
             }
             
@@ -128,7 +106,7 @@
                 }
             }
             if(!match){
-                submissionMessage = "Wrong. Your paraphrase of ("+ (i + 1) + ") looks wrong.";
+                submission.log('incorrect', "Paraphrase of "+lineMarker+" is incorrect.");
                 return;
             }
         }
@@ -151,21 +129,21 @@
 		
 		if(!implication){
 			if(!implies){
-				submissionMessage = "Correct.";
+				submission.log('correct', 'Correct');
                 return;
 			}
             else{
-                submissionMessage = "Incorrect.";
+                submission.log('incorrect', 'Incorrect');
                 return;
             }
 		}
 		else if(implication){
 			if(implies){
-				submissionMessage = "Correct.";
+				submission.log('correct', 'Correct');
                 return;
 			}
 			else{
-                submissionMessage = "Incorrect.";
+                submission.log('incorrect', 'Incorrect');
                 return;
             }
 		}
@@ -174,30 +152,37 @@
 
 </script>
 
-<p>{number}. For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
-
-{#each sentSetArr as sent, i}
-    <div class="description_line">
-        {i+1}. {sent}
-    </div>
-{/each}
-<div class="description_line">
-    C. {conclusionSent}
-</div>
-<div class="problem-answer">
-    {#each logStrSetArr as logStr, i}
-        <div>
-            {i+1}. <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
+        {#each sentSetArr as sent, i}
+            <div class="description-line">
+                <span class="description-line-marker">{i+1}.</span> {sent}
+            </div>
+        {/each}
+        <div class="description-line">
+            <span class="description-line-marker">C.</span> {conclusionSent}
         </div>
-    {/each}
-    <div>
-        C. <LogStrInput bind:logStr={studentConclusionLogStr}/>
+    </div>
+	
+    <div slot="submission-input">
+        {#each logStrSetArr as logStr, i}
+            <div class="relative">
+                <span class="absolute left-1">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+            </div>
+        {/each}
+        <div class="relative">
+            <span class="absolute left-1">C.</span> <LogStrInput bind:logStr={studentConclusionLogStr}/>
+        </div>
+        
+        <div class="flex w5 center items-center mb2">
+            <input class="mr2" type=radio bind:group={implication} name="implies" value={true} />
+            <label for={true} class="lh-copy">Implies</label>
+        </div>
+        <div class="flex w5 center items-center mb2">
+            <input class="mr2" type=radio bind:group={implication} name="implies" value={false} />
+            <label for={false} class="lh-copy">Does not imply</label>
+        </div>
     </div>
 
-    Implies? <input type=checkbox bind:checked={implication} /> 
-    
-    <div class="tc ma4">
-        <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>
-        <p>{submissionMessage}</p>
-    </div>
-</div>
+</ProblemWrapper>

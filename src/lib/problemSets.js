@@ -3398,3 +3398,75 @@ export const problemSets = [
         ]
     }
  ];
+
+export const demoProblems = [
+    {
+        "number": 1,
+        "type": 'truthTable',
+        "question": null,
+        "answer": null,
+        "logStr": "p | r <> q | r",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": null
+    },
+    {
+        "number": 2,
+        "type": 'truthTable',
+        "question": null,
+        "answer": null,
+        "logStr": "-p | q <> (p > r)",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": null
+    },
+    {
+        "number": 3,
+        "type": "paraphrase",
+        "question": "If Serbia is forced to submit, then Austria-Hungary will control the Balkans and threaten Constantinople if and only if England does not intervene.",
+        "answer": null,
+        "logStr": "p > (q . r <> -s)",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": null
+    },
+    {
+        "number": 4,
+        "type": "implication",
+        "question": null,
+        "answer": null,
+        "logStr": null,
+        "logStr1": "(p <> q) <> r",
+        "logStr2": "p . -q | -p . r",
+        "logStrSet": null,
+        "sentSet": null
+    },
+    {
+        "number": 5,
+        "type": "disjNormForm",
+        "question": null,
+        "answer": null,
+        "logStr": "(p <> q) . (q <> r)",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": null
+    },
+    {
+        "number": 6,
+        "type": "natLangArg",
+        "question": "Therefore, Smith was the murderer.",
+        "answer": null,
+        "logStr": "q",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": "-p > q | r, -q > -p . s, s > q | r",
+        "sentSet": "If Jones did not meet Smith last night, then either Smith was the murderer of Jones is lying./If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight./If the murder took place after midnight, then either Smith was the murderer or Jones is lying."
+    }    
+   
+    
+
+];

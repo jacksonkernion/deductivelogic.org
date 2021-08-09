@@ -31,10 +31,10 @@
     }
 
     .show_t_table_wrapper{
-        width:95%;
         border:1px solid #ccc;
         background-color: #fbfbfb;
         padding:10px;
+        margin: 2rem;
     }
 </style>
 

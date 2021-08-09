@@ -66,7 +66,7 @@
     <div class="problem-answer tc">
         Equivalent? <input type=checkbox bind:checked={answer} />
 
-        <HiddenTruthTable logStr={logStr1+' <> '+logStr2} />
+        <HiddenTruthTable logStr={'[' + logStr1 + '] <> [' + logStr2 + ']'} />
 
         <div class="extra_question_wrapper">
             <div class="extra_question_message">If implication fails...</div>

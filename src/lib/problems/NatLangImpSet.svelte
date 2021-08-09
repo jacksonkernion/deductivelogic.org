@@ -1,12 +1,16 @@
 <script>
 
+    import { permutator } from '$lib/helpers.js';
 	import {validity} from '$lib/logic.js';
     import {getLetterVars} from '$lib/logic.js';
     import LogStrInput from '$lib/components/LogStrInput.svelte';
 
-    export let id = '';
-    export let logStrSet = [];
-    export let sentSet = [];
+    export let number = '';
+    export let sentSet = '';
+    export let logStrSet = '';
+
+    let sentSetArr = sentSet.split('/')
+    let logStrSetArr = logStrSet.split(',');
 
     export let submissionStatus = '';
     export let submission = '';
@@ -15,28 +19,7 @@
     export let studentLogStrSet = [];
     export let answersArr = [[0,0]];
     //$: correctImpArr = getCorrectImpArr(logStrSet);
-    let correctImpArr = getCorrectImpArr(logStrSet);
-
-    function permutator(inputArr) {
-        var results = [];
-
-        function permute(arr, memo) {
-            var cur, memo = memo || [];
-
-            for (var i = 0; i < arr.length; i++) {
-            cur = arr.splice(i, 1);
-            if (arr.length === 0) {
-                results.push(memo.concat(cur));
-            }
-            permute(arr.slice(), memo.concat(cur));
-            arr.splice(i, 0, cur[0]);
-            }
-
-            return results;
-        }
-
-        return permute(inputArr);
-    }
+    let correctImpArr = getCorrectImpArr(logStrSetArr);
 
     function findChars(haystack, needle, offset=0){
 
@@ -89,8 +72,8 @@
 
         // Check the student paraphase of English sentences, abtracting away variable letter choice
         // Report which one is wrong if wrong
-        for(var i = 0; i < logStrSet.length; i++){
-            var correctStr = logStrSet[i];
+        for(var i = 0; i < logStrSetArr.length; i++){
+            var correctStr = logStrSetArr[i];
             var studentStr = studentLogStrSet[i];
             var match = false;
         
@@ -121,7 +104,7 @@
                 if(validity('('+correctStr+') <> ('+testStr+')')){
                     match = true;
                     //Break the for loop here
-                    i = logStrSet.length;
+                    i = logStrSetArr.length;
                 }
             }
             if(!match){
@@ -164,8 +147,8 @@
 </script>
 
 <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
-    <div class="problem-description">{id}. Paraphrase the following natural language sentences and then determine any implications that hold between them. <br/>
-        {#each logStrSet as logStr, i}
+    <div class="problem-description">{number}. Paraphrase the following natural language sentences and then determine any implications that hold between them. <br/>
+        {#each logStrSetArr as logStr, i}
             <div class="description_line">
                 {i+1}. {logStr}
             </div>
@@ -173,7 +156,7 @@
     </div>
 
     <div class="problem-answer">
-        {#each sentSet as sent, i}
+        {#each sentSetArr as sent, i}
             <div>
                 {i+1}. <LogStrInput bind:logStr={studentLogStrSet[i]}/>
             </div>
@@ -182,7 +165,7 @@
         {#each answersArr as implication, i}
             <button on:click={() => removeImplication(i)}>X</button>
             <select bind:value={implication[0]} >
-                {#each logStrSet as logStr, j}
+                {#each logStrSetArr as logStr, j}
                     <option value={parseInt(j+1)}>
                         {j+1}
                     </option>
@@ -190,7 +173,7 @@
             </select>
             implies
             <select bind:value={implication[1]} >
-                {#each logStrSet as logStr, j}
+                {#each logStrSetArr as logStr, j}
                     <option value={j+1}>
                         {j+1}
                     </option>

@@ -1,22 +1,21 @@
 <script>
-    import {tVal} from '$lib/logic.js';
-	import {parseLogStr} from '$lib/logic.js';
-	import {getLetterVars} from '$lib/logic.js';
-	import {dispLogStr} from '$lib/logic.js';
-	import LogStrInput from '$lib/components/LogStrInput.svelte';
 
-    export let number;
-    export let logStr;
+	import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+
+    import {tVal, parseLogStr, getLetterVars, dispLogStr} from '$lib/logic.js';
+
+    export let number = '';
+    export let logStr = '';
 
     let studentLogStr = '';
 	
-	let submissionVerdict = '';
-    let submissionMessage = '';
+	let submission;
 
     function checkSubmission() {
 
         if(studentLogStr.indexOf('>') !== -1 || studentLogStr.indexOf('<>') !== -1){
-			submissionMessage = 'Provided schema is not in disjunctive normal form.';
+			submission.log('warn', 'Provided schema is not in disjunctive normal form.');
             return;
 		}
 		
@@ -29,7 +28,7 @@
 				for(var j=i+1; j<studentLogStr.length; j++) {
 				
 					if(studentLogStr[j] == "|"){
-                        submissionMessage = 'You should not have a disjunction within parentheses.';
+                        submission.log('warn', 'You should not have a disjunction within parentheses.');
                         return;
                     }
 					if(studentLogStr[j] == "(" || studentLogStr[j] == "[" || studentLogStr[j] == "{")
@@ -98,7 +97,7 @@
 		//check that they have all the right assignments
 		for(var t of correctArr){
 			if(!studentArr.includes(t)){
-				submissionMessage = "Incorrect";
+				submission.log('incorrect', "Incorrect");
                 return;
 			}
 		}
@@ -106,26 +105,22 @@
 		//check that they have no extraneous assignments
 		for(var t of studentArr){
 			if(!correctArr.includes(t)){
-				submissionMessage = "Incorrect";
+				submission.log('incorrect', "Incorrect");
                 return;
 			}
 		}
-		submissionMessage = "Correct";
+		submission.log('correct', "Correct");
         return;
     }
 
 </script>
 
-<li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
-    <p>{number}. Transform the following schema into disjunctive normal form:</p>
-    <div class="pl3">
-		<p>{dispLogStr(logStr)}</p>
-	</div>
-
-    <LogStrInput bind:logStr={studentLogStr} />
-
-    <div class="tc ma4">
-        <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>
-        <p>{submissionMessage}</p>
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Transform the following schema into disjunctive normal form:</p>
+        <div class="description-line">{dispLogStr(logStr)}</div>
     </div>
-</li>
+	<div slot="submission-input">
+        <LogStrInput bind:logStr={studentLogStr} />
+    </div>
+</ProblemWrapper>

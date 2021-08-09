@@ -1,16 +1,10 @@
 <script>
 
-	import {tVal} from '$lib/logic.js';
-	import {validity} from '$lib/logic.js';
-	import {parseLogStr} from '$lib/logic.js';
-	import {getLetterVars} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/logic.js';
     import TruthAssignmentInput from '$lib/components/TruthAssignmentInput.svelte';
     import HiddenTruthTable from '$lib/components/HiddenTruthTable.svelte';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
-    /*function removeDuplicates(array) {
-        return array.filter((a, b) => array.indexOf(a) === b)
-    };*/
+    import {tVal, validity, parseLogStr, getLetterVars, dispLogStr} from '$lib/logic.js';
 
     export let logStr1 = '';
     export let logStr2 = '';
@@ -27,11 +21,9 @@
         tAnswerRows: [],
     };
 
-	let submission = '';
-	let submissionStatus = '';
-	let submissionMessage = '';
+    let submission;
 	
-	let answer = false;
+	let answer = true;
 	let interpretation = {};
 
     function checkSubmission() {
@@ -40,60 +32,60 @@
 			
 			//Evaluates if false on provided assignments
 			if(!tVal(parseLogStr('('+logStr1+') > ('+logStr2+')'), interpretation)){
-				submissionMessage = "Correct";
+				submission.log('correct', "Correct");
                 return;
 			}
             else{
-                submissionMessage = "Incorrect";
+                submission.log('incorrect', "Incorrect");
                 return;
             }
 		}
 		else if(answer){
 			//Evaluate validity of conditional
 			if(validity('('+logStr1+') > ('+logStr2+')')){
-				submissionMessage = "Correct";
+				submission.log('correct', "Correct");
                 return;
 			}
 			else{
-				submissionMessage = 'Incorrect';
+				submission.log('incorrect', "Incorrect");
                 return
 			}
 		}
 	}
 	
-
 </script>
 
 <style>
+
 </style>
 
-<li class="lh-copy pv3 bt b--black-10">
-	<p>{number}. Does schema (1) imply schema (1)?</p>
-	<div class="pl3">
-        <p>1. {dispLogStr(logStr1)}<br/>
-        2. {dispLogStr(logStr2)}</p>
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Does schema (1) imply schema (2)?</p>
+        <div class="description-line"><span class="description-line-marker">1.</span> {dispLogStr(logStr1)}</div>
+        <div class="description-line"><span class="description-line-marker">2.</span> {dispLogStr(logStr2)}</div>
+        <p>If implication fails to hold, provide an interpretation that witnesses this fact.</p>
     </div>
 	
-	<p> If implication fails to hold, provide an interpretation that witnesses this fact. </p>
-	
-    <div class="problem-answer tc">
-        Implies? <input type=checkbox bind:checked={answer} /> 
+    <div slot="submission-input"class="tc">
+        {#if !isQ}
+            <HiddenTruthTable logStr={'[' + logStr1 + '] > [' + logStr2 + ']'} />   
+        {/if}
+        
 
-        <div class="problem-answer">
-            
-            {#if !isQ}
-                <HiddenTruthTable logStr={logStr1+' <> '+logStr2} />   
-            {/if}
-
-            <div class="extra_question_wrapper">
-                <div class="extra_question_message">If implication fails...</div>
-                <TruthAssignmentInput bind:letterVars={tTableData.letterVars} bind:interpretation />
-            </div>
+        <div class="flex w5 center items-center mb2">
+            <input class="mr2" type=radio bind:group={answer} name="implies" value={true} />
+            <label for={true} class="lh-copy">Implies</label>
+        </div>
+        <div class="flex w5 center items-center mb2">
+            <input class="mr2" type=radio bind:group={answer} name="implies" value={false} />
+            <label for={false} class="lh-copy">Does not imply...</label>
         </div>
 
-        <div class="tc ma4">
-            <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>
-            <p>{submissionMessage}</p>
+        <div class="extra-question-wrapper pb2" hidden={answer}>
+            <div class="extra-question-message f6 black-50 pb2">...as shown with interpretation:</div>
+            <TruthAssignmentInput bind:letterVars={tTableData.letterVars} bind:interpretation />
         </div>
     </div>
-</li>
+
+</ProblemWrapper>

@@ -1,15 +1,71 @@
 <script>
-    import {problemSets} from '$lib/problemSets.js';
+    import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
+	import Paraphrase from '$lib/problems/Paraphrase.svelte';
+	import TruthTable from '$lib/problems/TruthTable.svelte';
+	import Implication from '$lib/problems/Implication.svelte';
+	import ImplicationSet from '$lib/problems/ImplicationSet.svelte';
+	import Equivalence from '$lib/problems/Equivalence.svelte';
+	import EquivalenceSet from '$lib/problems/EquivalenceSet.svelte';
+	import Validity from '$lib/problems/Validity.svelte';
+	import DisjNormForm from '$lib/problems/DisjNormForm.svelte';
+	import NatLangImpSet from '$lib/problems/NatLangImpSet.svelte';
+	import NatLangArg from '$lib/problems/NatLangArg.svelte';
+
+    import {demoProblems} from '$lib/problemSets.js';
+
+    let problems = demoProblems.map((problem) => {
+        if(problem.type === 'multipleChoice')
+            problem.component = MultipleChoice;
+        else if(problem.type === 'paraphrase')
+            problem.component = Paraphrase;
+        else if(problem.type === 'truthTable')
+            problem.component = TruthTable;
+        else if(problem.type === 'implication')
+            problem.component = Implication;
+        else if(problem.type === 'implicationSet')
+            problem.component = ImplicationSet;
+        else if(problem.type === 'equivalence')
+            problem.component = Equivalence;
+        else if(problem.type === 'equivalenceSet')
+            problem.component = EquivalenceSet;
+        else if(problem.type === 'validity')
+            problem.component = Validity;
+        else if(problem.type === 'natLangImpSet')
+            problem.component = NatLangImpSet;
+        else if(problem.type === 'natLangArg')
+            problem.component = NatLangArg;
+        else if(problem.type ==='disjNormForm')
+            problem.component = DisjNormForm;
+        else if(problem.type === 'quantParaphrase')
+            problem.component = null;
+        else if(problem.type === 'quantInterp')
+            problem.component = null;
+        
+        return problem;
+    });
 </script>
 
-<h1>deductivelogic.org 2.0</h1>
+<div class="bg-washed-green bb b--green bw1">
 
-<ul class="list pl0 measure center">
-    {#each problemSets as problemSet}
-        <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--black-10">
-            <a href="/pset{problemSet.number}">Problem Set {problemSet.number}</a>
-        </li>
-    {/each}
-</ul>
+    <div class="mw7 center pb4 dark-green">
+        <div class="lh-title f3 fw6 tracked pt6 pb2">DEDUCTIVELOGIC.ORG v2.0</div>
+        <p class="lh-copy f4 fw4">Interactive problem sets for deductive logic courses.<br/>Developed for Harvard's introductory course.</p>
+        <p class="lh-copy f4 fw4"><span class="fw5">See below:</span> truth-functional logic problem examples.<br/>
+            <span class="fw5">In progress:</span> monadic and polyadic quantificational logic problems.</p>
+        <p class="lh-copy f4 fw4">Launching Fall 2021.</p>
+
+    </div>
+
+</div>
+<div class="mw7 center pa4">
+    <div class="list pl0"> 
+        {#each problems as problem}
+            <svelte:component this={problem.component} {...problem}/>
+        {/each}
+    </div>
+</div>
+
+
+
 
 

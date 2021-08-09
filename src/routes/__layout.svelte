@@ -1,2 +1,4 @@
-<div class="mw7 center"><slot></slot>
+<script></script>
+<div>
+    <slot></slot>
 </div>

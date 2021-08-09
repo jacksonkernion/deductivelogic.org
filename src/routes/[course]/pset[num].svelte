@@ -10,9 +10,7 @@
 </script>
 <script>
 
-	import {tVal} from '$lib/logic.js';
-	import {validity} from '$lib/logic.js';
-	import {parseLogStr} from '$lib/logic.js';
+	import {parseLogStr, validity, prenexForm, tVal, quantParaphrase} from '$lib/logic.js';
 
 	import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/problems/Paraphrase.svelte';
@@ -30,7 +28,11 @@
     let problems = [];
 
     problemSet.problems = problemSet.problems.map((problem) => {
-        if(problem.type === 'truthTable')
+        if(problem.type === 'multipleChoice')
+            problem.component = MultipleChoice;
+        else if(problem.type === 'paraphrase')
+            problem.component = Paraphrase;
+        else if(problem.type === 'truthTable')
             problem.component = TruthTable;
         else if(problem.type === 'implication')
             problem.component = Implication;
@@ -40,8 +42,10 @@
             problem.component = Equivalence;
         else if(problem.type === 'equivalenceSet')
             problem.component = EquivalenceSet;
-        else if(problem.type === 'paraphrase')
-            problem.component = Paraphrase;
+        else if(problem.type === 'validity')
+            problem.component = Validity;
+        else if(problem.type === 'natLangImpSet')
+            problem.component = NatLangImpSet;
         else if(problem.type === 'natLangArg')
             problem.component = NatLangArg;
         else if(problem.type ==='disjNormForm')
@@ -53,12 +57,20 @@
         
         return problem;
     });
+
+    //console.log(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"));
+    console.log(prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]")));
+    //console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"))));
+    
+    //console.log(tVal(parseLogStr('(Ax)(Ey)(Px . Ryx)'), {domainSize: 4, P1: true, R31: true}));
+    //console.log(tVal(parseLogStr('(Ax)(Ey)(Px > Ryx)'), {domainSize: 4, P1: true, R31: true}));
+    //console.log(parseLogStr('(Ax)(Ey)(Px . Ryx)'));
    
 	
 </script> 
 
 
-<h1 class="">Problem Set {problemSet.number}</h1>
+<h1 class="pv3 bb b--black-10">Problem Set {problemSet.number}</h1>
 
 <ul class="list pl0 w-75">
     {#each problemSet.problems as problem}

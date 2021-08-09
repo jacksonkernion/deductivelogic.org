@@ -73,7 +73,9 @@
         text-align:center;
         padding:5px 10px;
         font-size:16px;
+        line-height: 1;
     }
+
     .t_table{
         margin:0 auto;
         background-color:white;
@@ -93,11 +95,12 @@
 
     .t_table-button_F, .t_table-button_T{
         float:left;
-        padding:2px 6px;
+        padding:4px 6px 3px 6px;
         border:1px solid #ccc;
         color:#ccc;
         margin:0px 3px;
         font-family: arial, sans-serif;
+        box-sizing: content-box;
     }
 
     .t_table-button_F:hover, .t_table-button_T:hover{
@@ -113,7 +116,7 @@
     .t_table-space{
         padding:3px 0px;
         margin:0px;
-        height:23px;
+        height:25px;
     }
 
     .t_table-space.log_str_parent-1{
@@ -127,13 +130,13 @@
     .t_table-toolbar{
         display: block;
         height: 80px;
+        width: 165px;
         padding: 15px;
-        position: relative;
     }
 
     .t_table-clear_all{
         float:left;
-        padding:3px 6px;
+        padding:5px 6px;
         color:#ccc;
         margin:3px 3px 0px 3px;
         font-size:13px;
@@ -144,33 +147,38 @@
     }
 
     .t_table-highlight{
-        position:absolute;
-        left:18px;
-        top:0px;
-        color:#666;
+        color:#aaa;
         font-size:10px;
+        padding-left: 3px;
+        font-weight: 500;
     }
 
     .t_table-highlight_F, .t_table-highlight_T{
         float:left;
-        padding:2px 6px;
         border:1px solid #ccc;
         color:#ccc;
         margin:3px 3px 0px 3px;
         background-color:white;
+        padding:3px 6px;
+        box-sizing: content-box;
     }
 
     .highlightT, .highlightF{
         background-color:#eeeeee;
     }
 
+    /* Jackson fixing spacing issues */
+    td, tr{
+        box-sizing: content-box;
+    }
+
 </style>
 
-<div class="t_table-toolbar center mw5">
+<div class="t_table-toolbar mw5 center">
     <div class="t_table-highlight tracked ">HIGHLIGHT</div>
-    <div class="t_table-highlight_T" class:highlightT on:click={toggleHighlightT}>⊤</div>
-    <div class="t_table-highlight_F" class:highlightF on:click={toggleHighlightF}>⊥</div>
-    <div class="t_table-clear_all">clear all</div>
+    <div class="t_table-highlight_T br1" class:highlightT on:click={toggleHighlightT}>⊤</div>
+    <div class="t_table-highlight_F br1" class:highlightF on:click={toggleHighlightF}>⊥</div>
+    <div class="t_table-clear_all br1">Clear all</div>
 </div>
 <table class="t_table">
     <tr class="t_table-top_row">
@@ -199,8 +207,8 @@
                     {/if}
                     </div>
                     <div class="t_table-buttons">
-                        <div class="t_table-button_T" on:click={(e) => updateTCell(rowIndex, cellIndex, true, e)}>⊤</div>
-                        <div class="t_table-button_F" on:click={(e) => updateTCell(rowIndex, cellIndex, false, e)}>⊥</div>
+                        <div class="t_table-button_T br1" on:click={(e) => updateTCell(rowIndex, cellIndex, true, e)}>⊤</div>
+                        <div class="t_table-button_F br1" on:click={(e) => updateTCell(rowIndex, cellIndex, false, e)}>⊥</div>
                     </div>
                 </td>
             {/each}

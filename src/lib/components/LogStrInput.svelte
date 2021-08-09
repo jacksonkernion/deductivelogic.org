@@ -142,14 +142,14 @@
 </style>
 
 <div class="logStrInput-wrapper">
-	<input type="text" bind:this={input} bind:value on:keyup={replaceSymbol} />
+	<input type="text" class="br1" bind:this={input} bind:value on:keyup={replaceSymbol} />
 	<div class="logStrInput-button-wrapper">
-		<div class="logStrInput-button" on:click={() => insertSymbol('–')}>–</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('.')}>.</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('∨')}>∨</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('⊃')}>⊃</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('≡')}>≡</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('∀')}>∀</div>
-		<div class="logStrInput-button" style="margin-right:0px;" on:click={() => insertSymbol('∃')}>∃</div>
+		<div class="logStrInput-button br1" on:click={() => insertSymbol('–')}>–</div>
+		<div class="logStrInput-button br1" on:click={() => insertSymbol('.')}>.</div>
+		<div class="logStrInput-button br1" on:click={() => insertSymbol('∨')}>∨</div>
+		<div class="logStrInput-button br1" on:click={() => insertSymbol('⊃')}>⊃</div>
+		<div class="logStrInput-button br1" on:click={() => insertSymbol('≡')}>≡</div>
+		<div class="logStrInput-button br1" on:click={() => insertSymbol('∀')}>∀</div>
+		<div class="logStrInput-button br1" style="margin-right:0px;" on:click={() => insertSymbol('∃')}>∃</div>
 	</div>
 </div>

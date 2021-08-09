@@ -1,38 +1,18 @@
 <script>
-    
-    import {parseLogStr} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/logic.js';
-    import {getLetterVars} from '$lib/logic.js';
-    import {validity} from '$lib/logic.js';
-    import LogStrInput from '$lib/components/LogStrInput.svelte';
 
+    import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    
+    import {parseLogStr, dispLogStr, getLetterVars, validity} from '$lib/logic.js';
+    import {permutator} from '$lib/helpers.js';
+    
     export let question = '';
     export let logStr = '';
     export let number = '';
 
-    export let submission = '';
-    export let submissionMessage = '';
+    let studentLogStr = '';
 
-    function permutator(inputArr) {
-        var results = [];
-
-        function permute(arr, memo) {
-            var cur, memo = memo || [];
-
-            for (var i = 0; i < arr.length; i++) {
-            cur = arr.splice(i, 1);
-            if (arr.length === 0) {
-                results.push(memo.concat(cur));
-            }
-            permute(arr.slice(), memo.concat(cur));
-            arr.splice(i, 0, cur[0]);
-            }
-
-            return results;
-        }
-
-        return permute(inputArr);
-    }
+    let submission;
 
     function findChars(haystack, needle, offset=0){
 
@@ -57,9 +37,11 @@
 
     }
 
+
     function checkSubmission(){
-        if(!parseLogStr(submission))
-            submissionMessage = "Provided schema, "+dispLogStr(submission)+", could not be understood.";
+
+        if(!parseLogStr(studentLogStr))
+            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr));
 		
 		// If it's Q, to get leter vars, remove all capital letters
 		/* if(logic::isQ($correct_str)){
@@ -71,22 +53,22 @@
         */
 		
 		var correctVars = getLetterVars(logStr);
-		var studentVars = getLetterVars(submission);
+		var studentVars = getLetterVars(studentLogStr);
 		
 		if(correctVars.length != studentVars.length){
-			submissionMessage = "Hmm...You don't seem to have the correct number of letters.";
+			submission.log('warn', "Hmm...You don't seem to have the correct number of letters.");
             return;
 		}
 		
 		var testVarsArr = permutator(correctVars);
 		
 		for(var testVars of testVarsArr){
-			var testStr = submission;
+			var testStr = studentLogStr;
 			
 			var varPositions = [];
 			
 			for(var studentVar of studentVars){
-				varPositions.push(findChars(submission, studentVar));
+				varPositions.push(findChars(studentLogStr, studentVar));
 			}
 			for(var i = 0; i < testVars.length; i++){
 				for(var varPosition of varPositions[i]){
@@ -94,30 +76,25 @@
 				}
 			}
 			
-            //console.log(testStr + " ??? " + logStr);
 			//Evaluate equivalency
             console.log('('+logStr+') <> ('+testStr+')');
 			if(validity('('+logStr+') <> ('+testStr+')')){
-				submissionMessage = 'correct';
+				submission.log('correct', 'Correct');
                 return;
 			}
 		}
-		submissionMessage = 'incorrect';
+		submission.log('incorrect', 'Incorrect');
         return;
     }
 </script>
 
 
-<li class="lh-copy pv3 bt b--black-10">
-	<p>{number}. Paraphrase the following sentence in logical notation:</p>
-	<div class="pl3">
-        <p>{question}</p>
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Paraphrase the following sentence in logical notation:</p>
+        <div class="description-line">{question}</div>
     </div>
-	
-    <LogStrInput bind:logStr={submission} />
-
-	<div class="tc ma4">
-        <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>
-        <p>{submissionMessage}</p>
+	<div slot="submission-input">
+        <LogStrInput bind:logStr={studentLogStr} />
     </div>
-</li>
+</ProblemWrapper>

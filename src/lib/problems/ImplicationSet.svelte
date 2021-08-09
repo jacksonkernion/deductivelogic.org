@@ -102,7 +102,7 @@
             </select>
             <br/>
         {/each}
-        <div on:click={addImplication}><a>+ Add implication</a></div>
+        <div on:click={addImplication}><button>+ Add implication</button></div>
         
         <div class="tc ma4">
             <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>

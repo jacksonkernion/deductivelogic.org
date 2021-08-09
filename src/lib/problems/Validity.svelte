@@ -6,8 +6,8 @@
 	import {getLetterVars} from '$lib/logic.js';
     import TruthAssignmentInput from '$lib/components/TruthAssignmentInput.svelte';
 
-    export let id = '';
     export let logStr = '';
+    export let number = '';
 
 	export let tTableData = {
         logStr: logStr,
