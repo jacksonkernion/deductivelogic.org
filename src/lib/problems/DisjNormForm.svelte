@@ -57,7 +57,7 @@
                 return;
             }
             //as if for each row in a truth table...
-            for(var i=0; i < Math.pow(letterVars.length, 2); i++){
+            for(var i=0; i < Math.pow(2,letterVars.length); i++){
                 var assignments = {};
                 //A left-padded binary string, representing the i-th row of truth table
                 var truthValues = i.toString(2).padStart(letterVars.length, '0');
@@ -79,7 +79,7 @@
 		var logProp = parseLogStr(logStr);
 		
 		//as if for each row in a truth table
-		for(var i=0; i < Math.pow(letterVars.length, 2); i++){
+		for(var i=0; i < Math.pow(2, letterVars.length); i++){
             var assignments = {};
             //A left-padded binary string, representing the i-th row of truth table
             var truthValues = i.toString(2).padStart(letterVars.length, '0');

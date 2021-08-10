@@ -16,7 +16,7 @@
     let showTruthTable = false;
     function toggleTruthTable(){
         showTruthTable = showTruthTable ? false : true;
-    }
+    }  
 </script>
 
 <style>

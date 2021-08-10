@@ -10,12 +10,20 @@
 
 </script>
 
-<h1 class='ttu w-100'>{courseSlug}</h1>
+<div class="bg-washed-green bb b--green bw1">
 
-<ul class="list pl0">
-    {#each problemSets as problemSet}
-        <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--black-10">
-            <a href="{courseSlug}/pset{problemSet.number}">Problem Set {problemSet.number}</a>
-        </li>
-    {/each}
-</ul>
+    <div class="mw7 pa4 center pb4 dark-green">
+        <div class="ttu lh-title f3 fw6 tracked pt6 pb2">{courseSlug}</div>
+    </div>
+
+</div>
+
+<div class="mw7 center pa4">
+    <ul class="list pl0"> 
+        {#each problemSets as problemSet}
+            <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--black-10">
+                <a href="{courseSlug}/pset{problemSet.number}">Problem Set {problemSet.number}</a>
+            </li>
+        {/each}
+    </ul>
+</div>

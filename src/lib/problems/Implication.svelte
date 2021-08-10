@@ -10,19 +10,9 @@
     export let logStr2 = '';
     export let number = '';
 
-    let isQ = false;
-
-	let tTableData = {
-        logStr: logStr1+' > '+logStr2,
-        logSubStrs: [],
-        letterVars: getLetterVars(logStr1+' > '+logStr2),
-
-        tAssignmentRows: [],
-        tAnswerRows: [],
-    };
-
+    // let isQ = false;
+    let letterVars = getLetterVars(logStr1+' > '+logStr2);
     let submission;
-	
 	let answer = true;
 	let interpretation = {};
 
@@ -67,11 +57,13 @@
         <p>If implication fails to hold, provide an interpretation that witnesses this fact.</p>
     </div>
 	
-    <div slot="submission-input"class="tc">
-        {#if !isQ}
+    <div slot="submission-input" class="tc">
+        <!-- {#if !isQ} 
             <HiddenTruthTable logStr={'[' + logStr1 + '] > [' + logStr2 + ']'} />   
         {/if}
-        
+        -->
+            
+        <HiddenTruthTable logStr={'[' + logStr1 + '] > [' + logStr2 + ']'} />
 
         <div class="flex w5 center items-center mb2">
             <input class="mr2" type=radio bind:group={answer} name="implies" value={true} />
@@ -84,7 +76,7 @@
 
         <div class="extra-question-wrapper pb2" hidden={answer}>
             <div class="extra-question-message f6 black-50 pb2">...as shown with interpretation:</div>
-            <TruthAssignmentInput bind:letterVars={tTableData.letterVars} bind:interpretation />
+            <TruthAssignmentInput {letterVars} bind:interpretation />
         </div>
     </div>
 

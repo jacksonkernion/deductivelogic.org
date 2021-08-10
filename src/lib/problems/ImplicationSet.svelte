@@ -1,15 +1,13 @@
 <script>
+    import {validity, dispLogStr} from '$lib/logic.js';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
-	import {validity} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/logic.js';
-
-    export let logStrSet = '';
     export let number = '';
+    export let logStrSet = '';
 
     let logStrSetArr = logStrSet.split(',');
 
-    let submissionVerdict = '';
-    let submissionMessage = '';
+    let submission;
     
     let answersArr = [[0,0]];
     // $: correctImpArr = getCorrectImpArr(logStrSet);
@@ -44,7 +42,7 @@
 		//Check that they don't have any self-implications
 		for(var imp of answersArr){
 			if(imp[0] == imp[1]){
-				submissionMessage = "Please don't include self-implications (Ex. n implies n)";
+				submission.log('warn', "Please don't include self-implications (Ex. n implies n)");
                 return;
             }
 		}
@@ -52,7 +50,7 @@
 		//check that they have no extraneous implications
 		for(var imp1 of answersArr){
 			if(!correctImpArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-				submissionMessage = "Some of your implications are wrong.";
+				submission.log('incorrect', "Some of your implications are wrong.");
                 return;
             }
 		}
@@ -60,29 +58,29 @@
 		//check that they have all the implications
 		for(var imp1 of correctImpArr){
             if(!answersArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-				submissionMessage = "You're missing some implications.";
+				submission.log('incorrect', "You're missing some implications.");
                 return;
             }
 		}
 		
-        submissionMessage = "Success!";
+        submission.log('correct', 'Correct');
         return;
 	}
 	
-
 </script>
 
-<li class="lh-copy pv3 bt b--black-10">
-    <p>{number}. Determine the implications that hold among the following set of schemata: <p/>
-    <div class="pl3">
-    {#each logStrSetArr as logStr, i}
-        <div class="description_line">
-            {i+1}. {dispLogStr(logStr)}
-        </div>
-    {/each}
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Determine the implications that hold among the following set of schemata:</p>
+        {#each logStrSetArr as logStr, i}
+            <div class="description-line">
+                <span class="description-line-marker">{i+1}.</span> {dispLogStr(logStr)}
+            </div>
+        {/each}
     </div>
+	
+    <div slot="submission-input" class="tc">
 
-    <div class="problem-answer tc">
         {#each answersArr as implication, i}
             <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={() => removeImplication(i)}>X</button>
             <select bind:value={implication[0]} >
@@ -102,11 +100,9 @@
             </select>
             <br/>
         {/each}
-        <div on:click={addImplication}><button>+ Add implication</button></div>
+
+        <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={addImplication}>+ Add implication</button>
         
-        <div class="tc ma4">
-            <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>
-            <p>{submissionMessage}</p>
-        </div>
-    </div> 
-</li>
+    </div>
+
+</ProblemWrapper>

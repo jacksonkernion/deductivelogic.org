@@ -110,13 +110,14 @@
     }
 
     .t_table-fill{
-        min-width:64px;
+        min-width:66px;
     }
 
     .t_table-space{
         padding:3px 0px;
         margin:0px;
         height:25px;
+        min-width:66px;
     }
 
     .t_table-space.log_str_parent-1{
@@ -175,7 +176,7 @@
 </style>
 
 <div class="t_table-toolbar mw5 center">
-    <div class="t_table-highlight tracked ">HIGHLIGHT</div>
+    <div class="t_table-highlight tracked tl">HIGHLIGHT</div>
     <div class="t_table-highlight_T br1" class:highlightT on:click={toggleHighlightT}>⊤</div>
     <div class="t_table-highlight_F br1" class:highlightF on:click={toggleHighlightF}>⊥</div>
     <div class="t_table-clear_all br1">Clear all</div>

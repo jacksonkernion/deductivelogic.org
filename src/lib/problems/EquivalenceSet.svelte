@@ -1,8 +1,8 @@
 <script>
-    import {validity} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/logic.js';
+    import {validity, dispLogStr} from '$lib/logic.js';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
-    export let id = '';
+    export let number = '';
     export let logStr = '';
     export let logStrSet = '';
 
@@ -12,8 +12,7 @@
 
     $: correctLogStrIndexes = getCorrectLogStrIndexes(logStrSetArr);
 
-    let submissionVerdict = '';
-    let submissionMessage = '';
+    let submission;
 
     function getCorrectLogStrIndexes(logStrSetArr){
         let correctArr = [];
@@ -33,7 +32,7 @@
 		//check that they have no extraneous equivalences
 		for(var equiv1 of selectedLogStrIndexes){
 			if(!correctLogStrIndexes.some((equiv2) => equiv1 == equiv2)){
-				submissionMessage = "Wrong. You've selected too many.";
+				submission.log('incorrect', "Wrong. You've selected too many.");
                 foundError = true;
             }
 		}
@@ -41,31 +40,31 @@
 		//check that they have all the equivalences
 		for(var equiv1 of correctLogStrIndexes){
             if(!selectedLogStrIndexes.some((equiv2) => equiv1 == equiv2)){
-				submissionMessage = "Wrong. You're missing some equivalences.";
+				submission.log('incorrect', "Wrong. You're missing some equivalences.");
                 foundError = true;
             }
 		}
 		
         if(!foundError){
-            submissionMessage = "Success!";
+            submission.log('correct', "Correct");
         }
     }
 
 </script>
-<li class="lh-copy pv3 bt b--black-10">
-    <p>{id}. Determine which of the following schemata are equivalent to {dispLogStr(logStr)} :</p>
-    <div class="pl3">
+
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Determine which of the following schemata are equivalent to {dispLogStr(logStr)}:</p>     
+    </div>
+	
+    <div slot="submission-input">
+
         {#each logStrSetArr as logStr, i}
             <label class="db">
                 <input type=checkbox bind:group={selectedLogStrIndexes} value={i} />
                 {dispLogStr(logStr)}
             </label>
-        {/each}
+        {/each}    
     </div>
-    <div class="problem-answer tc">
-        <div class="tc ma4">
-            <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={checkSubmission}>Check</button>
-            <p>{submissionMessage}</p>
-        </div>
-    </div>
-</li>
+
+</ProblemWrapper>

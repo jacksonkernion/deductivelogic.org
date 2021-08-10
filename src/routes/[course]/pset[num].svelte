@@ -69,16 +69,21 @@
 	
 </script> 
 
+<div class="bg-washed-green bb b--green bw1">
 
-<h1 class="pv3 bb b--black-10">Problem Set {problemSet.number}</h1>
+    <div class="mw7 pa4 center pb4 dark-green">
+        <div class="lh-title f3 fw6 pt6 pb2">Problem Set {problemSet.number}</div>
+    </div>
 
-<ul class="list pl0 w-75">
-    {#each problemSet.problems as problem}
-        <svelte:component this={problem.component} {...problem}/>
-        <!-- <li>{problem.logStr}</li> -->
-    {/each}
-</ul>
+</div>
 
+<div class="mw7 center pa4">
+    <ul class="list pl0"> 
+        {#each problemSet.problems as problem}
+            <svelte:component this={problem.component} {...problem}/>
+        {/each}
+    </ul>
+</div>
 
 <style>
 

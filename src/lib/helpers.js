@@ -42,3 +42,26 @@ export function permutator(inputArr) {
 
 	return permute(inputArr);
 }
+
+export function findChars(haystack, needle, offset=0){
+
+	var pos = haystack.indexOf(needle, offset);
+
+	//base case
+	if(pos === -1){
+		return false;
+	}
+	//recursion
+	else{
+		var littleArr = [pos, pos + needle.length - 1];
+		var arr = [littleArr];
+		var otherArr = findChars(haystack, needle, pos + needle.length);
+		if(otherArr){
+			for(var littleArr of otherArr){
+				arr.push(littleArr);
+			}
+		}
+		return arr;
+	}
+
+}

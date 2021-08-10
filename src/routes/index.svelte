@@ -47,7 +47,7 @@
 
 <div class="bg-washed-green bb b--green bw1">
 
-    <div class="mw7 center pb4 dark-green">
+    <div class="mw7 pa4 center pb4 dark-green">
         <div class="lh-title f3 fw6 tracked pt6 pb2">DEDUCTIVELOGIC.ORG v2.0</div>
         <p class="lh-copy f4 fw4">Interactive problem sets for deductive logic courses.<br/>Developed for Harvard's introductory course.</p>
         <p class="lh-copy f4 fw4"><span class="fw5">See below:</span> truth-functional logic problem examples.<br/>
@@ -58,11 +58,11 @@
 
 </div>
 <div class="mw7 center pa4">
-    <div class="list pl0"> 
+    <ul class="list pl0"> 
         {#each problems as problem}
             <svelte:component this={problem.component} {...problem}/>
         {/each}
-    </div>
+    </ul>
 </div>
 
 

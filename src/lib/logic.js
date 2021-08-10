@@ -326,8 +326,6 @@ export function validity(logStr){
         }
         //if(isQ)
             //assignments['domain_size'] = self::get_domain_size($logStr);
-        console.log(logProp);
-        console.log(assignments);
         if(!tVal(logProp, assignments)){
             return false; 
         }
@@ -637,12 +635,12 @@ export function pullOutQ(logProp){
 export function quantEquiv(logProp1, logProp2, letterVars){
 	
 	//as if for each row in a truth table
-	for(var i=0; i < Math.pow(letterVars.length, 2); i++){
+	for(var i=0; i < Math.pow(2, letterVars.length); i++){
         var assignments = {};
         //A left-padded binary string, representing the i-th row of truth table
         var truthValues = i.toString(2).padStart(letterVars.length, '0');
         for(var j=0; j < letterVars.length; j++){
-            if(truthValues[j] === false)
+            if(truthValues[j] == 0)
                 assignments[letterVars[j]] = true;
             else
                 assignments[letterVars[j]] = false;

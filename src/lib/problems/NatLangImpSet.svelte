@@ -1,10 +1,10 @@
 <script>
-
-    import { permutator } from '$lib/helpers.js';
-	import {validity} from '$lib/logic.js';
-    import {getLetterVars} from '$lib/logic.js';
     import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
+    import {permutator, findChars} from '$lib/helpers.js';
+	import {validity, getLetterVars} from '$lib/logic.js';
+    
     export let number = '';
     export let sentSet = '';
     export let logStrSet = '';
@@ -12,37 +12,12 @@
     let sentSetArr = sentSet.split('/')
     let logStrSetArr = logStrSet.split(',');
 
-    export let submissionStatus = '';
-    export let submission = '';
-	export let submissionMessage = '';
+    let submission;
     
     export let studentLogStrSet = [];
     export let answersArr = [[0,0]];
     //$: correctImpArr = getCorrectImpArr(logStrSet);
     let correctImpArr = getCorrectImpArr(logStrSetArr);
-
-    function findChars(haystack, needle, offset=0){
-
-        var pos = haystack.indexOf(needle, offset);
-
-        //base case
-        if(pos === -1){
-            return false;
-        }
-        //recursion
-        else{
-            var littleArr = [pos, pos + needle.length - 1];
-            var arr = [littleArr];
-            var otherArr = findChars(haystack, needle, pos + needle.length);
-            if(otherArr){
-                for(var littleArr of otherArr){
-                    arr.push(littleArr);
-                }
-            }
-            return arr;
-        }
-
-    }
 
     function getCorrectImpArr(logStrSet){
         let correctArr = [];
@@ -81,7 +56,7 @@
             var studentVars = getLetterVars(studentStr);
             
             if(correctVars.length != studentVars.length){
-                submissionMessage = "Hmm...You don't seem to have the correct number of letters in your paraphrasing.";
+                submission.log('warn', "Hmm...You don't seem to have the correct number of letters in your paraphrasing.");
                 return;
             }
             
@@ -108,7 +83,7 @@
                 }
             }
             if(!match){
-                submissionMessage = "Wrong. Your paraphrase of ("+ (i + 1) + ") looks wrong.";
+                submission.log('incorrect', "Paraphrase of "+ (i + 1) +" is incorrect.");
                 return;
             }
         }
@@ -118,7 +93,7 @@
         //Check that they don't have any self-implications
 		for(var imp of answersArr){
 			if(imp[0] == imp[1]){
-				submissionMessage = "Please don't include self-implications (Ex. n implies n)";
+                submission.log('warn', "Please don't include self-implications (Ex. n implies n)");
                 return;
             }
 		}
@@ -126,7 +101,7 @@
 		//Check that they have no extraneous implications
 		for(var imp1 of answersArr){
 			if(!correctImpArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-				submissionMessage = "Some of your implications are wrong.";
+                submission.log('incorrect', "Some of your implications are wrong.");
                 return;
             }
 		}
@@ -134,36 +109,38 @@
 		//check that they have all the implications
 		for(var imp1 of correctImpArr){
             if(!answersArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-				submissionMessage = "You're missing some implications.";
+                submission.log('incorrect', "You're missing some implications.");
                 return;
             }
 		}
 		
-        submissionMessage = "Success!";
+        submission.log('correct', 'Correct');
         return;
 	}
 	
 
 </script>
 
-<li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
-    <div class="problem-description">{number}. Paraphrase the following natural language sentences and then determine any implications that hold between them. <br/>
-        {#each logStrSetArr as logStr, i}
-            <div class="description_line">
-                {i+1}. {logStr}
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Paraphrase the following natural language sentences and then determine any implications that hold between them.</p>
+        {#each sentSetArr as sent, i}
+            <div class="description-line">
+                <span class="description-line-marker">{i+1}.</span> {sent}
             </div>
         {/each}
     </div>
-
-    <div class="problem-answer">
-        {#each sentSetArr as sent, i}
-            <div>
-                {i+1}. <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+	
+    <div slot="submission-input" class="tc">
+        
+        {#each logStrSetArr as logStr, i}
+            <div class="relative">
+                <span class="absolute left-1">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
             </div>
         {/each}
 
         {#each answersArr as implication, i}
-            <button on:click={() => removeImplication(i)}>X</button>
+            <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={() => removeImplication(i)}>X</button>
             <select bind:value={implication[0]} >
                 {#each logStrSetArr as logStr, j}
                     <option value={parseInt(j+1)}>
@@ -181,9 +158,9 @@
             </select>
             <br/>
         {/each}
-        <div on:click={addImplication}><a>+ Add implication</a></div>
+
+        <button on:click={addImplication}>+ Add implication</button>
         
-        <p>Submission Status: {submissionMessage}</p>   
-        <button class="f6 link dim br2 ph3 pv2 mb2 dib white bg-black" on:click={checkSubmission}>Check</button>
-    </div> 
-</li>
+    </div>
+
+</ProblemWrapper>

@@ -1,38 +1,40 @@
 <script>
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
-export let id = '';
-export let question = '';
-export let sentenceSet = [];
-export let answer = '';
+    export let number = '';
+    export let question = '';
+    export let sentenceSet = [];
+    export let answer = '';
 
-let submission = '';
-let submissionStatus = '';
-let submissionMessage = '';
+    let studentAnswer = '';
 
-function checkSubmission() {
-    if(answer == submission){
-        submissionStatus = 'success';
-        submissionMessage = "Success message";
+    let submission;
+
+    function checkSubmission() {
+        if(answer == submission){
+            submission.log('correct', 'Correct');
+        }
+        else{
+            submission.log('incorrect', 'Incorrect');
+        }
     }
-    else{
-        submissionStatus = 'error';
-        submissionMessage = "Error message";
-    }
-}
 </script>
 
-<li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
-    
-    <p>{id}. {question}</p>
-    <select bind:value={submission}>
-        <option value="none"></option>
-        {#each sentenceSet as option}
-            <option value="{option}">{option}</option>
-        {/each}
-    </select>
-    <div class="cf">
-        <div class="fl">{submissionMessage}</div>
-        <button class="fr f6 link dim br2 ph3 pv2 mb2 dib white bg-black" on:click={checkSubmission}>Check</button>
+
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>{question}</p>
     </div>
+	
+    <div slot="submission-input" class="tc">
+        
+        <select bind:value={studentAnswer}>
+            <option value="none"></option>
+            {#each sentenceSet as option}
+                <option value="{option}">{option}</option>
+            {/each}
+        </select>
     
-</li>
+    </div>
+
+</ProblemWrapper>
