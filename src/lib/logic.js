@@ -114,37 +114,6 @@ export function tVal(logProp, tValues){
     }
 }
 
-export function isLower(character) {
-    return (character === character.toLowerCase()) && (character !== character.toUpperCase());
-}
-
-export function getLetterVars(logStr) {
-
-    let letterVars = [];
-    let letter;
-        
-    //crawl the sentence string, look for lower case letters, store them
-    for(let i=0; i<logStr.length; i++) {
-
-        if(isLower(logStr[i])){
-            letter = logStr[i];
-            var match = false;
-            letterVars.forEach(function(letterVar) {
-                if(letter == letterVar){
-                    match = true;
-                }
-            });	
-            if(!match){
-                letterVars.push(letter);
-            }
-        }
-        //SEE logic.php for handling: identity, quant
-    }
-    
-    //sort($letter_vars);
-    return letterVars;
-}
-
 export function logStrTrim(logStr){
     logStr = logStr.trim();
 
@@ -363,7 +332,10 @@ export function isQ(logStr){
 
 export function findNonQuantLogProp(logProp){
 
-	if(logProp.symbol.indexOf('A') !== -1 || logProp.symbol.indexOf('E') !== -1){
+    if(logProp.symbol === null){
+        return logProp;
+    }
+	else if(logProp.symbol.indexOf('A') !== -1 || logProp.symbol.indexOf('E') !== -1){
 		return findNonQuantLogProp(logProp.parts[0]);
 	}
 	else
@@ -377,7 +349,10 @@ export function getQuantArray(logProp, obj = null){
 		var obj = {A: [], E: []};
 	}
 
-	if(logProp.symbol.indexOf('A') !== -1){
+    if(logProp.symbol === null){
+        return obj;
+    }
+	else if(logProp.symbol.indexOf('A') !== -1){
 		obj.A.push(logProp.symbol);
 		return getQuantArray(logProp.parts[0], obj);
 	}
@@ -392,26 +367,25 @@ export function getQuantArray(logProp, obj = null){
 
 export function replaceVar(oldVar, newVar, logProp){
 
-    // Need a 'deep clone' so that I don't accidentally affect the evaluation of the logProp elsewhere, by replacing the var permanently
-	var clonedLogProp = JSON.parse(JSON.stringify(logProp));
+	//var clonedLogProp = JSON.parse(JSON.stringify(logProp));
 	
 	//base case
-	if(!clonedLogProp.symbol){
+	if(logProp.symbol === null){
 	
         var regex = new RegExp(oldVar, 'g');
-		clonedLogProp.logStr.replace(regex, newVar);
-		return clonedLogProp;
+		logProp.logStr = logProp.logStr.replace(regex, newVar);
+		return logProp;
 		
 	}
 	else{
         
-		for(var key=0; key < clonedLogProp.parts.length; key++){
+		for(var key=0; key < logProp.parts.length; key++){
 		
-            clonedLogProp.parts[key] = replaceVar(oldVar, newVar, clonedLogProp.parts[key]);
+            logProp.parts[key] = replaceVar(oldVar, newVar, logProp.parts[key]);
 		
 		}
 		
-		return clonedLogProp;
+		return logProp;
 	
 	}
 
@@ -440,9 +414,9 @@ export function propToStr(logProp){
 		
 			logStr += '[';	
 		
-			for(const [key, logPropPart] of logProp.parts){
+			for(var key in logProp.parts){
 				
-				logStr += propToStr(logPropPart);
+				logStr += propToStr(logProp.parts[key]);
 				
 				if(key !== (logProp.parts.length - 1)){
 				
@@ -464,7 +438,6 @@ export function propToStr(logProp){
 
 export function prenexForm(logProp, unusedVariables=null){
     
-	
 	//base case
 	if(logProp.symbol === null){
 		return logProp;
@@ -474,16 +447,15 @@ export function prenexForm(logProp, unusedVariables=null){
 	else{
 	
 		//if unusedVariables isn't set, create an array with all lowercase letters
-		if(!unusedVariables){
+		if(unusedVariables === null){
 			
-			var unusedVariables = [];
+			unusedVariables = [];
 			for(var i=97; i<123; i++){
 				//Make sure they aren't already used in the prop, lest it lead to confusion, mixups
 				if(logProp.logStr.indexOf(String.fromCharCode(i)) === -1){
 					unusedVariables.push(String.fromCharCode(i));
 				}
 			}
-			
 		}
 		
 		//There's a special case for biconditionals...
@@ -513,7 +485,7 @@ export function prenexForm(logProp, unusedVariables=null){
 			newLogProp = prenexForm(newLogProp, unusedVariables);
 		}
 		else{
-			//Law of distribution - reaches a common ground
+			//Law of distribution
 			if(logProp.symbol === "." || logProp.symbol === "|"){
 			
 				if(logProp.symbol === "."){
@@ -527,7 +499,7 @@ export function prenexForm(logProp, unusedVariables=null){
 					
 				var allEOrAllA = true;
 				for(var i=0; i < logProp.parts.length; i++){
-                    if(!logProp.parts[i].symbol){
+                    if(logProp.parts[i].symbol === null){
                         allEOrAllA = false;
 						i = logProp.parts.length;
                     }
@@ -540,31 +512,32 @@ export function prenexForm(logProp, unusedVariables=null){
 					logProp.symbol = logProp.parts[0].symbol;
 					
 					//replace all other related vars with new big var on campus
-					for(const [key, logPropPart] of logProp.parts){
-						if(key !== 0)
-							replaceVar(logPropPart.symbol[1], logProp.symbol[1], logPropPart);
-						logProp.parts[key] = logProp.parts[key].parts[0];
+					for(var i=0; i < logProp.parts.length; i++){
+                        var logPropPart = logProp.parts[i];
+						if(i != 0)
+							logProp = replaceVar(logPropPart.symbol[1], logProp.symbol[1], logPropPart);
+						logProp.parts[i] = logProp.parts[i].parts[0];
 					}
                     // clone logProp
-                    newLogProp1 = JSON.parse(JSON.stringify(logProp));
+                    var newLogProp1 = JSON.parse(JSON.stringify(logProp));
 					newLogProp1.symbol = oldSymbol;
 					logProp.parts = [newLogProp1];
 					return prenexForm(logProp, unusedVariables);
 				}
 		
 			}
-			
-			for(var i=0; i< logProp.parts.length; i++){
+
+            for(var i=0; i< logProp.parts.length; i++){
 				logProp.parts[i] = prenexForm(logProp.parts[i], unusedVariables);
 			}
-		
+			
 			var newLogProp = new LogProp();
 			
 			//If the old log prop symbol is E or A, we don't want to be switching around symbol order
 			if(logProp.symbol.indexOf('A') !== -1 || logProp.symbol.indexOf('E') !== -1){
 				
 				//but we do want to assign it a new variable, to ensure correct scope
-				newLogProp.symbol =  logProp.symbol[0] + unusedVariables[unusedVariables.length - 1];
+				newLogProp.symbol = logProp.symbol[0] + unusedVariables[unusedVariables.length - 1];
 				newLogProp.parts.push(replaceVar(logProp.symbol[1], unusedVariables[unusedVariables.length - 1], logProp.parts[0]));
 				unusedVariables.splice(unusedVariables.length - 1);
 				
@@ -573,6 +546,7 @@ export function prenexForm(logProp, unusedVariables=null){
 			else{
 				newLogProp = pullOutQ(logProp);
 			}
+
 		
 		}
 		return newLogProp;
@@ -590,7 +564,7 @@ export function pullOutQ(logProp){
     //recursion
 	else{
 	
-        // clone logProp
+        // copy logProp
 		let newLogProp = JSON.parse(JSON.stringify(logProp));
 	
 		//Go through each part, and see if any of them have and E or A symbol
@@ -598,31 +572,34 @@ export function pullOutQ(logProp){
             
             var logPropPart = logProp.parts[key];
 
-			// If E or A 
-			if(logProp.symbol.indexOf('A') !== -1 || logProp.symbol.indexOf('E') !== -1){
-				
-                newLogProp.symbol = logPropPart.symbol;
+			
+            // If E or A
+            if(logPropPart.symbol !== null){
+                if(logPropPart.symbol.indexOf('A') !== -1 || logPropPart.symbol.indexOf('E') !== -1){
+                    
+                    newLogProp.symbol = logPropPart.symbol;
 
-				//If original symbol was negation or if antecedent of conditional, we need to switch quant symbols
-				if(logProp.symbol === "-" || (logProp.symbol === ">" && key === 0)){
-					if(logProp.symbol.indexOf('A') !== -1){
-						newLogProp.symbol[0] = "E";
-					}
-					else
-                        newLogProp.symbol[0] = "A";
-				}
-				
-				//Switch the around the order of stuff
-				let reallyNewLogProp = new LogProp();
-				reallyNewLogProp.parts = logProp.parts;
-				reallyNewLogProp.parts[key] = logProp.parts[key].parts[0];
-				reallyNewLogProp.symbol = logProp.symbol;
-				newLogProp.parts = pullOutQ(reallyNewLogProp);
-				newLogProp.logStr = null;
-				//break loop
-                key = logProp.parts.length;
-				
-			}
+                    //If original symbol was negation or if part is antecedant of conditional, we need to switch quant symbols
+                    if(logProp.symbol === "-" || (logProp.symbol === ">" && key === 0)){
+                        if(logPropPart.symbol.indexOf('A') !== -1){
+                            newLogProp.symbol[0] = "E";
+                        }
+                        else
+                            newLogProp.symbol[0] = "A";
+                    }
+                    
+                    //Switch the around the order of stuff
+                    let reallyNewLogProp = new LogProp();
+                    reallyNewLogProp.parts = logProp.parts;
+                    reallyNewLogProp.parts[key] = logProp.parts[key].parts[0];
+                    reallyNewLogProp.symbol = logProp.symbol;
+                    newLogProp.parts = [pullOutQ(reallyNewLogProp)];
+                    newLogProp.logStr = '';
+                    //break loop
+                    key = logProp.parts.length;
+                    
+                }
+            }
 		
 		}
 		
@@ -673,8 +650,8 @@ export function quantParaphrase(logStr1, logStr2) {
 	let logProp1 = prenexForm(parseLogStr(logStr1));
 	let logProp2 = prenexForm(parseLogStr(logStr2));
 
-	let nonQLogProp1 = findNonQLogProp(logProp1);
-	let nonQLogProp2 = findNonQLogProp(logProp2);
+	let nonQLogProp1 = findNonQuantLogProp(logProp1);
+	let nonQLogProp2 = findNonQuantLogProp(logProp2);
 
 	//Get arrays of As and Es
 	let quantArr1 = getQuantArray(logProp1);
@@ -693,32 +670,32 @@ export function quantParaphrase(logStr1, logStr2) {
 		for(var Eperm in Eperms){
 		
             // clone logProp
-			var testLogProp = JSON.parse(JSON.stringify(nonQlogProp2));
+			var testLogProp = JSON.parse(JSON.stringify(nonQLogProp2));
 			
 			//replace all the letter vars attached to A with potentially matching vars in lopProp1
 			//do it once, to mark the spots with the key (because it could kludge vars)
-			for(const [key, quantA] of Aperm){
+			for(var key in Aperm){
 
 				testLogProp = replaceVar(quantArr2['A'][key][1], key, testLogProp);
 			
 			}
 			//do it again to get letters in
-			for(const [key, quantA] of Aperm){
+			for(var key in Aperm){
 			
-				testLogProp = replaceVar(key, quantA[1], testLogProp);
+				testLogProp = replaceVar(key, Aperm[key][1], testLogProp);
 			
 			}
 			
 			//do it once, to mark the spots with the key (because it could kludge vars)
-			for(const [key, quantE] of Eperm){
+			for(var key in Eperm){
 		
 				testLogProp = replaceVar(quantArr2['E'][key][1], key, testLogProp);
 			
 			}
 			//do it again to get letters in
-			for(const [key, quantE] of Eperm){
+			for(var key in Eperm){
 			
-				testLogProp = replaceVar(key, quantE[1], testLogProp);
+				testLogProp = replaceVar(key, Eperm[key][1], testLogProp);
 				
 			}
 			
@@ -730,4 +707,37 @@ export function quantParaphrase(logStr1, logStr2) {
 		}
 	}
 	return false;
+}
+
+/* UTILITIES */
+
+export function isLower(character) {
+    return (character === character.toLowerCase()) && (character !== character.toUpperCase());
+}
+
+export function getLetterVars(logStr) {
+
+    let letterVars = [];
+    let letter;
+        
+    //crawl the sentence string, look for lower case letters, store them
+    for(let i=0; i<logStr.length; i++) {
+
+        if(isLower(logStr[i])){
+            letter = logStr[i];
+            var match = false;
+            letterVars.forEach(function(letterVar) {
+                if(letter == letterVar){
+                    match = true;
+                }
+            });	
+            if(!match){
+                letterVars.push(letter);
+            }
+        }
+        //SEE logic.php for handling: identity, quant
+    }
+    
+    //sort($letter_vars);
+    return letterVars;
 }

@@ -59,8 +59,9 @@
     });
 
     //console.log(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"));
-    console.log(prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]")));
+    //console.log(prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]")));
     //console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"))));
+    console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", "Aw[Ez(Tw > (Cz . Pwz)) ]"));
     
     //console.log(tVal(parseLogStr('(Ax)(Ey)(Px . Ryx)'), {domainSize: 4, P1: true, R31: true}));
     //console.log(tVal(parseLogStr('(Ax)(Ey)(Px > Ryx)'), {domainSize: 4, P1: true, R31: true}));
