@@ -1,0 +1,43 @@
+<script>
+
+    import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    
+    import {parseLogStr, dispLogStr, quantParaphrase} from '$lib/logic.js';
+    
+    export let question = '';
+    export let logStr = '';
+    export let number = '';
+    export let sentSet = '';
+
+    let sentSetArr = sentSet.split('/')
+    let studentLogStr = '';
+    let submission;
+
+    function checkSubmission(){
+
+        if(!parseLogStr(studentLogStr))
+            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr));
+		
+		if(quantParaphrase(logStr, studentLogStr))
+            submission.log('correct', 'Correct');
+		else
+            submission.log('incorrect', 'Incorrect');
+    }
+</script>
+
+<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+    <div slot="description">
+        <p>Paraphrase the following sentence in logical notation:</p>
+        <div class="description-line">{question}</div>
+        <p>Use the following predicates:</p>
+        {#each sentSetArr as sent, i}
+            <div class="description-line">
+                {sent}
+            </div>
+        {/each}
+    </div>
+	<div slot="submission-input">
+        <LogStrInput bind:logStr={studentLogStr} />
+    </div>
+</ProblemWrapper>

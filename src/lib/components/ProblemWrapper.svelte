@@ -64,7 +64,7 @@
             {:else if submission.verdict == 'correct'}
                 <ion-icon name="checkbox" class="dib v-mid green"></ion-icon>
             {/if}
-            <div class="dib v-mid black-70">{submission.message}</div>
+            <div class="dib v-mid black-70">{@html submission.message}</div>
         </div>
     {/if}
 </div>

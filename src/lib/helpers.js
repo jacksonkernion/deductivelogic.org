@@ -22,6 +22,46 @@ export function unfancyLogStr(str){
 	return fixed;
 }
 
+function factorial(int){
+	if(int < 2) {
+		return 1;
+	}
+
+	for(f = 2; (int-1) > 1; f *= $int--);
+
+	return f;
+}
+
+function perm(arr, nth = null) {
+	
+	if (nth === null) {
+		return permutator(arr);
+	}
+
+	var result = [];
+	var length = arr.length;
+
+	while (length--) {
+			var f = factorial(length);
+			var p = Math.floor(nth / f);
+			result.push(arr[p]);
+			arr.splice(p, 1);
+			nth -= p * f;
+	}
+
+	result = result.concat(arr);
+	return result;
+}
+	
+export function permutator(arr) {
+	var p = [];
+	for (var i=0; i < factorial(arr.length); i++) {
+		p.push(perm(arr, i));
+	}
+	return p;
+}
+
+/* Some permutation function I found online, to replace permutation fuction form PHP. But behaves slightly differently, so had to update
 export function permutator(inputArr) {
 	var results = [];
 
@@ -42,6 +82,7 @@ export function permutator(inputArr) {
 
 	return permute(inputArr);
 }
+*/
 
 export function findChars(haystack, needle, offset=0){
 

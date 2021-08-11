@@ -43,15 +43,6 @@
         if(!parseLogStr(studentLogStr))
             submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr));
 		
-		// If it's Q, to get leter vars, remove all capital letters
-		/* if(logic::isQ($correct_str)){
-			if(logic::quant_paraphrase($correct_str, $student_str))
-				$this->respond('correct', $problem);
-			else
-				$this->respond('incorrect', $problem);
-		}
-        */
-		
 		var correctVars = getLetterVars(logStr);
 		var studentVars = getLetterVars(studentLogStr);
 		

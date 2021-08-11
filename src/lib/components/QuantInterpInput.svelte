@@ -1,0 +1,111 @@
+<script>
+    export let interpretation = {};
+    // quantPreds is array specifying the predicate letter, plus the n-place for predicate. Ex: [{letter: 'R', n: 2}]
+    export let quantPreds = [];
+
+    $: domain = printDomain(interpretation);
+    $: extensions = getExtensions(interpretation);
+    
+    function printDomain(interp){
+        var str = '{';
+        for(var i=0; i < interp.domainSize; i++){
+            if(i > 0){
+                str += ', ';
+            }
+            str += (i + 1);
+        }
+        str += '}';
+        return str;
+    };
+
+    function getExtensions(interpretation){
+        var extensions = {};
+
+        for(var key in quantPreds){
+            extensions[quantPreds[key].letter] = [];
+        }
+
+        for(var key in interpretation){
+            if(key != 'domainSize'){
+                var predLetter = key.substr(0,1)
+                var extension = key.substr(1);
+                var str = '';
+                str += extension.substr(0, 1);
+
+                if(extension.length>1){
+                    for(var i=1; i < extension.length; i++){
+                        str += ', ' + key.substr(i, 1);
+                    }
+					str = '<'+str+'>';
+				}
+                //str += str+', ';
+                extensions[predLetter].push({extension: extension, extensionStr: str});
+            }
+                
+        }
+        return extensions;
+    }
+
+    function incrementDomain(){
+        interpretation.domainSize = interpretation.domainSize + 1;
+    }
+
+    function decrementDomain(){
+        //CHECK THAT EXTENSIONS STILL REMAIN IN DOMAIN
+        interpretation.domainSize = interpretation.domainSize - 1;
+    }
+
+    function removeExtension(predLetter, extension){
+        delete interpretation[predLetter+extension];
+        interpretation = interpretation;
+    }
+
+    function handleKeyDown(quantPred, e){
+        if(e.key === 'Enter'){
+			var val = e.target.value;
+			var units = val.split(',');
+            var extension = '';
+			
+			//check to make sure the units are within domain of discourse, create extension str
+			var inDomain = true;
+			for(var i=0; i<units.length; i++){
+                extension += units[i];
+				if(parseInt(units[i]) > interpretation.domainSize)
+					inDomain = false;
+			}
+			
+			//check to make sure they've given the right number of units
+			if(units.length != quantPred.n){
+				alert('Incorrect number of elements. This predicate attaches to '+n+' elements');
+			}
+			else if(!inDomain){
+				alert('Predicates cannot attach to elements outside the domain.');
+			}
+			else{
+			
+				//delete value
+				e.target.value = '';
+				
+				//add extension
+				interpretation[quantPred.letter+extension] = true;
+			
+			}
+		}
+    }
+
+
+</script>
+
+<div>
+    <div><a on:click={decrementDomain}>–1</a><a on:click={incrementDomain}>+1</a>Universe = {domain}</div>
+
+    {#each quantPreds as quantPred}
+        <div>"{quantPred.letter}" = {'{'}
+            {#each extensions[quantPred.letter] as {extension, extensionStr}}
+                <a class="extension" on:click={removeExtension(quantPred.letter, extension)}>{extensionStr}</a>, 
+            {/each}
+            <input style="width:{17 * quantPred.n}px" on:keydown={(e) => handleKeyDown(quantPred, e)}/>
+            {'}'}
+        </div>
+    {/each}
+</div>

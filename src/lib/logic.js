@@ -49,8 +49,7 @@ export function tVal(logProp, tValues){
         if(isA || isE){
 
             //skip first parentheses
-            var paren2pos = logProp.logStr.indexOf(')');
-            var oldLogStr = logStrTrim(logProp.logStr.substr(paren2pos+1));
+            var oldLogStr = logStrTrim(logProp.parts[0].logStr);
              
             for(var unit=1; unit<=tValues['domainSize']; unit++){
                 var regex = new RegExp(logProp.symbol[1], 'g');
@@ -394,7 +393,7 @@ export function replaceVar(oldVar, newVar, logProp){
 export function propToStr(logProp){
 
 	if(logProp.symbol === null)
-		return logProp.parts;
+		return logProp.logStr;
 	
 	else{
 	
@@ -414,7 +413,7 @@ export function propToStr(logProp){
 		
 			logStr += '[';	
 		
-			for(var key in logProp.parts){
+			for(var key = 0; key < logProp.parts.length; key++){
 				
 				logStr += propToStr(logProp.parts[key]);
 				
@@ -665,40 +664,44 @@ export function quantParaphrase(logStr1, logStr2) {
 	let Aperms = permutator(quantArr1['A']);
 	let Eperms = permutator(quantArr1['E']);
 
-	for(var Aperm in Aperms){
+	for(var i=0; i < Aperms.length; i++){
+
+        var Aperm = Aperms[i];
 	
-		for(var Eperm in Eperms){
+		for(var j=0; j < Eperms.length; j++){
+
+            var Eperm = Eperms[j];
 		
             // clone logProp
 			var testLogProp = JSON.parse(JSON.stringify(nonQLogProp2));
 			
 			//replace all the letter vars attached to A with potentially matching vars in lopProp1
 			//do it once, to mark the spots with the key (because it could kludge vars)
-			for(var key in Aperm){
+			for(var key=0; key < Aperm.length; key++){
 
 				testLogProp = replaceVar(quantArr2['A'][key][1], key, testLogProp);
 			
 			}
 			//do it again to get letters in
-			for(var key in Aperm){
+			for(var key=0; key < Aperm.length; key++){
 			
 				testLogProp = replaceVar(key, Aperm[key][1], testLogProp);
 			
 			}
 			
 			//do it once, to mark the spots with the key (because it could kludge vars)
-			for(var key in Eperm){
+			for(var key=0; key < Eperm.length; key++){
 		
 				testLogProp = replaceVar(quantArr2['E'][key][1], key, testLogProp);
 			
 			}
 			//do it again to get letters in
-			for(var key in Eperm){
+			for(var key=0; key < Eperm.length; key++){
 			
 				testLogProp = replaceVar(key, Eperm[key][1], testLogProp);
 				
 			}
-			
+
 			//test equivalence of two nonQ log props over all rows of tTable	
 			let letterVars = getLetterVars(propToStr(nonQLogProp1));
 			if(quantEquiv(nonQLogProp1, testLogProp, letterVars)){
@@ -709,35 +712,122 @@ export function quantParaphrase(logStr1, logStr2) {
 	return false;
 }
 
+export function getQuantPreds(logStr){
+
+	var predLetters = [];
+	var predVars = [];
+	for(var i=0; i<logStr.length; i++) {
+        var letter = '';
+		//if((ctype_upper($schema[$i]) || $schema[$i] == '=') && $schema[$i]!="A" && $schema[$i]!="E"){
+		if(isUpper(logStr[i]) && logStr[i] != "A" && logStr[i]!="E"){
+			letter = logStr[i];
+		}
+		
+		// check to make sure it's not a repeat
+		if(letter){
+			var match = false;
+			for(pred in predLetters){
+				if(predLetters[pred] == letter){
+					match = true;
+				}
+			}
+			if(!match){
+				predLetters.push(letter);
+				//grab all the lowercase letters attached to pred
+				if(letter != '='){
+					for(var j=i+1; j<logStr.length; j++){
+                        if(isLower(logStr[j])){
+                            //do nothing, normally. keep going til you find the end of atom...
+                            if((j+1) >= logStr.length){
+                                var length = j - i;
+                                var pred = {};
+                                pred.letter = letter;
+                                pred.n = length;
+                                predVars.push(pred);
+                                j = logStr.length;
+                                i = logStr.length;
+                            }
+                        }
+                        else{
+                            var length = j - i - 1;
+                            var pred = {};
+                            pred.letter = letter;
+                            pred.n = length;
+                            predVars.push(pred);
+                            i = j;
+                            j = logStr.length;
+                        }
+					}
+				}
+				else{
+                    pred = {letter: letter, n: 2};
+                    predVars.push(pred);
+				}
+			}
+		}
+	}
+	return predVars;
+
+}
+
 /* UTILITIES */
 
 export function isLower(character) {
     return (character === character.toLowerCase()) && (character !== character.toUpperCase());
 }
+export function isUpper(character) {
+    return (character === character.toUpperCase()) && (character !== character.toLowerCase());
+}
 
 export function getLetterVars(logStr) {
 
-    let letterVars = [];
-    let letter;
+    let atomVars = [];
+    let atom = '';
         
-    //crawl the sentence string, look for lower case letters, store them
+    //crawl the sentence string, look for lower case letters (and check if attached to Uppercase, etc), store them
     for(let i=0; i<logStr.length; i++) {
 
-        if(isLower(logStr[i])){
-            letter = logStr[i];
+        var char = logStr[i];
+
+        if(isLower(char)){
+            atom = char;
+        }
+        else if((isUpper(char) || char == '=' || char == '≠') && char != 'A' && char != 'E'){
+            
+            //grab all the lowercase letters attached to it, skip ahead in main loop
+			for(var j = i+1; j < logStr.length; j++){
+				if(isLower(logStr[j])){
+					//do nothing, normally. keep going til you find the end of atom...
+					if((j+1) == logStr.length){
+						var length = j - i + 1;
+						atom = logStr.substr(i, length);
+						j = logStr.length;
+                        i = logStr.length;
+					}
+				}
+				else{
+					var length = j - i;
+					atom = logStr.substr(i, length);
+                    i = j;
+					j = logStr.length;
+				}
+			}
+        }
+
+        // check to make sure it's not a repeat, or part of conjoined atom
+        if (atom){
             var match = false;
-            letterVars.forEach(function(letterVar) {
-                if(letter == letterVar){
+            atomVars.forEach(function(oldAtom) {
+                //This condition is slightly different in original PHP version, as it didn't skip over parts of conjoined atoms. I think old version is subtly non-ideal? But maybe not...
+                if(atom == oldAtom){
                     match = true;
                 }
-            });	
+            });
             if(!match){
-                letterVars.push(letter);
+                atomVars.push(atom);
             }
         }
-        //SEE logic.php for handling: identity, quant
     }
-    
-    //sort($letter_vars);
-    return letterVars;
+
+    return atomVars.sort();
 }

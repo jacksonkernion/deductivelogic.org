@@ -23,6 +23,8 @@
 	import DisjNormForm from '$lib/problems/DisjNormForm.svelte';
 	import NatLangImpSet from '$lib/problems/NatLangImpSet.svelte';
 	import NatLangArg from '$lib/problems/NatLangArg.svelte';
+    import QuantParaphrase from '$lib/problems/QuantParaphrase.svelte';
+    import QuantInterp from '$lib/problems/QuantInterp.svelte';
 
     export let problemSet = {};
     let problems = [];
@@ -51,9 +53,9 @@
         else if(problem.type ==='disjNormForm')
             problem.component = DisjNormForm;
         else if(problem.type === 'quantParaphrase')
-            problem.component = null;
+            problem.component = QuantParaphrase;
         else if(problem.type === 'quantInterp')
-            problem.component = null;
+            problem.component = QuantInterp;
         
         return problem;
     });
@@ -61,11 +63,13 @@
     //console.log(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"));
     //console.log(prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]")));
     //console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"))));
-    console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", "Aw[Ez(Tw > (Cz . Pwz)) ]"));
+    //console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", "Aw[Ez(Tw > (Cz . Pwz)) ]"));
     
     //console.log(tVal(parseLogStr('(Ax)(Ey)(Px . Ryx)'), {domainSize: 4, P1: true, R31: true}));
     //console.log(tVal(parseLogStr('(Ax)(Ey)(Px > Ryx)'), {domainSize: 4, P1: true, R31: true}));
     //console.log(parseLogStr('(Ax)(Ey)(Px . Ryx)'));
+
+    //console.log(quantParaphrase("(Ax)(Cx > Rx)", "Ax(Cx > Rx)"));
    
 	
 </script> 
