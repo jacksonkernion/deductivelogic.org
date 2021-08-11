@@ -74,7 +74,8 @@ button {
 }
 
 button:hover {
-	border-color: black;
+	/* border-color: black; */
+	background-color: #eee;
 	opacity: .8;
 	cursor: pointer;
 }
@@ -91,11 +92,12 @@ button:not(:disabled):active {
 button:focus {
 	border-color: #666;
 }
-*/
+
 
 a.link :hover{
 	
 }
+*/
 
 /* Problem Elements */
 

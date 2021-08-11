@@ -3,39 +3,23 @@
     import LogStrInput from '$lib/components/LogStrInput.svelte';
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
     
-    import {parseLogStr, dispLogStr, getLetterVars, validity} from '$lib/logic.js';
-    import {permutator} from '$lib/helpers.js';
+    import {parseLogStr, getLetterVars, validity} from '$lib/logic.js';
+    import {dispLogStr, findChars, permutator} from '$lib/helpers.js';
+
     
-    export let question = '';
+    export let sent = '';
     export let logStr = '';
     export let number = '';
+
+    //delete this later, after problem set data is fixed
+    export let question;
+    sent = question;
 
     let studentLogStr = '';
 
     let submission;
 
-    function findChars(haystack, needle, offset=0){
 
-        var pos = haystack.indexOf(needle, offset);
-
-        //base case
-        if(pos === -1){
-            return false;
-        }
-        //recursion
-        else{
-            var littleArr = [pos, pos + needle.length - 1];
-            var arr = [littleArr];
-            var otherArr = findChars(haystack, needle, pos + needle.length);
-            if(otherArr){
-                for(var littleArr of otherArr){
-                    arr.push(littleArr);
-                }
-            }
-            return arr;
-        }
-
-    }
 
 
     function checkSubmission(){

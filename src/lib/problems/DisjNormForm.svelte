@@ -3,7 +3,8 @@
 	import LogStrInput from '$lib/components/LogStrInput.svelte';
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
-    import {tVal, parseLogStr, getLetterVars, dispLogStr} from '$lib/logic.js';
+    import {tVal, parseLogStr, getLetterVars} from '$lib/logic.js';
+	import {dispLogStr} from '$lib/helpers.js';
 
     export let number = '';
     export let logStr = '';

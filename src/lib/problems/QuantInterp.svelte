@@ -2,7 +2,8 @@
     import QuantInterpInput from '$lib/components/QuantInterpInput.svelte';
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
     
-    import {tVal, parseLogStr, dispLogStr, getQuantPreds} from '$lib/logic.js';
+    import {tVal, parseLogStr, getQuantPreds} from '$lib/logic.js';
+    import {dispLogStr} from '$lib/helpers.js';
     
     export let logStr = '';
     export let number = '';

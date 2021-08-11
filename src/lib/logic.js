@@ -301,27 +301,6 @@ export function validity(logStr){
     return true;
 }
 
-export function dispLogStr(logStr){
-    for(var i=0; i < logStr.length; i++){
-        if(logStr[i] == "<" && logStr[i+1] == ">")
-            logStr = logStr.substring(0, i) + "≡" + logStr.substring(i+2);
-        else if(logStr[i] == ">")
-            logStr = logStr.substring(0, i) + "⊃" + logStr.substring(i+1);
-        else if(logStr[i] == "|")
-            logStr = logStr.substring(0, i) + "∨" + logStr.substring(i+1);
-        //else if($logStr[$i] == ".")
-            //$logStr = substr($logStr, 0, $i) . "·" . substr($logStr, $i+1);
-        else if(logStr[i] == "-")
-            logStr = logStr.substring(0, i) + "–" + logStr.substring(i+1);
-        else if(logStr[i] == "A")
-            logStr = logStr.substring(0, i) + "∀" + logStr.substring(i+1);
-        else if(logStr[i] == "E")
-            logStr = logStr.substring(0, i) + "∃" + logStr.substring(i+1);
-    }
-
-    return logStr;
-}
-
 export function isQ(logStr){
 	var isQ = false;
 	if(logStr.indexOf('A') !== -1 || logStr.indexOf('E') !== -1)

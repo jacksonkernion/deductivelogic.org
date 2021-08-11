@@ -3,13 +3,17 @@
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
     import {validity, parseLogStr, getLetterVars} from '$lib/logic.js';
-    import { permutator } from '$lib/helpers.js';
+    import {findChars, permutator} from '$lib/helpers.js';
 
     export let logStr;
-    export let question;
+    export let sent;
     export let sentSet = '';
     export let logStrSet = '';
     export let number;
+
+    //delete this later, after problem set data is fixed
+    export let question;
+    sent = question;
 
     let sentSetArr = sentSet.split('/')
     let logStrSetArr = logStrSet.split(',');
@@ -24,28 +28,6 @@
 
     $: correctLogStrArr = [...logStrSetArr, conclusionLogStr];
     $: studentLogStrArr = [...studentLogStrSet, studentConclusionLogStr];
-
-    function findChars(haystack, needle, offset=0){
-
-        var pos = haystack.indexOf(needle, offset);
-
-        //base case
-        if(pos === -1){
-            return false;
-        }
-        //recursion
-        else{
-            var littleArr = [pos, pos + needle.length - 1];
-            var arr = [littleArr];
-            var otherArr = findChars(haystack, needle, pos + needle.length);
-            if(otherArr){
-                for(var littleArr of otherArr){
-                    arr.push(littleArr);
-                }
-            }
-            return arr;
-        }
-    }
 
     function checkSubmission(){
 

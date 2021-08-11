@@ -1,5 +1,7 @@
 <script>
 
+    import { fly } from 'svelte/transition';
+
     export let number;
     export let submission = {
         verdict: '',
@@ -56,7 +58,7 @@
     {#if submission.verdict}
         <!-- This is the styling for a 'solid' submission message box. Thought it to distracting/loud -->
         <!-- <div class="ph3 pv3 mt4 ba br2 b--{color} bg-washed-{color}"> -->
-        <div class="ph3 pv3 tc">
+        <div class="ph3 pv3 tc" in:fly={{ y: -20 }}>
             {#if submission.verdict == 'warn'}
                 <ion-icon name="warning" class="dib v-mid gold"></ion-icon>
             {:else if submission.verdict == 'incorrect'}

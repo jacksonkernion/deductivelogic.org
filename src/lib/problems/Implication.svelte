@@ -4,7 +4,8 @@
     import HiddenTruthTable from '$lib/components/HiddenTruthTable.svelte';
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
 
-    import {tVal, validity, parseLogStr, getLetterVars, dispLogStr} from '$lib/logic.js';
+    import {tVal, validity, parseLogStr, getLetterVars} from '$lib/logic.js';
+    import {dispLogStr} from '$lib/helpers.js';
 
     export let logStr1 = '';
     export let logStr2 = '';

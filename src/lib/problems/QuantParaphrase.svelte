@@ -3,12 +3,17 @@
     import LogStrInput from '$lib/components/LogStrInput.svelte';
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
     
-    import {parseLogStr, dispLogStr, quantParaphrase} from '$lib/logic.js';
+    import {parseLogStr, quantParaphrase} from '$lib/logic.js';
+    import {dispLogStr} from '$lib/helpers.js';
     
-    export let question = '';
+    export let sent = '';
     export let logStr = '';
     export let number = '';
     export let sentSet = '';
+
+    //delete this later, after problem set data is fixed
+    export let question;
+    sent = question;
 
     let sentSetArr = sentSet.split('/');
     let studentLogStr = '';

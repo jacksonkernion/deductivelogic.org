@@ -1,6 +1,8 @@
 <script>
-    import {validity, dispLogStr} from '$lib/logic.js';
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+
+    import {validity} from '$lib/logic.js';
+    import {dispLogStr} from '$lib/helpers.js';
 
     export let number = '';
     export let logStrSet = '';

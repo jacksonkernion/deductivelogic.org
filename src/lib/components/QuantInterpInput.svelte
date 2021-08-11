@@ -5,7 +5,6 @@
 
     $: domain = printDomain(interpretation);
     $: extensions = getExtensions(interpretation);
-    $: console.log(extensions);
     
     function printDomain(interp){
         var str = '{';
@@ -79,7 +78,7 @@
 				if(parseInt(units[i]) > interpretation.domainSize)
 					inDomain = false;
 			}
-			console.log(extension);
+            
 			//check to make sure they've given the right number of units
 			if(units.length != quantPred.n){
 				alert('Incorrect number of elements. This predicate attaches to '+quantPred.n+' elements');

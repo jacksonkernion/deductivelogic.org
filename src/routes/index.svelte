@@ -55,7 +55,6 @@
         <p class="lh-copy f4 fw4"><span class="fw5">Example problems below:</span> truth table, truth-functional paraphrase, implication, disjunctive normal form, natural language argument, quantificational paraphrase, quantificational interpretation.</p>
         <p class="lh-copy f4 fw4"><span class="fw5">In progress:</span> deduction problems.</p>
         <p class="lh-copy f4 fw4">Launching Fall 2021.</p>
-
     </div>
 
 </div>

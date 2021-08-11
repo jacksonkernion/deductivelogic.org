@@ -1,5 +1,5 @@
 <script>
-    import {dispLogStr} from '$lib/logic.js';
+    import {dispLogStr} from '$lib/helpers.js';
 
     export let tTableData = {
         logStr: '',

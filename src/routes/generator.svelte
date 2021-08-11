@@ -1,31 +1,42 @@
 <script>
 
-    let problemForm;
+    import ProblemForm from '$lib/components/ProblemForm.svelte';
 
-    function showProblemForm(e){
-        //Add a LOADING spinner?
-        var problemType = e.target.value;
-        
+    import {problemTypes} from '$lib/problemTypes.js';
+
+    let newProblem = {
+        type: 'none'
+    };
+
+    function updateNewProblem() {
+        for(var attr in problemTypes[newProblem.type].attributes){
+            newProblem[attr] = '';
+        }
     }
 
 </script>
 
-<div class='add_label'>Problem Type</div>
-<!-- svelte-ignore a11y-no-onchange -->
-<select name="problemType" on:change={showProblemForm}>
-    <option value="none"></option>
-    <option value="truthTable">(TF) Truth Table</option>
-    <option value="paraphrase">(TF) Paraphrase</option>
-    <option value="validity">(TF) Validity</option>
-    <option value="implication">(TF) Implication</option>
-    <option value="implicationSet">(TF) Set of Implications</option>
-    <option value="equivalence">(TF) Equivalence</option>
-    <option value="equivalenceSet">(TF) Set of Equivalencies</option>
-    <option value="disjNormForm">(TF) Disjunctive Normal Form</option>
-    <option value="natLangImpSet">(TF) Implications in English</option>
-    <option value="natLangArg">(TF) Arguments in English</option>
-</select>
+<div class="bg-washed-green bb b--green bw1">
 
-<div>
+    <div class="mw7 pa4 center pb4 dark-green">
+        <div class="lh-title f3 fw6 pt6 pb2">Generator</div>
+    </div>
 
 </div>
+
+<div class="mw7 center pa4">
+    <p class='f5'>Problem Type</p>
+    <!-- svelte-ignore a11y-no-onchange -->
+    <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
+        <option value="none"></option>
+        {#each Object.entries(problemTypes) as [shorthand, prob]}
+            <option value="{shorthand}">{prob.description}</option> 
+        {/each}
+    </select>
+
+    {#if newProblem.type!='none'}
+        <ProblemForm bind:problem={newProblem}/>
+    {/if}
+</div>
+
+
