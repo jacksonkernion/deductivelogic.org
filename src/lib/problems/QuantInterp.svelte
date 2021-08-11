@@ -11,7 +11,7 @@
     let interpretations = {true: {domainSize:1}, false: {domainSize:1}};
     let quantPreds = getQuantPreds(logStr);
 
-    let sentSetArr = sentSet.split('/')
+    let sentSetArr = sentSet.split('/');
     let submission;
 
     function checkSubmission(){
@@ -44,17 +44,17 @@
     <div slot="submission-input" class="tc">
         
         {#if sentSetArr.includes('true')}
-            <div class="extra-question-wrapper">
+            <div>
                 {#if sentSetArr.includes('true') && sentSetArr.includes('false')}
-                    <div class="extra-question-message">True interpretation:</div>
+                    <div class="f6 black-50 pb2">True interpretation:</div>
                 {/if}
                 <QuantInterpInput bind:interpretation={interpretations.true} {quantPreds}></QuantInterpInput>
             </div>
         {/if}
         {#if sentSetArr.includes('false')}
-            <div class="extra-question-wrapper">
+            <div>
                 {#if sentSetArr.includes('true') && sentSetArr.includes('false')}
-                    <div class="extra-question-message">False interpretation:</div>
+                    <div class="f6 black-50 pv2">False interpretation:</div>
                 {/if}
                 <QuantInterpInput bind:interpretation={interpretations.false} {quantPreds}></QuantInterpInput>
             </div>

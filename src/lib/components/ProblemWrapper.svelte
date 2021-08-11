@@ -48,7 +48,7 @@
     <div class="absolute left--2"><p>{number}.</p></div>
     <slot name="description"></slot>
     <!-- <div class="bb b--black-10 "></div> -->
-    <slot name="submission-input"></slot>
+    <div class="submission-input"><slot name="submission-input"></slot></div>
     
     <div class="tc mt4">
         <button class="f6 br1 ba ph3 pv2 mb2 black" on:click>Check</button>

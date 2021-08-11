@@ -187,7 +187,7 @@ export function parseLogStr(logStr){
                     logProp.parts = [parseLogStr(part)];
                     
                     if(!logProp.parts[0])
-                            return false;
+                        return false;
                     return logProp;
                 }
                 else if(symbol == "<>"){

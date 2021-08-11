@@ -5,6 +5,7 @@
 
     $: domain = printDomain(interpretation);
     $: extensions = getExtensions(interpretation);
+    $: console.log(extensions);
     
     function printDomain(interp){
         var str = '{';
@@ -34,7 +35,7 @@
 
                 if(extension.length>1){
                     for(var i=1; i < extension.length; i++){
-                        str += ', ' + key.substr(i, 1);
+                        str += ', ' + extension.substr(i, 1);
                     }
 					str = '<'+str+'>';
 				}
@@ -47,11 +48,15 @@
     }
 
     function incrementDomain(){
-        interpretation.domainSize = interpretation.domainSize + 1;
+        if(interpretation.domainSize < 9){
+            interpretation.domainSize = interpretation.domainSize + 1;
+        }
+        else{
+			alert('Domains cannot be bigger than 9.')
+		}
     }
 
     function decrementDomain(){
-        //CHECK THAT EXTENSIONS STILL REMAIN IN DOMAIN
         interpretation.domainSize = interpretation.domainSize - 1;
     }
 
@@ -61,6 +66,7 @@
     }
 
     function handleKeyDown(quantPred, e){
+        
         if(e.key === 'Enter'){
 			var val = e.target.value;
 			var units = val.split(',');
@@ -73,10 +79,10 @@
 				if(parseInt(units[i]) > interpretation.domainSize)
 					inDomain = false;
 			}
-			
+			console.log(extension);
 			//check to make sure they've given the right number of units
 			if(units.length != quantPred.n){
-				alert('Incorrect number of elements. This predicate attaches to '+n+' elements');
+				alert('Incorrect number of elements. This predicate attaches to '+quantPred.n+' elements');
 			}
 			else if(!inDomain){
 				alert('Predicates cannot attach to elements outside the domain.');
@@ -93,19 +99,52 @@
 		}
     }
 
+    function handleFocusIn(e){
+        e.target.parentElement.querySelector('.save-message').style.display = 'inline-block';
+    }
+    function handleFocusOut(e){
+        e.target.parentElement.querySelector('.save-message').style.display = 'none';
+    }
 
 </script>
 
-<div>
-    <div><a on:click={decrementDomain}>–1</a><a on:click={incrementDomain}>+1</a>Universe = {domain}</div>
+<style>
+    input {
+		border: 1px solid #ccc;
+		padding: 3px;
+	}
+
+    .wrapper{
+        margin-left:8rem;
+    }
+
+    .domain-buttons{
+        position: absolute;
+        left: -3rem;
+    }
+    .save-message{
+        color:#CCC;
+        font-size:12px;
+        padding-left:15px;
+    }
+</style>
+
+<div class="tl wrapper">
+    <div class="submission-input-line relative">
+        <span class="domain-buttons left--2"><a on:click={decrementDomain}>–1</a> <a on:click={incrementDomain}>+1</a> </span>
+        Universe = {domain}
+    </div>
 
     {#each quantPreds as quantPred}
-        <div>"{quantPred.letter}" = {'{'}
+        <div class="submission-input-line relative">
+            "{quantPred.letter}" = {'{'}
             {#each extensions[quantPred.letter] as {extension, extensionStr}}
-                <a class="extension" on:click={removeExtension(quantPred.letter, extension)}>{extensionStr}</a>, 
+                <a class="extension" on:click={removeExtension(quantPred.letter, extension)}>{extensionStr}</a>,&nbsp;
             {/each}
-            <input style="width:{17 * quantPred.n}px" on:keydown={(e) => handleKeyDown(quantPred, e)}/>
+            <input class="br1" style="width:{17 * quantPred.n}px" on:keydown={(e) => handleKeyDown(quantPred, e)} on:focusin={(e) => handleFocusIn(e)} on:focusout={(e) => handleFocusOut(e)}/>
             {'}'}
+            <span class="save-message" style="" hidden>Press 'Enter' to log extension</span>
+            
         </div>
     {/each}
 </div>

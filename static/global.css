@@ -108,6 +108,14 @@ a.link :hover{
 	left:0;
 }
 
+.submission-input{
+	padding-top: .5rem;
+}
+
+.submission-input-line{
+	padding: .5rem 0 .5rem 0;
+}
+
 .divider{
 	border-top: 1px solid #ccc
 }

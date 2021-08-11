@@ -10,7 +10,7 @@
     export let number = '';
     export let sentSet = '';
 
-    let sentSetArr = sentSet.split('/')
+    let sentSetArr = sentSet.split('/');
     let studentLogStr = '';
     let submission;
 

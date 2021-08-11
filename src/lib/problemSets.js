@@ -3465,7 +3465,40 @@ export const demoProblems = [
         "logStr2": null,
         "logStrSet": "-p > q | r, -q > -p . s, s > q | r",
         "sentSet": "If Jones did not meet Smith last night, then either Smith was the murderer of Jones is lying./If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight./If the murder took place after midnight, then either Smith was the murderer or Jones is lying."
-    }    
+    },
+    {
+        "number": 7,
+        "type": "quantParaphrase",
+        "question": "There are sopranos who respect only those tenors who are louder than they.",
+        "answer": null,
+        "logStr": "(Ex)(Sx . (Ay)(Ty . Rxy > Lyx))",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": 'S = "(1) is a soprano"/T = "(1) is a tenor"/L = "(1) is louder than (2)"/R = "(1) respects (2)"'
+    },
+    {
+        "number": 8,
+        "type": "quantInterp",
+        "question": null,
+        "answer": null,
+        "logStr": "(Ax)(Fx > (Gx <> Hx)) . -(Ax)(Fx . Gx <> Hx) . (Ex)Fx",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": 'true'
+    },
+    {
+        "number": 9,
+        "type": "quantInterp",
+        "question": null,
+        "answer": null,
+        "logStr": "(Ax)(Ay)(Fxy > (Ez)(Fxz . Fyz))",
+        "logStr1": null,
+        "logStr2": null,
+        "logStrSet": null,
+        "sentSet": 'true/false'
+    },
    
     
 

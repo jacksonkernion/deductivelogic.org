@@ -10,6 +10,8 @@
 	import DisjNormForm from '$lib/problems/DisjNormForm.svelte';
 	import NatLangImpSet from '$lib/problems/NatLangImpSet.svelte';
 	import NatLangArg from '$lib/problems/NatLangArg.svelte';
+    import QuantParaphrase from '$lib/problems/QuantParaphrase.svelte';
+    import QuantInterp from '$lib/problems/QuantInterp.svelte';
 
     import {demoProblems} from '$lib/problemSets.js';
 
@@ -37,9 +39,9 @@
         else if(problem.type ==='disjNormForm')
             problem.component = DisjNormForm;
         else if(problem.type === 'quantParaphrase')
-            problem.component = null;
+            problem.component = QuantParaphrase;
         else if(problem.type === 'quantInterp')
-            problem.component = null;
+            problem.component = QuantInterp;
         
         return problem;
     });
@@ -50,8 +52,8 @@
     <div class="mw7 pa4 center pb4 dark-green">
         <div class="lh-title f3 fw6 tracked pt6 pb2">DEDUCTIVELOGIC.ORG v2.0</div>
         <p class="lh-copy f4 fw4">Interactive problem sets for deductive logic courses.<br/>Developed for Harvard's introductory course.</p>
-        <p class="lh-copy f4 fw4"><span class="fw5">See below:</span> truth-functional logic problem examples.<br/>
-            <span class="fw5">In progress:</span> monadic and polyadic quantificational logic problems.</p>
+        <p class="lh-copy f4 fw4"><span class="fw5">Example problems below:</span> truth table, truth-functional paraphrase, implication, disjunctive normal form, natural language argument, quantificational paraphrase, quantificational interpretation.</p>
+        <p class="lh-copy f4 fw4"><span class="fw5">In progress:</span> deduction problems.</p>
         <p class="lh-copy f4 fw4">Launching Fall 2021.</p>
 
     </div>

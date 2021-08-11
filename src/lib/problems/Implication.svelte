@@ -13,7 +13,7 @@
     // let isQ = false;
     let letterVars = getLetterVars(logStr1+' > '+logStr2);
     let submission;
-	let answer = true;
+	let answer;
 	let interpretation = {};
 
     function checkSubmission() {
@@ -74,7 +74,7 @@
             <label for={false} class="lh-copy">Does not imply...</label>
         </div>
 
-        <div class="extra-question-wrapper pb2" hidden={answer}>
+        <div class="extra-question-wrapper pb2" hidden={answer!=false}>
             <div class="extra-question-message f6 black-50 pb2">...as shown with interpretation:</div>
             <TruthAssignmentInput {letterVars} bind:interpretation />
         </div>

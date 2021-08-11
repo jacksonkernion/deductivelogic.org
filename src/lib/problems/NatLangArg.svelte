@@ -18,7 +18,7 @@
 
     let studentLogStrSet = [];
     let studentConclusionLogStr = '';
-    let implication = false;
+    let implication;
 
     let submission;
 
