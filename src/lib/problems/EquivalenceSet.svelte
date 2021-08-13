@@ -6,19 +6,18 @@
 
     export let number = '';
     export let logStr = '';
-    export let logStrSet = '';
-
-    let logStrSetArr = logStrSet.split(',');
+    export let logStrSet = [];
     
     let selectedLogStrIndexes = [];
 
-    $: correctLogStrIndexes = getCorrectLogStrIndexes(logStrSetArr);
+    //$: correctLogStrIndexes = getCorrectLogStrIndexes(logStrSet);
+    let correctLogStrIndexes = getCorrectLogStrIndexes(logStrSet);
 
     let submission;
 
-    function getCorrectLogStrIndexes(logStrSetArr){
+    function getCorrectLogStrIndexes(logStrSet){
         let correctArr = [];
-        logStrSetArr.forEach(function(logStrItem, i) {
+        logStrSet.forEach(function(logStrItem, i) {
             if(validity("("+logStr+') <> ('+logStrItem+")")){
                 correctArr = [...correctArr, i];
             }
@@ -61,7 +60,7 @@
 	
     <div slot="submission-input">
 
-        {#each logStrSetArr as logStr, i}
+        {#each logStrSet as logStr, i}
             <label class="db">
                 <input type=checkbox bind:group={selectedLogStrIndexes} value={i} />
                 {dispLogStr(logStr)}

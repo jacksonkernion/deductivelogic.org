@@ -43,14 +43,19 @@ export function unfancyLogStr(str){
 	return fixed;
 }
 
-function factorial(int){
+/*function factorial(int){
 	if(int < 2) {
 		return 1;
 	}
 
-	for(f = 2; (int-1) > 1; f *= $int--);
+	for(var f = 2; (int-1) > 1; f *= int--);
 
 	return f;
+} 
+*/
+
+function factorial(n){
+	return !(n > 1) ? 1 : factorial(n - 1) * n;
 }
 
 function perm(arr, nth = null) {
@@ -77,7 +82,8 @@ function perm(arr, nth = null) {
 export function permutator(arr) {
 	var p = [];
 	for (var i=0; i < factorial(arr.length); i++) {
-		p.push(perm(arr, i));
+		// calling arr.slice() because, otherwise, we pass by reference, and end up altering 'arr', which we don't want here.
+		p.push(perm(arr.slice(), i));
 	}
 	return p;
 }

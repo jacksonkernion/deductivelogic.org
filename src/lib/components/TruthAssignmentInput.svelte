@@ -10,8 +10,6 @@
     }
 
     function handleMouseEnter(e){
-        console.log(e.target.lastChild);
-        console.log(e.target);
         e.target.firstChild.style.display = 'none';
         if(e.target.lastElementChild.classList.contains('t_table-clicked')){
             e.target.lastElementChild.style.display  = 'block';

@@ -10,13 +10,26 @@
     export let logStr = '';
     export let number = '';
 
-	let letterVars = getLetterVars(logStr1+' <> '+logStr2);
+	let letterVars = getLetterVars(logStr);
     let submission;
-	let answer = true;
+	let answer;
 	let interpretation = {};
 
     function checkSubmission() {
+
+        if(answer === undefined){
+            submission.log('warn', "Select an option.");
+            return;
+        }
+
         if(!answer){
+
+            for(const i in letterVars){
+                if(interpretation[letterVars[i]] === undefined){
+                    submission.log('warn', "Provided interpretation is incomplete.");
+                    return;
+                }
+            }
             
             //Evaluates if false on provided assignments
             if(!tVal(parseLogStr(logStr), interpretation)){

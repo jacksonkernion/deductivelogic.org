@@ -11,16 +11,8 @@
     export let logStr = '';
     export let number = '';
 
-    //delete this later, after problem set data is fixed
-    export let question;
-    sent = question;
-
     let studentLogStr = '';
-
     let submission;
-
-
-
 
     function checkSubmission(){
 
@@ -52,7 +44,6 @@
 			}
 			
 			//Evaluate equivalency
-            console.log('('+logStr+') <> ('+testStr+')');
 			if(validity('('+logStr+') <> ('+testStr+')')){
 				submission.log('correct', 'Correct');
                 return;
@@ -67,7 +58,7 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
-        <div class="description-line">{question}</div>
+        <div class="description-line">{sent}</div>
     </div>
 	<div slot="submission-input">
         <LogStrInput bind:logStr={studentLogStr} />

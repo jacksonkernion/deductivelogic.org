@@ -9,13 +9,8 @@
     export let sent = '';
     export let logStr = '';
     export let number = '';
-    export let sentSet = '';
+    export let sentSet = [];
 
-    //delete this later, after problem set data is fixed
-    export let question;
-    sent = question;
-
-    let sentSetArr = sentSet.split('/');
     let studentLogStr = '';
     let submission;
 
@@ -34,11 +29,11 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
-        <div class="description-line">{question}</div>
+        <div class="description-line">{sent}</div>
         <p>Use the following predicates:</p>
-        {#each sentSetArr as sent, i}
+        {#each sentSet as sentence, i}
             <div class="description-line">
-                {sent}
+                {sentence}
             </div>
         {/each}
     </div>

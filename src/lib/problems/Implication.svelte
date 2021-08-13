@@ -19,7 +19,19 @@
 
     function checkSubmission() {
 
+        if(answer === undefined){
+            submission.log('warn', "Select an option.");
+            return;
+        }
+
 		if(!answer){
+
+            for(const i in letterVars){
+                if(interpretation[letterVars[i]] === undefined){
+                    submission.log('warn', "Provided interpretation is incomplete.");
+                    return;
+                }
+            }
 			
 			//Evaluates if false on provided assignments
 			if(!tVal(parseLogStr('('+logStr1+') > ('+logStr2+')'), interpretation)){

@@ -1,5 +1,5 @@
 export const problemTypes = {
-    tTable: {
+    truthTable: {
         description: "(TF) Truth Table",
         attributes: {
             logStr: "Enter the schema you'd like to test:"
@@ -28,7 +28,7 @@ export const problemTypes = {
     implicationSet: {
         description: "(TF) Set of Implications",
         attributes: {
-            logStrSet: "Enter all the schemata which you would like to test"
+            logStrSet: "Enter all the schemata which you would like to test:"
         }
     },
     equivalence: {
@@ -72,7 +72,7 @@ export const problemTypes = {
         attributes: {
             sent: "English sentence:",
             logStr: "Correct schematization:",
-            sentSet: "Specify each predicate letter (Ex. F = \"(1) loves (2)\"):"
+            sentSet: "Specify each predicate letter (Ex. Fxy = \"x loves y\"):"
         }
     },
     quantInterp: {
@@ -94,7 +94,7 @@ export const problemTypes = {
 
 
     /* deduction: {
-        logStrSet_opt: "The schematized premises:",
+        logStrSet: "The schematized premises:",
         logStr: "The schematized conclusion:"
     }, */
 

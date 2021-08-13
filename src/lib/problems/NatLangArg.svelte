@@ -7,17 +7,11 @@
 
     export let logStr;
     export let sent;
-    export let sentSet = '';
-    export let logStrSet = '';
+    export let sentSet = [];
+    export let logStrSet = [];
     export let number;
 
-    //delete this later, after problem set data is fixed
-    export let question;
-    sent = question;
-
-    let sentSetArr = sentSet.split('/')
-    let logStrSetArr = logStrSet.split(',');
-    let conclusionSent = question;
+    let conclusionSent = sent;
     let conclusionLogStr = logStr;
 
     let studentLogStrSet = [];
@@ -26,110 +20,127 @@
 
     let submission;
 
-    $: correctLogStrArr = [...logStrSetArr, conclusionLogStr];
+    //$: correctLogStrArr = [...logStrSet, conclusionLogStr];
+    let correctLogStrArr = [...logStrSet, conclusionLogStr];
     $: studentLogStrArr = [...studentLogStrSet, studentConclusionLogStr];
 
     function checkSubmission(){
 
-        // Check overall number of vars matches
-		var correctVars = getLetterVars(correctLogStrArr.join(' . '));
-		var studentVars = getLetterVars(studentLogStrArr.join(' . '));
-			
-		if(correctVars.length != studentVars.length){
-            submission.log('warn', "Hmm...You don't seem to have the correct number of letters in your paraphrasing.");
-            return;
-        }
- 
-        // Check the student paraphase of English sentences, abtracting away variable letter choice; report which one is wrong if wrong
-
+        // first, do basic check of number of letter vars in each logStr pair
         for(var i = 0; i < correctLogStrArr.length; i++){
-            var correctStr = correctLogStrArr[i];
-            var studentStr = studentLogStrArr[i];
-
-            var lineMarker = '(' + (i + 1) + ')';
-            if(i == (correctLogStrArr.length - 1)){
-                lineMarker = "(C)";
-            }
-
-            if(!parseLogStr(studentStr)){
-                submission.log('warn', "Schema "+lineMarker+" could not be understood.");
-                return;
-            }
-        
-            var correctVars = getLetterVars(correctStr);
-            var studentVars = getLetterVars(studentStr);
+            var correctVars = getLetterVars(correctLogStrArr[i]);
+            var studentVars = getLetterVars(studentLogStrArr[i]);
             
             if(correctVars.length != studentVars.length){
-                submission.log('warn', "Incorrect number of letters in your paraphrasing of schema " + lineMarker + ".");
+                var lineMarker = '(' + (i + 1) + ')';
+                if(i == (correctLogStrArr.length - 1)){
+                    lineMarker = "(C)";
+                }
+                submission.log('warn', "Incorrect number of letters in your paraphrasing of "+lineMarker+".");
                 return;
             }
+        }
+
+        // Check overall number of vars matches
+        var correctVars = getLetterVars(correctLogStrArr.join(' . '));
+        var studentVars = getLetterVars(studentLogStrArr.join(' . '));
             
-            var match = false;
-            var testVarsArr = permutator(correctVars);
-            
-            for(var testVars of testVarsArr){
-			    var testStr = studentStr;
-			    var varPositions = [];
+        if(correctVars.length != studentVars.length){
+            submission.log('warn', "Total number of letters used across paraphrased lines does not match correct total number.");
+            return;
+        }
+
+        // Go through each permutation of correct vars, try to find mapping where each logStr pair matches
+        var testVarsArr = permutator(correctVars);
+        for(var i=0; i < testVarsArr.length; i++){
+            var testVars = testVarsArr[i];
+            var allMatch = false;
+            var matches = [];
+
+            for(var j = 0; j < studentLogStrArr.length; j++){
+                var correctStr = correctLogStrArr[j];
+                var studentStr = studentLogStrArr[j];
+                matches[j] = false;
+
+                // Throw error if submitted logStr can't be parsed
+                if(!parseLogStr(studentStr)){
+                    submission.log('warn', "Schema "+lineMarker+" could not be understood.");
+                    return;
+                }
                 
-			    for(var studentVar of studentVars){
-				    varPositions.push(findChars(studentStr, studentVar));
-			    }
-                for(var i = 0; i < testVars.length; i++){
-				    for(var varPosition of varPositions[i]){
-                        testStr = testStr.substring(0, varPosition[0]) + testVars[i] + testStr.substring(varPosition[1]+1);
-				    }
-			    }
+                var testStr = studentStr;
+                var varPositions = [];
+                var varPositions = studentVars.map((studentVar) => {
+                    return findChars(studentStr, studentVar);
+                });
                 
-                //Evaluate equivalency
-                if(validity('('+correctStr+') <> ('+testStr+')')){
-                    match = true;
-                    //Break the for loop here
-                    i = correctLogStrArr.length;
+                //replace each variable of studenLogStr with a var from current permutation of correctVars
+                for(var k = 0; k < testVars.length; k++){
+                    //if varPositions[k] *is* false, that means it's a var used in a different schema, not this one...
+                    if(varPositions[k] != false){
+                        for(var varPosition of varPositions[k]){
+                                testStr = testStr.substring(0, varPosition[0]) + testVars[k] + testStr.substring(varPosition[1]+1);
+                        }
+                    }
+                }
+
+                //If not a match, jump to next testVars permutation...
+                if(!validity('('+correctStr+') <> ('+testStr+')')){
+                    j = testVarsArr.length;
+                }
+                // if a match on final logStr in set
+                else if((j + 1) == studentLogStrArr.length){
+                    matches[j] = true;
+                    allMatch = true;
+                    //stop running through permutations
+                    i = testVarsArr.length;
+                }
+                // if a match
+                else{
+                    matches[j] = true;
                 }
             }
-            if(!match){
-                submission.log('incorrect', "Paraphrase of "+lineMarker+" is incorrect.");
-                return;
-            }
+        }
+        if(!allMatch){
+            submission.log('incorrect', "At least one paraphrase is incorrect.");
+            return;
+            //The reasons I *don't* provide the paraphrasing line that did not result in a match, is because earlier line may 'accidentally' match, meaning that we can't in principle find the exact line of mismatch. Ex: correct = p.r/q.-r & student = p.q/q.-r
         }
 
         // Check implication of conclusion
 
         var bigLogStr = '';
-		
-		for(var i = 0; i < studentLogStrSet.length; i++){
-		
-			if(i == 0)
-				bigLogStr += "(" + studentLogStrSet[i] + ")";
-			else
+        for(var i = 0; i < studentLogStrSet.length; i++){
+            if(i == 0)
+                bigLogStr += "(" + studentLogStrSet[i] + ")";
+            else
                 bigLogStr += " . (" + studentLogStrSet[i] + ")";
-		}
-		
-		bigLogStr = "(" + bigLogStr + ") > (" + studentConclusionLogStr + ")";
-		
-		var implies = validity(bigLogStr);
-		
-		if(!implication){
-			if(!implies){
-				submission.log('correct', 'Correct');
+        }
+
+        bigLogStr = "(" + bigLogStr + ") > (" + studentConclusionLogStr + ")";
+
+        var implies = validity(bigLogStr);
+
+        if(!implication){
+            if(!implies){
+                submission.log('correct', 'Correct');
                 return;
-			}
+            }
             else{
                 submission.log('incorrect', 'Incorrect');
                 return;
             }
-		}
-		else if(implication){
-			if(implies){
-				submission.log('correct', 'Correct');
+        }
+        else if(implication){
+            if(implies){
+                submission.log('correct', 'Correct');
                 return;
-			}
-			else{
+            }
+            else{
                 submission.log('incorrect', 'Incorrect');
                 return;
             }
-		}
-        
+        }
     }
 
 </script>
@@ -137,9 +148,9 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
-        {#each sentSetArr as sent, i}
+        {#each sentSet as sentence, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> {sent}
+                <span class="description-line-marker">{i+1}.</span> {sentence}
             </div>
         {/each}
         <div class="description-line">
@@ -148,7 +159,7 @@
     </div>
 	
     <div slot="submission-input">
-        {#each logStrSetArr as logStr, i}
+        {#each logStrSet as logStr, i}
             <div class="relative">
                 <span class="absolute left-1">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
             </div>

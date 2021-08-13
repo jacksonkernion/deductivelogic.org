@@ -56,6 +56,15 @@
         }
     }
 
+    /*
+    function handleTouchToggle(e){
+        if(e.target.lastElementChild.classList.contains('t_table-clicked') && e.target.firstChild.style.display != 'none' ){
+            e.target.firstChild.style.display = 'none';
+            e.target.lastElementChild.style.display  = 'block';
+        }
+    }
+    */
+
     function toggleHighlightT(){
         highlightT = highlightT ? false : true;
     }
@@ -179,7 +188,7 @@
     <div class="t_table-highlight tracked tl">HIGHLIGHT</div>
     <div class="t_table-highlight_T br1" class:highlightT on:click={toggleHighlightT}>⊤</div>
     <div class="t_table-highlight_F br1" class:highlightF on:click={toggleHighlightF}>⊥</div>
-    <div class="t_table-clear_all br1">Clear all</div>
+    <!-- <div class="t_table-clear_all br1">Clear all</div> -->
 </div>
 <table class="t_table">
     <tr class="t_table-top_row">
@@ -199,7 +208,10 @@
                 {/if}
             {/each}
             {#each tTableData.tAnswerRows[rowIndex] as tAnswerCell, cellIndex}
-                <td class="t_table-space" class:highlightT="{highlightT && tAnswerCell}" class:highlightF="{highlightF && tAnswerCell === false}" on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
+                <td class="t_table-space" class:highlightT="{highlightT && tAnswerCell}" class:highlightF="{highlightF && tAnswerCell === false}"
+                    on:mouseenter={handleMouseEnter} 
+                    on:mouseleave={handleMouseLeave} 
+                >
                     <div class="t_table-fill">
                     {#if tAnswerCell === true}
                         ⊤

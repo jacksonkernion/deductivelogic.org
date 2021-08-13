@@ -67,7 +67,7 @@
     function handleKeyDown(quantPred, e){
         
         if(e.key === 'Enter'){
-			var val = e.target.value;
+			var val = e.target.value.replace(/ /g, '');
 			var units = val.split(',');
             var extension = '';
 			

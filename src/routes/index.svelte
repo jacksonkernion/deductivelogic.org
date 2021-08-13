@@ -40,9 +40,14 @@
             problem.component = DisjNormForm;
         else if(problem.type === 'quantParaphrase')
             problem.component = QuantParaphrase;
-        else if(problem.type === 'quantInterp')
+        else if(problem.type === 'quantInterp'){
             problem.component = QuantInterp;
-        
+            problem.interpsRequested = problem.sentSet.split('/');
+        }
+
+        if (problem.question)
+            problem.sent = problem.question;
+
         return problem;
     });
 </script>

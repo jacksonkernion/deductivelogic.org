@@ -445,14 +445,15 @@ export function prenexForm(logProp, unusedVariables=null){
 			
 			let newLogPropPart1 = new LogProp();
 			newLogPropPart1.symbol = ".";
-			for(logPropPart in logProp.parts){
+			for(var logPropPart of logProp.parts){
                 //clone logProp part
 				newLogPropPart1.parts.push(JSON.parse(JSON.stringify(logPropPart)));
 			}
 			
             //clone logProp part
 			let newLogPropPart2 = JSON.parse(JSON.stringify(newLogPropPart1));
-			for(const [key, logPropPart]of newLogPropPart2.parts){
+			for(var key in newLogPropPart2.parts){
+                logPropPart = newLogPropPart2.parts[key];
 				let reallyNewLogProp = new LogProp();
 				reallyNewLogProp.symbol = "-";
 				reallyNewLogProp.parts = [logPropPart];
@@ -474,7 +475,8 @@ export function prenexForm(logProp, unusedVariables=null){
 					var testSymbol = "E";
 					var oldSymbol = "|";
 				}
-					
+				
+                //test whether every child part is A quantifier/E quantifier
 				var allEOrAllA = true;
 				for(var i=0; i < logProp.parts.length; i++){
                     if(logProp.parts[i].symbol === null){
@@ -487,13 +489,17 @@ export function prenexForm(logProp, unusedVariables=null){
 					}
 				}
 				if(allEOrAllA){
-					logProp.symbol = logProp.parts[0].symbol;
+
+                    // Changed this from old PHP version, to use an 'unused' variable, to avoid an observed variable collision. Ex:  Ax(Cx > Rx) . Ay(Cy > Ex(Tx . Pxy)) 
+                    // But there's a chance this causes other issues I haven't thought of. Go see old PHP version, which doesn't replace vars in first logProp part
+                    // Alternative: test that var is not bound by other quantifier before using it to replace other vars.
+
+					logProp.symbol = logProp.parts[0].symbol[0] + unusedVariables[unusedVariables.length - 1];
+                    unusedVariables.splice(unusedVariables.length - 1);
 					
 					//replace all other related vars with new big var on campus
 					for(var i=0; i < logProp.parts.length; i++){
-                        var logPropPart = logProp.parts[i];
-						if(i != 0)
-							logProp = replaceVar(logPropPart.symbol[1], logProp.symbol[1], logPropPart);
+						logProp.parts[i] = replaceVar(logProp.parts[i].symbol[1], logProp.symbol[1], logProp.parts[i]);
 						logProp.parts[i] = logProp.parts[i].parts[0];
 					}
                     // clone logProp
@@ -543,14 +549,13 @@ export function pullOutQ(logProp){
 	else{
 	
         // copy logProp
-		let newLogProp = JSON.parse(JSON.stringify(logProp));
+		var newLogProp = JSON.parse(JSON.stringify(logProp));
 	
-		//Go through each part, and see if any of them have and E or A symbol
+		//Go through each part, and see if any of them have an E or A symbol
 		for(var key=0; key<logProp.parts.length; key++){
             
             var logPropPart = logProp.parts[key];
 
-			
             // If E or A
             if(logPropPart.symbol !== null){
                 if(logPropPart.symbol.indexOf('A') !== -1 || logPropPart.symbol.indexOf('E') !== -1){
@@ -560,10 +565,10 @@ export function pullOutQ(logProp){
                     //If original symbol was negation or if part is antecedant of conditional, we need to switch quant symbols
                     if(logProp.symbol === "-" || (logProp.symbol === ">" && key === 0)){
                         if(logPropPart.symbol.indexOf('A') !== -1){
-                            newLogProp.symbol[0] = "E";
+                            newLogProp.symbol = "E" + newLogProp.symbol[1];
                         }
                         else
-                            newLogProp.symbol[0] = "A";
+                            newLogProp.symbol = "A" + newLogProp.symbol[1];
                     }
                     
                     //Switch the around the order of stuff
@@ -610,21 +615,6 @@ export function quantEquiv(logProp1, logProp2, letterVars){
 
 export function quantParaphrase(logStr1, logStr2) {
 
-	/**************
-	KNOWN BUG - There's a risk of using replacement variables that exist elsewhere in the log_prop that
-	has var_replacement done to it.
-	
-	Ex. (Ax)(Fxy) is counted as a paraphrase of (Ay)(Fyy).
-	
-	
-	*I'm not addressing this now because this will only occur if using free variables, variables not 
-	constrained by some quantifier. For right now, every variable belonging to a quantifier WILL be replaced.
-	
-	*An easy fix would just be to compare lowercase letter vars at the outset.
-		- in example, 2 letter vars (x,y) would not match one letter var (y).
-	
-	***************/
-
 	let logProp1 = prenexForm(parseLogStr(logStr1));
 	let logProp2 = prenexForm(parseLogStr(logStr2));
 
@@ -655,29 +645,24 @@ export function quantParaphrase(logStr1, logStr2) {
 			var testLogProp = JSON.parse(JSON.stringify(nonQLogProp2));
 			
 			//replace all the letter vars attached to A with potentially matching vars in lopProp1
-			//do it once, to mark the spots with the key (because it could kludge vars)
-			for(var key=0; key < Aperm.length; key++){
-
-				testLogProp = replaceVar(quantArr2['A'][key][1], key, testLogProp);
-			
+			//first, mark the spots with the key (because it could kludge vars)
+            var key1 = 0;
+			for( ; key1 < Aperm.length; key1++){
+				testLogProp = replaceVar(quantArr2['A'][key1][1], key1, testLogProp);
 			}
-			//do it again to get letters in
-			for(var key=0; key < Aperm.length; key++){
-			
-				testLogProp = replaceVar(key, Aperm[key][1], testLogProp);
-			
+            for(var key2=0; key2 < Eperm.length; key2++){
+                var digit = key2 + key1;
+				testLogProp = replaceVar(quantArr2['E'][key2][1], digit, testLogProp);
 			}
-			
-			//do it once, to mark the spots with the key (because it could kludge vars)
-			for(var key=0; key < Eperm.length; key++){
-		
-				testLogProp = replaceVar(quantArr2['E'][key][1], key, testLogProp);
-			
+            
+			//do the loops again to get letters in
+            key1 = 0;
+			for( ; key1 < Aperm.length; key1++){		
+				testLogProp = replaceVar(key1, Aperm[key1][1], testLogProp);		
 			}
-			//do it again to get letters in
-			for(var key=0; key < Eperm.length; key++){
-			
-				testLogProp = replaceVar(key, Eperm[key][1], testLogProp);
+			for(var key2=0; key2 < Eperm.length; key2++){
+                var digit = key2 + key1;
+				testLogProp = replaceVar(digit, Eperm[key2][1], testLogProp);
 				
 			}
 

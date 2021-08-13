@@ -3425,7 +3425,7 @@ export const demoProblems = [
     {
         "number": 3,
         "type": "paraphrase",
-        "question": "If Serbia is forced to submit, then Austria-Hungary will control the Balkans and threaten Constantinople if and only if England does not intervene.",
+        "sent": "If Serbia is forced to submit, then Austria-Hungary will control the Balkans and threaten Constantinople if and only if England does not intervene.",
         "answer": null,
         "logStr": "p > (q . r <> -s)",
         "logStr1": null,
@@ -3458,24 +3458,24 @@ export const demoProblems = [
     {
         "number": 6,
         "type": "natLangArg",
-        "question": "Therefore, Smith was the murderer.",
+        "sent": "Therefore, Smith was the murderer.",
         "answer": null,
         "logStr": "q",
         "logStr1": null,
         "logStr2": null,
-        "logStrSet": "-p > q | r, -q > -p . s, s > q | r",
-        "sentSet": "If Jones did not meet Smith last night, then either Smith was the murderer of Jones is lying./If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight./If the murder took place after midnight, then either Smith was the murderer or Jones is lying."
+        "logStrSet": ["-p > q | r", "-q > -p . s","s > q | r"],
+        "sentSet": ["If Jones did not meet Smith last night, then either Smith was the murderer or Jones is lying.","If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight.","If the murder took place after midnight, then either Smith was the murderer or Jones is lying."]
     },
     {
         "number": 7,
         "type": "quantParaphrase",
-        "question": "There are sopranos who respect only those tenors who are louder than they.",
+        "sent": "There are sopranos who respect only those tenors who are louder than they.",
         "answer": null,
         "logStr": "(Ex)(Sx . (Ay)(Ty . Rxy > Lyx))",
         "logStr1": null,
         "logStr2": null,
         "logStrSet": null,
-        "sentSet": 'S = "(1) is a soprano"/T = "(1) is a tenor"/L = "(1) is louder than (2)"/R = "(1) respects (2)"'
+        "sentSet": ['S = "(1) is a soprano"','T = "(1) is a tenor"','L = "(1) is louder than (2)"','R = "(1) respects (2)"']
     },
     {
         "number": 8,
@@ -3498,8 +3498,6 @@ export const demoProblems = [
         "logStr2": null,
         "logStrSet": null,
         "sentSet": 'true/false'
-    },
-   
-    
+    },    
 
 ];

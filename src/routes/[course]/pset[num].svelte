@@ -10,7 +10,7 @@
 </script>
 <script>
 
-	import {parseLogStr, validity, prenexForm, tVal, quantParaphrase} from '$lib/logic.js';
+	import {parseLogStr, validity, prenexForm, propToStr, tVal, quantParaphrase} from '$lib/logic.js';
 
 	import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/problems/Paraphrase.svelte';
@@ -54,9 +54,18 @@
             problem.component = DisjNormForm;
         else if(problem.type === 'quantParaphrase')
             problem.component = QuantParaphrase;
-        else if(problem.type === 'quantInterp')
+        else if(problem.type === 'quantInterp'){
             problem.component = QuantInterp;
-        
+            problem.interpsRequested = problem.sentSet.split('/');
+        }
+
+        if(problem.logStrSet)
+            problem.logStrSet = problem.logStrSet.split(',');
+        if(problem.sentSet)
+            problem.sentSet = problem.sentSet.split('/');
+        if (problem.question)
+            problem.sent = problem.question;
+
         return problem;
     });
 
@@ -64,6 +73,12 @@
     //console.log(prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]")));
     //console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", prenexForm(parseLogStr("Ax[ Tx > Ey(Cy . Pxy) ]"))));
     //console.log(quantParaphrase("Ax[ Tx > Ey(Cy . Pxy) ]", "Aw[Ez(Tw > (Cz . Pwz)) ]"));
+    
+    //var logStr = "Ax(Cx > Rx) . Ax(Cx > Ey(Ty . Pyx))";
+    //var studentLogStr = "Ax(Cx > Rx) . Ay(Cy > Ez(Tz . Pzy))";
+    //console.log(quantParaphrase(logStr, studentLogStr));
+
+    //console.log(propToStr(prenexForm(parseLogStr("Ay([(Ex)Fxy > (Az)Gzy . (Ax)Fyx])"))));
     
     //console.log(tVal(parseLogStr('(Ax)(Ey)(Px . Ryx)'), {domainSize: 4, P1: true, R31: true}));
     //console.log(tVal(parseLogStr('(Ax)(Ey)(Px > Ryx)'), {domainSize: 4, P1: true, R31: true}));

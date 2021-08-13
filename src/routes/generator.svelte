@@ -1,17 +1,77 @@
 <script>
 
+    import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
+	import Paraphrase from '$lib/problems/Paraphrase.svelte';
+	import TruthTable from '$lib/problems/TruthTable.svelte';
+	import Implication from '$lib/problems/Implication.svelte';
+	import ImplicationSet from '$lib/problems/ImplicationSet.svelte';
+	import Equivalence from '$lib/problems/Equivalence.svelte';
+	import EquivalenceSet from '$lib/problems/EquivalenceSet.svelte';
+	import Validity from '$lib/problems/Validity.svelte';
+	import DisjNormForm from '$lib/problems/DisjNormForm.svelte';
+	import NatLangImpSet from '$lib/problems/NatLangImpSet.svelte';
+	import NatLangArg from '$lib/problems/NatLangArg.svelte';
+    import QuantParaphrase from '$lib/problems/QuantParaphrase.svelte';
+    import QuantInterp from '$lib/problems/QuantInterp.svelte';
+
     import ProblemForm from '$lib/components/ProblemForm.svelte';
 
     import {problemTypes} from '$lib/problemTypes.js';
 
+    let problems = [];
+
+    $: problems = problems.map((problem) => {
+        if(problem.type === 'multipleChoice')
+            problem.component = MultipleChoice;
+        else if(problem.type === 'paraphrase')
+            problem.component = Paraphrase;
+        else if(problem.type === 'truthTable')
+            problem.component = TruthTable;
+        else if(problem.type === 'implication')
+            problem.component = Implication;
+        else if(problem.type === 'implicationSet')
+            problem.component = ImplicationSet;
+        else if(problem.type === 'equivalence')
+            problem.component = Equivalence;
+        else if(problem.type === 'equivalenceSet')
+            problem.component = EquivalenceSet;
+        else if(problem.type === 'validity')
+            problem.component = Validity;
+        else if(problem.type === 'natLangImpSet')
+            problem.component = NatLangImpSet;
+        else if(problem.type === 'natLangArg')
+            problem.component = NatLangArg;
+        else if(problem.type ==='disjNormForm')
+            problem.component = DisjNormForm;
+        else if(problem.type === 'quantParaphrase')
+            problem.component = QuantParaphrase;
+        else if(problem.type === 'quantInterp')
+            problem.component = QuantInterp;
+        
+        return problem;
+    });
+
     let newProblem = {
+        number: 1,
         type: 'none'
     };
 
     function updateNewProblem() {
         for(var attr in problemTypes[newProblem.type].attributes){
-            newProblem[attr] = '';
+            if(attr=='logStrSet' || attr=='sentSet')
+                newProblem[attr] = [''];
+            else
+                newProblem[attr] = '';
         }
+    }
+    function createProblem() {
+        //ADD ERROR CHECKING...
+        problems = [...problems, newProblem];
+
+        newProblem = {
+            number: newProblem.number++,
+            type: 'none'
+        };
     }
 
 </script>
@@ -25,7 +85,14 @@
 </div>
 
 <div class="mw7 center pa4">
-    <p class='f5'>Problem Type</p>
+
+    <ul class="list pl0"> 
+        {#each problems as problem}
+            <svelte:component this={problem.component} {...problem}/>
+        {/each}
+    </ul>
+
+    <p class='f5'>Select problem type:</p>
     <!-- svelte-ignore a11y-no-onchange -->
     <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
         <option value="none"></option>
@@ -35,7 +102,7 @@
     </select>
 
     {#if newProblem.type!='none'}
-        <ProblemForm bind:problem={newProblem}/>
+        <ProblemForm bind:problem={newProblem} mode='generate' on:click={createProblem}/>
     {/if}
 </div>
 

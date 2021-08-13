@@ -1,20 +1,22 @@
 <script>
     import {problemTypes} from '$lib/problemTypes.js';
     import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import Button from '$lib/jui-components/Button.svelte';
 
     export let problem;
     export let mode = 'create';
 
-    if (problem.logStrSet)
-        $: logStrSetArr = problem.logStrSet.split(',');
-    if (problem.sentSet)
-        $: sentSetArr = problem.sentSet.split('/');
-
-    function handleAddLogStr(){
-
+    function addLogStr(){
+        problem.logStrSet = [...problem.logStrSet, ''];
     }
-    function handleAddSentence(){
-        
+    function removeLogStr(index){
+        problem.logStrSet = problem.logStrSet.filter( (e,i) => i !== index );
+    }
+    function addSentence(){
+        problem.sentSet = [...problem.sentSet, ''];
+    }
+    function removeSentence(index){
+        problem.sentSet = problem.sentSet.filter( (e,i) => i !== index );
     }
 
 </script>
@@ -24,7 +26,7 @@
 
         <div class="inputWrapper">	
 
-            <label>{description}</label>
+            <label>{@html description}</label>
 
             {#if attr=='question' || attr=='answer' || attr=='sent'}
                 <input bind:value={problem[attr]} />
@@ -35,22 +37,25 @@
             {/if}
 
             {#if attr=='logStrSet' && problem.logStrSet}
-                {#each logStrSetArr as logStr, i}
+                {#each problem.logStrSet as logStr, i}
+                    <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={() => removeLogStr(i)}>X</button>
                     <LogStrInput bind:logStr />
                 {/each}
-                <a on:click={handleAddLogStr}>+ Add schema</a>
+                <a on:click={addLogStr}>+ Add schema</a>
             {/if}
 
             {#if attr=='sentSet' && problem.sentSet}
-                {#each sentSetArr as sent, i}
+                {#each problem.sentSet as sent, i}
+                    <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={() => removeSentence(i)}>X</button>
                     <input bind:value={sent} />
                 {/each}
-                {#if problme.type!='fillBlanks'}
-                    <a on:click={handleAddSentence}>+ Add sentence</a>
+                {#if problem.type == 'quantParaphrase'}
+                    <a on:click={addSentence}>+ Add predicate specification</a>
+                {:else if problem.type == 'fillBlanks'}
+                    <a on:click={addSentence}>+ Add fill</a>
                 {:else}
-                    <a on:click={handleAddSentence}>+ Add fill</a>
+                    <a on:click={addSentence}>+ Add sentence</a>
                 {/if}
-
                 
             {/if}
 
@@ -67,11 +72,12 @@
     {/each}
 
     {#if mode=='update'}
-        <button>Update</button>
-        <button>Cancel</button>
+        <button class="f6 br1 ba ph3 pv2 mb2 black" on:click>Update</button>
+        <button class="f6 br1 ba ph3 pv2 mb2 black">Cancel</button>
     {:else if mode=='generate'}
-        <button type="submit">Generate Problem</button>
+        <button class="f6 br1 ba ph3 pv2 mb2 black" type="submit" on:click>Generate Problem</button>
     {:else}
-        <button type="submit">Create</button>
+        <button class="f6 br1 ba ph3 pv2 mb2 black" type="submit" on:click>Add Problem</button>
 	{/if}
+
 </div>
