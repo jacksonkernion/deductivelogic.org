@@ -6,11 +6,13 @@
     export let submission = {
         verdict: '',
         message: '',
+        number: 1
     };
 
     function logSubmission(verdict, message){
         submission.verdict = verdict;
         submission.message = message;
+        submission.number++;
     }
 
     submission.log = logSubmission;
@@ -46,34 +48,44 @@
 
 </script>
 
+<style>
+
+    .submission-input{
+
+    }
+
+    .submission-message{
+        max-width: 26rem;
+        padding: .125rem;
+    }
+    .submission-message-wrapper{
+        padding-top:  .4rem;
+    }
+
+</style>
+
 <div class="relative pv3 w-75">
     <div class="absolute left--2"><p>{number}.</p></div>
     <slot name="description"></slot>
     <!-- <div class="bb b--black-10 "></div> -->
     <div class="submission-input"><slot name="submission-input"></slot></div>
     
-    <div class="tc mt4">
-        <button class="f6 br1 ba ph3 pv2 mb2 black" on:click>Check</button>
+    <div class="mt4 mb2 cf">
+        {#key submission.number}
+            <!-- This is the styling for a 'solid' submission message box. Thought it to distracting/loud -->
+            <!-- <div class="ph3 pv3 mt4 ba br2 b--{color} bg-washed-{color}"> -->
+            <div class="fl submission-message-wrapper" in:fly={{ y: -30 }}>
+                {#if submission.verdict == 'warn'}
+                    <ion-icon name="warning" class="dib v-top gold"></ion-icon>
+                {:else if submission.verdict == 'incorrect'}
+                    <ion-icon name="close-circle" class="dib v-top red"></ion-icon>
+                {:else if submission.verdict == 'correct'}
+                    <ion-icon name="checkbox" class="dib v-top green"></ion-icon>
+                {/if}
+                <div class="submission-message dib v-top black-70 f6">{@html submission.message}</div>
+            </div>
+        {/key}
+        <button class="f6 br1 ba ph3 pv2 black fr" on:click>Check</button>
     </div>
-    {#if submission.verdict}
-        <!-- This is the styling for a 'solid' submission message box. Thought it to distracting/loud -->
-        <!-- <div class="ph3 pv3 mt4 ba br2 b--{color} bg-washed-{color}"> -->
-        <div class="ph3 pv3 tc" in:fly={{ y: -20 }}>
-            {#if submission.verdict == 'warn'}
-                <ion-icon name="warning" class="dib v-mid gold"></ion-icon>
-            {:else if submission.verdict == 'incorrect'}
-                <ion-icon name="close-circle" class="dib v-mid red"></ion-icon>
-            {:else if submission.verdict == 'correct'}
-                <ion-icon name="checkbox" class="dib v-mid green"></ion-icon>
-            {/if}
-            <div class="dib v-mid black-70">{@html submission.message}</div>
-        </div>
-    {/if}
 </div>
 <div class="divider w-75"></div>
-
-<style>
-    ion-icon {
-        font-size: 20px;
-    }
-</style>

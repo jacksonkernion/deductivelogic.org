@@ -2,8 +2,12 @@
 	import {unfancyLogStr} from '$lib/helpers.js';
 
 	export let logStr = '';
+    export let label = null;
+    export let name = null;
+
 	let value = '';
 	let input;
+
 	$: logStr = unfancyLogStr(value);
 
 	function getCaretPosition(ctrl) {
@@ -51,8 +55,8 @@
 	function insertSymbol(symbol) {
 		var newValue = value.substr(0, input.selectionStart) + symbol + value.substr(input.selectionEnd);
 		value = newValue;
-		// input.focus();
-		// input.setSelectionRange(input.selectionStart + 1, input.selectionStart + 1);
+		input.focus();
+		//input.setSelectionRange(input.selectionStart + 1, input.selectionStart + 1);
 		
 	}
 
@@ -110,46 +114,57 @@
 </script>
 
 <style>
-	input {
-		font-size: 20px;
-		border: 1px solid #ccc;
-		padding: 3px;
-		width: 400px;
-	}
-	.logStrInput-wrapper{
-		width: 408px;
-		margin: 30px auto 30px auto;
-	}
-	.logStrInput-button-wrapper {
-		margin: 0px auto;
+	input{
+        transition: all 0.15s ease-in-out;
+        color: #4D4D4D;
+
+    }
+
+    input:focus {
+        outline: 0;
+        border-color: #5584EB;
+        box-shadow: inset 0 0 0 0.1rem #5584EB;
+    }
+	
+	.logStrInput-buttons-wrapper {
+		
 	}
 	.logStrInput-button {
 		display: inline-block;
 		text-align: center;
 		font-size: 20px;
-		margin: 10px 10px 10px 0px;
+		margin-right: .15rem;
 		min-width: 28px;
 		min-height: 28px;
-		border: 1px solid #ccc;
-		color: #ccc;
+		border: 1px solid rgb(192, 192, 192);
+		border-radius: .18rem;
+		color: #aaa;
+
+		align-items: center;
+		justify-content: center;
 	}
 	.logStrInput-button:hover {
 		cursor: pointer;
-		border: 1px solid black;
-		color: black;
+		color: #333;
+		background-color: #eee;
+		opacity: .8;
 	}
 
 </style>
 
-<div class="logStrInput-wrapper">
-	<input type="text" class="br1" bind:this={input} bind:value on:keyup={replaceSymbol} />
-	<div class="logStrInput-button-wrapper">
-		<div class="logStrInput-button br1" on:click={() => insertSymbol('–')}>–</div>
-		<div class="logStrInput-button br1" on:click={() => insertSymbol('.')}>.</div>
-		<div class="logStrInput-button br1" on:click={() => insertSymbol('∨')}>∨</div>
-		<div class="logStrInput-button br1" on:click={() => insertSymbol('⊃')}>⊃</div>
-		<div class="logStrInput-button br1" on:click={() => insertSymbol('≡')}>≡</div>
-		<div class="logStrInput-button br1" on:click={() => insertSymbol('∀')}>∀</div>
-		<div class="logStrInput-button br1" style="margin-right:0px;" on:click={() => insertSymbol('∃')}>∃</div>
+<div class="black-80 measure mb3 cf">
+	{#if label}
+		<label for={name} class="f6 fw5 db mb2">{@html label}</label>
+	{/if}
+	<input id={name} class="logStr input-reset br2 ba b--black-20 pa2 mb2 dib w-100" type="text" bind:value bind:this={input} on:keyup={replaceSymbol} />
+	
+	<div class="logStrInput-buttons-wrapper fl">
+		<div class="logStrInput-button" on:click={() => insertSymbol('–')}>–</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol('.')}>.</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol('∨')}>∨</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol('⊃')}>⊃</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol('≡')}>≡</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol('∀')}>∀</div>
+		<div class="logStrInput-button" style="margin-right:0px;" on:click={() => insertSymbol('∃')}>∃</div>
 	</div>
 </div>

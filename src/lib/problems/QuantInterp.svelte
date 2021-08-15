@@ -38,23 +38,23 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Specify an interpretation that makes the following schema {#if interpsRequested.includes('true')}true{/if}{#if interpsRequested.includes('true') && interpsRequested.includes('false')}, and such an intrepretation that makes it {/if}{#if interpsRequested.includes('false')}false{/if}:</p>
-        <div class="description-line">{dispLogStr(logStr)}</div>
+        <div class="description-line logStr">{dispLogStr(logStr)}</div>
     </div>
 	
-    <div slot="submission-input" class="tc">
+    <div slot="submission-input" >
         
         {#if interpsRequested.includes('true')}
-            <div>
+            <div class="mv3">
                 {#if interpsRequested.includes('true') && interpsRequested.includes('false')}
-                    <div class="f6 black-50 pb2">True interpretation:</div>
+                    <div class="f6 black-50 pb2 ml4">True interpretation:</div>
                 {/if}
                 <QuantInterpInput bind:interpretation={interpretations.true} {quantPreds}></QuantInterpInput>
             </div>
         {/if}
         {#if interpsRequested.includes('false')}
-            <div>
+            <div class="mv3">
                 {#if interpsRequested.includes('true') && interpsRequested.includes('false')}
-                    <div class="f6 black-50 pv2">False interpretation:</div>
+                    <div class="f6 black-50 pv2 ml4">False interpretation:</div>
                 {/if}
                 <QuantInterpInput bind:interpretation={interpretations.false} {quantPreds}></QuantInterpInput>
             </div>

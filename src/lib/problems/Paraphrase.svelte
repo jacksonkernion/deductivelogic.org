@@ -58,9 +58,9 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
-        <div class="description-line">{sent}</div>
+        <p class="description-line serif">{sent}</p>
     </div>
-	<div slot="submission-input">
+	<div slot="submission-input" class="submission-input-line">
         <LogStrInput bind:logStr={studentLogStr} />
     </div>
 </ProblemWrapper>

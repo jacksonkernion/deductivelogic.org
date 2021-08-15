@@ -35,7 +35,6 @@
         line-height: 1;
     }
     .t_table{
-        margin:0 auto;
         background-color:white;
         color:black;
     }
@@ -81,7 +80,7 @@
 </style>
 
 <div>
-    <table class="t_table">
+    <table class="t_table logStr">
         <tr>
         {#each letterVars as letter }
                 <td>{letter}</td>

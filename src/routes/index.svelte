@@ -14,8 +14,12 @@
     import QuantInterp from '$lib/problems/QuantInterp.svelte';
 
     import {demoProblems} from '$lib/problemSets.js';
+    import ProblemForm from '$lib/components/ProblemForm.svelte';
+    import {problemTypes} from '$lib/problemTypes.js';
 
-    let problems = demoProblems.map((problem) => {
+    let problems = demoProblems;
+    
+    $: problems = problems.map((problem) => {
         if(problem.type === 'multipleChoice')
             problem.component = MultipleChoice;
         else if(problem.type === 'paraphrase')
@@ -42,7 +46,8 @@
             problem.component = QuantParaphrase;
         else if(problem.type === 'quantInterp'){
             problem.component = QuantInterp;
-            problem.interpsRequested = problem.sentSet.split('/');
+            if(!problem.interpsRequested)
+                problem.interpsRequested = problem.sentSet.split('/');
         }
 
         if (problem.question)
@@ -50,6 +55,30 @@
 
         return problem;
     });
+
+    let newProblem = {
+        number: problems.length + 1,
+        type: 'none'
+    };
+
+    function updateNewProblem() {
+        for(var attr in problemTypes[newProblem.type].attributes){
+            if(attr=='logStrSet' || attr=='sentSet')
+                newProblem[attr] = [''];
+            else
+                newProblem[attr] = '';
+        }
+    }
+    function createProblem() {
+        //ADD ERROR CHECKING...
+        problems = [...problems, newProblem];
+        
+
+        newProblem = {
+            number: newProblem.number + 1,
+            type: 'none'
+        };
+    }
 </script>
 
 <div class="bg-washed-green bb b--green bw1">
@@ -63,12 +92,30 @@
     </div>
 
 </div>
-<div class="mw7 center pa4">
+<div class="mw7 center ph4 pt4 pb6">
     <ul class="list pl0"> 
         {#each problems as problem}
             <svelte:component this={problem.component} {...problem}/>
         {/each}
     </ul>
+
+    <h3 class="f5 fw5 mt4">Add Problem</h3>
+
+    <div class="black-80 measure">
+        <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
+        <!-- svelte-ignore a11y-no-onchange -->
+        <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
+            <option value="none"></option>
+            {#each Object.entries(problemTypes) as [shorthand, prob]}
+                <option value="{shorthand}">{prob.description}</option> 
+            {/each}
+        </select>
+    </div>
+
+    {#if newProblem.type!='none'}
+        <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
+    {/if}
+
 </div>
 
 

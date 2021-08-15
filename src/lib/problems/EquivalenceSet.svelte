@@ -55,16 +55,18 @@
 
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
-        <p>Determine which of the following schemata are equivalent to {dispLogStr(logStr)}:</p>     
+        <p>Determine which of the following schemata are equivalent to <span class="logStr">{dispLogStr(logStr)}</span>:</p>     
     </div>
 	
     <div slot="submission-input">
 
         {#each logStrSet as logStr, i}
-            <label class="db">
-                <input type=checkbox bind:group={selectedLogStrIndexes} value={i} />
-                {dispLogStr(logStr)}
-            </label>
+            <div class="submission-input-line">
+                <label class="db">
+                    <input type=checkbox bind:group={selectedLogStrIndexes} value={i} />
+                    <span class="logStr">{dispLogStr(logStr)}</span>
+                </label>
+            </div>
         {/each}    
     </div>
 

@@ -2,92 +2,92 @@ export const problemTypes = {
     truthTable: {
         description: "(TF) Truth Table",
         attributes: {
-            logStr: "Enter the schema you'd like to test:"
+            logStr: "Schema to test"
         }
     },
     paraphrase: {
         description: "(TF) Paraphrase",
         attributes: {
-            sent: "English sentence:",
-            logStr: "Correct schematization:"
+            sent: "English sentence",
+            logStr: "Schematized sentence"
         }
     },
     validity: {
         description: "(TF) Validity",
         attributes: {
-            logStr: "The candidate schema:"
+            logStr: "Candidate schema"
         }
     },
     implication: {
         description: "(TF) Implication",
         attributes: {
-            logStr1: "The candidate <i>implicating</i> schema:",
-            logStr2: "The candidate <i>implicated</i> schema:"
+            logStr1: "Candidate <em>implicating</em> schema",
+            logStr2: "Candidate <em>implicated</em> schema"
         }
     },
     implicationSet: {
         description: "(TF) Set of Implications",
         attributes: {
-            logStrSet: "Enter all the schemata which you would like to test:"
+            logStrSet: "Schemata to test"
         }
     },
     equivalence: {
         description: "(TF) Equivalence",
         attributes: {
-            logStr1: "Enter schema (1):",
-            logStr2: "Enter schema (2):"
+            logStr1: "Schema (1)",
+            logStr2: "Schema (2):"
         }
     },
     equivalenceSet: {
         description: "(TF) Set of Equivalencies",
         attributes: {
-            logStr: "The master schema:",
-            logStrSet: "All candidate schemata:"
+            logStr: "Master schema",
+            logStrSet: "Candidate schemata"
         }
     },
     disjNormForm: {
         description: "(TF) Disjunctive Normal Form",
         attributes: {
-            logStr: "Schema to be transformed into disjunctive normal form:"
+            logStr: "Schema to be transformed into disjunctive normal form"
         }
     },
     natLangImpSet: {
         description: "(TF) Implications in English",
         attributes: {
-            sentSet: "All candidate English sentences:",
-            logStrSet: "Each candidate sentence schematized:"
+            sentSet: "Candidate English sentences",
+            logStrSet: "Each candidate sentence, schematized"
         }
     },
     natLangArg: {
         description: "(TF) Arguments in English",
         attributes: {
-            sentSet: "The English premises:",
-            sent: "The English conclusion:",
-            logStrSet: "The schematized premises:",
-            logStr: "The schematized conclusion:"
+            sentSet: "English premises",
+            sent: "English conclusion",
+            logStrSet: "Schematized premises",
+            logStr: "Schematized conclusion"
         }
     },
     quantParaphrase: {
         description: "(Quant) Paraphrase",
         attributes: {
-            sent: "English sentence:",
-            logStr: "Correct schematization:",
-            sentSet: "Specify each predicate letter (Ex. Fxy = \"x loves y\"):"
+            sent: "English sentence",
+            logStr: "Schematized sentence",
+            sentSet: "Predicate specification <span class='normal black-60'>(Ex. Fxy = \"x loves y\")</span>",
         }
     },
     quantInterp: {
         description: "(Quant) Interpretations",
         attributes: {
-            logStr: "The schema to be interpretted:",
-            interpsRequested: "Interpretations to be asked for:"
+            logStr: "Schema to be interpretted",
+            interpsRequested: "Interpretations to ask for"
         }
     },
     multipleChoice: {
         description: "Multiple Choice",
         attributes: {
-            question: "Question:",
-            answer: "Answer:",
-            sentSet: "Other (incorrect) choices:"
+            question: "Question",
+            answer: "Answer",
+            sentSet: "Other (incorrect) choices"
         }
     }
 };

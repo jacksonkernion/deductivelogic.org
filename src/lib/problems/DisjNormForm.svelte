@@ -119,9 +119,9 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Transform the following schema into disjunctive normal form:</p>
-        <div class="description-line">{dispLogStr(logStr)}</div>
+        <div class="description-line logStr">{dispLogStr(logStr)}</div>
     </div>
-	<div slot="submission-input">
+	<div slot="submission-input" class="submission-input-line">
         <LogStrInput bind:logStr={studentLogStr} />
     </div>
 </ProblemWrapper>

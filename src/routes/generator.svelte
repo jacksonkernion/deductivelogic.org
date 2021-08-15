@@ -69,7 +69,7 @@
         problems = [...problems, newProblem];
 
         newProblem = {
-            number: newProblem.number++,
+            number: newProblem.number + 1,
             type: 'none'
         };
     }
@@ -92,14 +92,16 @@
         {/each}
     </ul>
 
-    <p class='f5'>Select problem type:</p>
-    <!-- svelte-ignore a11y-no-onchange -->
-    <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
-        <option value="none"></option>
-        {#each Object.entries(problemTypes) as [shorthand, prob]}
-            <option value="{shorthand}">{prob.description}</option> 
-        {/each}
-    </select>
+    <div class="black-80 measure">
+        <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
+        <!-- svelte-ignore a11y-no-onchange -->
+        <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
+            <option value="none"></option>
+            {#each Object.entries(problemTypes) as [shorthand, prob]}
+                <option value="{shorthand}">{prob.description}</option> 
+            {/each}
+        </select>
+    </div>
 
     {#if newProblem.type!='none'}
         <ProblemForm bind:problem={newProblem} mode='generate' on:click={createProblem}/>

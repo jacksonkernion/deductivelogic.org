@@ -29,15 +29,15 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
-        <div class="description-line">{sent}</div>
+        <div class="description-line serif">{sent}</div>
         <p>Use the following predicates:</p>
         {#each sentSet as sentence, i}
-            <div class="description-line">
+            <div class="description-line logStr">
                 {sentence}
             </div>
         {/each}
     </div>
-	<div slot="submission-input">
+	<div slot="submission-input" class="submission-input-line">
         <LogStrInput bind:logStr={studentLogStr} />
     </div>
 </ProblemWrapper>

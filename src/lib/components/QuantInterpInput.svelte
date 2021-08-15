@@ -108,41 +108,46 @@
 </script>
 
 <style>
-    input {
-		border: 1px solid #ccc;
-		padding: 3px;
-	}
+    input{
+        padding: 3px;
+        transition: all 0.15s ease-in-out;
+        color: #4D4D4D;
 
-    .wrapper{
-        margin-left:8rem;
     }
+
+    input:focus {
+        outline: 0;
+        border-color: #5584EB;
+        box-shadow: inset 0 0 0 0.1rem #5584EB;
+    }
+
 
     .domain-buttons{
         position: absolute;
-        left: -3rem;
+        left: -2rem;
     }
     .save-message{
-        color:#CCC;
+        color:#aaa;
         font-size:12px;
         padding-left:15px;
     }
 </style>
 
-<div class="tl wrapper">
-    <div class="submission-input-line relative">
-        <span class="domain-buttons left--2"><a on:click={decrementDomain}>–1</a> <a on:click={incrementDomain}>+1</a> </span>
+<div>
+    <div class="relative ml4">
+        <span class="domain-buttons"><a on:click={decrementDomain}>–</a> <a on:click={incrementDomain}>+</a> </span>
         Universe = {domain}
     </div>
 
     {#each quantPreds as quantPred}
-        <div class="submission-input-line relative">
-            "{quantPred.letter}" = {'{'}
+        <div class="submission-input-line relative logStr">
+            {quantPred.letter} = {'{'}
             {#each extensions[quantPred.letter] as {extension, extensionStr}}
                 <a class="extension" on:click={removeExtension(quantPred.letter, extension)}>{extensionStr}</a>,&nbsp;
             {/each}
-            <input class="br1" style="width:{17 * quantPred.n}px" on:keydown={(e) => handleKeyDown(quantPred, e)} on:focusin={(e) => handleFocusIn(e)} on:focusout={(e) => handleFocusOut(e)}/>
+            <input class="br1 ba b--black-20" style="width:{17 * quantPred.n}px" on:keydown={(e) => handleKeyDown(quantPred, e)} on:focusin={(e) => handleFocusIn(e)} on:focusout={(e) => handleFocusOut(e)}/>
             {'}'}
-            <span class="save-message" style="" hidden>Press 'Enter' to log extension</span>
+            <span class="save-message sans-serif" style="" hidden>Press 'Enter' to log extension</span>
             
         </div>
     {/each}

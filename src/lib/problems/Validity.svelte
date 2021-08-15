@@ -59,26 +59,28 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Test the following schema for validity:</p>
-        <div class="description-line">{dispLogStr(logStr)}</div>
+        <div class="description-line logStr">{dispLogStr(logStr)}</div>
         <p>If not valid, provide an interpretation under which the schema is false.</p>
     </div>
 	
-    <div slot="submission-input" class="tc">
+    <div slot="submission-input">
         
         <HiddenTruthTable {logStr} />   
         
-        <div class="flex w5 center items-center mb2">
-            <input class="mr2" type=radio bind:group={answer} name="implies" value={true} />
-            <label for={true} class="lh-copy">Valid</label>
-        </div>
-        <div class="flex w5 center items-center mb2">
-            <input class="mr2" type=radio bind:group={answer} name="implies" value={false} />
-            <label for={false} class="lh-copy">Not valid...</label>
-        </div>
+        <div class="submission-input-line">
+            <div class="mb2">
+                <input class="mr2" type=radio bind:group={answer} name="implies" value={true} />
+                <label for={true} class="lh-copy">Valid</label>
+            </div>
+            <div class="mb2">
+                <input class="mr2" type=radio bind:group={answer} name="implies" value={false} />
+                <label for={false} class="lh-copy">Not valid...</label>
+            </div>
 
-        <div class="extra-question-wrapper pb2" hidden={answer}>
-            <div class="extra-question-message f6 black-50 pb2">...as shown with interpretation:</div>
-            <TruthAssignmentInput {letterVars} bind:interpretation />
+            <div class="extra-question-wrapper pb2 pl4" hidden={answer!=false}>
+                <div class="extra-question-message f6 black-50 pb2">...as shown with interpretation:</div>
+                <TruthAssignmentInput {letterVars} bind:interpretation />
+            </div>
         </div>
     </div>
 

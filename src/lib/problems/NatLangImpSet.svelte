@@ -177,40 +177,46 @@
         <p>Paraphrase the following natural language sentences and then determine any implications that hold between them.</p>
         {#each sentSet as sent, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> {sent}
+                <span class="description-line-marker">{i+1}.</span> <span class="serif">{sent}</span>
             </div>
         {/each}
     </div>
 	
-    <div slot="submission-input" class="tc">
+    <div slot="submission-input">
         
         {#each logStrSet as logStr, i}
-            <div class="relative">
-                <span class="absolute left-1">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+            <div class="relative submission-input-line"> 
+                <span class="description-line-marker mt2">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
             </div>
         {/each}
-
+        
         {#each answersArr as implication, i}
-            <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={() => removeImplication(i)}>X</button>
-            <select bind:value={implication[0]} >
-                {#each logStrSet as logStr, j}
-                    <option value={(j+1)}>
-                        {j+1}
-                    </option>
-                {/each}
-            </select>
-            implies
-            <select bind:value={implication[1]} >
-                {#each logStrSet as logStr, j}
-                    <option value={(j+1)}>
-                        {j+1}
-                    </option>
-                {/each}
-            </select>
-            <br/>
+            <div class="submission-input-line">
+                <div class="dib v-mid">
+                    <select bind:value={implication[0]} >
+                        {#each logStrSet as logStr, j}
+                            <option value={(j+1)}>
+                                {j+1}
+                            </option>
+                        {/each}
+                    </select>
+                    implies
+                    <select bind:value={implication[1]} >
+                        {#each logStrSet as logStr, j}
+                            <option value={(j+1)}>
+                                {j+1}
+                            </option>
+                        {/each}
+                    </select>
+                </div>
+                <div class="remove-button pa2 v-mid" on:click={() => removeImplication(i)}>
+                    <ion-icon name="close-outline"></ion-icon>
+                </div>
+            </div>
         {/each}
-
-        <button on:click={addImplication}>+ Add implication</button>
+        <div class="lh-copy f6 mt3 ml4">
+            <a on:click={addImplication}>+ Add implication</a>
+        </div>
         
     </div>
 

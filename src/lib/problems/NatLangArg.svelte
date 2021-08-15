@@ -150,31 +150,32 @@
         <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
         {#each sentSet as sentence, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> {sentence}
+                <span class="description-line-marker">{i+1}.</span> <span class="serif">{sentence}</span>
             </div>
         {/each}
         <div class="description-line">
-            <span class="description-line-marker">C.</span> {conclusionSent}
+            <span class="description-line-marker">C.</span> <span class="serif">{conclusionSent}</span>
         </div>
     </div>
 	
     <div slot="submission-input">
         {#each logStrSet as logStr, i}
-            <div class="relative">
-                <span class="absolute left-1">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+            <div class="relative submission-input-line">
+                <span class="description-line-marker mt2">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
             </div>
         {/each}
-        <div class="relative">
-            <span class="absolute left-1">C.</span> <LogStrInput bind:logStr={studentConclusionLogStr}/>
+        <div class="relative submission-input-line">
+            <span class="description-line-marker mt2">C.</span> <LogStrInput bind:logStr={studentConclusionLogStr}/>
         </div>
-        
-        <div class="flex w5 center items-center mb2">
-            <input class="mr2" type=radio bind:group={implication} name="implies" value={true} />
-            <label for={true} class="lh-copy">Implies</label>
-        </div>
-        <div class="flex w5 center items-center mb2">
-            <input class="mr2" type=radio bind:group={implication} name="implies" value={false} />
-            <label for={false} class="lh-copy">Does not imply</label>
+        <div class="submission-input-line">
+            <div class="mb2 mt4">
+                <input class="mr2" type=radio bind:group={implication} name="implies" value={true} />
+                <label for={true} class="lh-copy">Implies</label>
+            </div>
+            <div class="mb2">
+                <input class="mr2" type=radio bind:group={implication} name="implies" value={false} />
+                <label for={false} class="lh-copy">Does not imply</label>
+            </div>
         </div>
     </div>
 

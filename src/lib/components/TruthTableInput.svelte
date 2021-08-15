@@ -67,9 +67,11 @@
 
     function toggleHighlightT(){
         highlightT = highlightT ? false : true;
+        highlightF = false;
     }
     function toggleHighlightF(){
         highlightF = highlightF ? false : true;
+        highlightT = false;
     }
 
 </script>
@@ -94,12 +96,6 @@
     .t_table-buttons{
         margin:0 auto;
         width:66px;
-    }
-
-    .t_table-highlight_F:hover, .t_table-highlight_T:hover, .t_table-clear_all:hover{
-        cursor:pointer;
-        border:1px solid black;
-        color:black;
     }
 
     .t_table-button_F, .t_table-button_T{
@@ -140,20 +136,8 @@
     .t_table-toolbar{
         display: block;
         height: 80px;
-        width: 165px;
+        width: 95px;
         padding: 15px;
-    }
-
-    .t_table-clear_all{
-        float:left;
-        padding:5px 6px;
-        color:#ccc;
-        margin:3px 3px 0px 3px;
-        font-size:13px;
-        background-color:white;
-        border: 1px solid #ccc;
-        color: #ccc;
-        text-align: center;
     }
 
     .t_table-highlight{
@@ -173,6 +157,13 @@
         box-sizing: content-box;
     }
 
+
+    .t_table-highlight_F:hover, .t_table-highlight_T:hover{
+        cursor:pointer;
+        border:1px solid black;
+        color:black;
+    }
+
     .highlightT, .highlightF{
         background-color:#eeeeee;
     }
@@ -184,13 +175,15 @@
 
 </style>
 
-<div class="t_table-toolbar mw5 center">
-    <div class="t_table-highlight tracked tl">HIGHLIGHT</div>
-    <div class="t_table-highlight_T br1" class:highlightT on:click={toggleHighlightT}>⊤</div>
-    <div class="t_table-highlight_F br1" class:highlightF on:click={toggleHighlightF}>⊥</div>
+<div class="t_table-toolbar center">
+    <div class="t_table-highlight tracked tl center">HIGHLIGHT</div>
+    <div class="center">
+        <div class="t_table-highlight_T br1" class:highlightT on:click={toggleHighlightT}>⊤</div>
+        <div class="t_table-highlight_F br1" class:highlightF on:click={toggleHighlightF}>⊥</div>
+    </div>
     <!-- <div class="t_table-clear_all br1">Clear all</div> -->
 </div>
-<table class="t_table">
+<table class="t_table logStr">
     <tr class="t_table-top_row">
         {#each tTableData.letterVars as letterVar}
         <td>{letterVar}</td>

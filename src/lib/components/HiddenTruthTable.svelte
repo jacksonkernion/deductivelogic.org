@@ -39,7 +39,7 @@
 </style>
 
 
-<div class="show_t_table_wrapper br1">
+<div class="show_t_table_wrapper br1 tc">
     <a class="show_t_table" on:click={toggleTruthTable}>{showTruthTable ? 'Hide' : 'Show'} Truth Table</a>
     
     <div hidden={!showTruthTable}>

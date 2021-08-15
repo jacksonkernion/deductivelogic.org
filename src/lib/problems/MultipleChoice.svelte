@@ -1,17 +1,20 @@
 <script>
     import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import {shuffle} from '$lib/helpers.js';
 
     export let number = '';
     export let question = '';
-    export let sentenceSet = [];
+    export let sentSet = [];
     export let answer = '';
 
     let studentAnswer = '';
 
+    let options = shuffle([...sentSet, answer]);
+
     let submission;
 
     function checkSubmission() {
-        if(answer == submission){
+        if(studentAnswer == answer){
             submission.log('correct', 'Correct');
         }
         else{
@@ -26,11 +29,11 @@
         <p>{question}</p>
     </div>
 	
-    <div slot="submission-input" class="tc">
+    <div slot="submission-input">
         
         <select bind:value={studentAnswer}>
             <option value="none"></option>
-            {#each sentenceSet as option}
+            {#each options as option}
                 <option value="{option}">{option}</option>
             {/each}
         </select>

@@ -86,34 +86,40 @@
         <p>Determine the implications that hold among the following set of schemata:</p>
         {#each logStrSet as logStr, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> {dispLogStr(logStr)}
+                <span class="description-line-marker">{i+1}.</span> <span class="logStr">{dispLogStr(logStr)}</span>
             </div>
         {/each}
     </div>
 	
-    <div slot="submission-input" class="tc">
+    <div slot="submission-input">
 
         {#each answersArr as implication, i}
-            <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={() => removeImplication(i)}>X</button>
-            <select bind:value={implication[0]} >
-                {#each logStrSet as logStr, j}
-                    <option value={(j+1)}>
-                        {j+1}
-                    </option>
-                {/each}
-            </select>
-            implies
-            <select bind:value={implication[1]} >
-                {#each logStrSet as logStr, j}
-                    <option value={(j+1)}>
-                        {j+1}
-                    </option>
-                {/each}
-            </select>
-            <br/>
+        <div class="submission-input-line">
+            <div class="dib v-mid">
+                <select bind:value={implication[0]} >
+                    {#each logStrSet as logStr, j}
+                        <option value={(j+1)}>
+                            {j+1}
+                        </option>
+                    {/each}
+                </select>
+                implies
+                <select bind:value={implication[1]} >
+                    {#each logStrSet as logStr, j}
+                        <option value={(j+1)}>
+                            {j+1}
+                        </option>
+                    {/each}
+                </select>
+            </div>
+            <div class="remove-button pa2 v-mid" on:click={() => removeImplication(i)}>
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+        </div>
         {/each}
-
-        <button class="f6 br1 ba ph3 pv2 mb2 dib black" on:click={addImplication}>+ Add implication</button>
+        <div class="lh-copy f6 mt3 ml4">
+            <a on:click={addImplication}>+ Add implication</a>
+        </div>
         
     </div>
 

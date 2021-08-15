@@ -57,7 +57,7 @@
 
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
-        <p>Construct a truth table for {dispLogStr(logStr)}</p>
+        <p>Construct a truth table for <span class='logStr'>{dispLogStr(logStr)}</span></p>
     </div>
     <div slot="submission-input">
         <TruthTableInput bind:tTableData />

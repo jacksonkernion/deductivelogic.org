@@ -1,4 +1,6 @@
-<script></script>
+<script>
+
+</script>
 <div>
     <slot></slot>
 </div>
