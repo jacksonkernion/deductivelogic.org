@@ -5,9 +5,14 @@
 	}
 </script>
 <script>
+    //import {user} from "$lib/sessionStore"
+    import supabase from "$lib/db"
+    import Auth from "$lib/components/Auth.svelte"
+
     import {problemSets} from '$lib/problemSets.js';
     export let courseSlug = '';
 
+    import Modal from '$lib/jui-components/Modal.svelte';
 </script>
 
 <div class="bg-washed-green bb b--green bw1">

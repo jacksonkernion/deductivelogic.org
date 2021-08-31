@@ -1,5 +1,13 @@
 <script>
 
+    import supabase from "$lib/db"
+    async function insertProblem(prob) {
+        let { data, error } = await supabase.from('problems').insert([prob]);
+        if (error)
+            throw new Error(error.message);  
+        return data;
+    }
+
     import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/problems/Paraphrase.svelte';
 	import TruthTable from '$lib/problems/TruthTable.svelte';
@@ -67,6 +75,8 @@
     function createProblem() {
         //ADD ERROR CHECKING...
         problems = [...problems, newProblem];
+
+        insertProblem(newProblem);
 
         newProblem = {
             number: newProblem.number + 1,

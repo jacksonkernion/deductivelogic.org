@@ -1,4 +1,29 @@
+<script context='module'>
+    export async function load({ session }) {
+        const { user } = session;
+
+        return {
+            props: {
+                user
+            }
+        };
+    }
+
+</script>
+
 <script>
+
+import Auth from "$lib/components/Auth.svelte";
+
+import supabase from '$lib/db';
+async function getProblems() {
+  let { data, error } = await supabase.from('problems').select('*');
+  if (error)
+    throw new Error(error.message);
+  
+  return data;
+}
+
     import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/problems/Paraphrase.svelte';
 	import TruthTable from '$lib/problems/TruthTable.svelte';
@@ -16,6 +41,8 @@
     import {demoProblems} from '$lib/problemSets.js';
     import ProblemForm from '$lib/components/ProblemForm.svelte';
     import {problemTypes} from '$lib/problemTypes.js';
+
+    export let user;
 
     let problems = demoProblems;
     
@@ -72,7 +99,7 @@
     function createProblem() {
         //ADD ERROR CHECKING...
         problems = [...problems, newProblem];
-        
+
 
         newProblem = {
             number: newProblem.number + 1,
@@ -90,6 +117,8 @@
         <p class="lh-copy f4 fw4"><span class="fw5">In progress:</span> deduction problems.</p>
         <p class="lh-copy f4 fw4">Launching Fall 2021.</p>
     </div>
+
+    <Auth {user} /> 
 
 </div>
 <div class="mw7 center ph4 pt4 pb6">
@@ -115,6 +144,18 @@
     {#if newProblem.type!='none'}
         <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
     {/if}
+
+    {#await getProblems()}
+        <p>Fetching data...</p>
+    {:then data}
+        {#each data as problem}
+            <TruthTable {...problem} />
+        {/each}
+    {:catch error}
+        <p>Something went wrong while fetching the data:</p>
+        <pre>{error}</pre>
+    {/await}
+
 
 </div>
 
