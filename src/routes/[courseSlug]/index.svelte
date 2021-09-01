@@ -1,6 +1,6 @@
 <script context='module'>
     export async function load({ page, fetch, session, context }) {
-		let courseSlug = page.params.course;
+		let courseSlug = page.params.courseSlug;
 		return { props: { courseSlug }};
 	}
 </script>
@@ -9,7 +9,6 @@
     import supabase from "$lib/db"
     import Auth from "$lib/components/Auth.svelte"
 
-    import {problemSets} from '$lib/problemSets.js';
     export let courseSlug = '';
 
     import Modal from '$lib/jui-components/Modal.svelte';
@@ -24,11 +23,13 @@
 </div>
 
 <div class="mw7 center pa4">
-    <ul class="list pl0"> 
+    <ul class="list pl0">
+        <!--
         {#each problemSets as problemSet}
             <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--black-10">
                 <a href="{courseSlug}/pset{problemSet.number}">Problem Set {problemSet.number}</a>
             </li>
         {/each}
+        -->
     </ul>
 </div>
