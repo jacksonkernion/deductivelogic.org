@@ -1,4 +1,4 @@
 import { writable } from 'svelte/store';
 
-export let courses = writable([]);
-export let problemSets = writable([]);
+export const courses = writable([]);
+export const problemSets = writable([]);

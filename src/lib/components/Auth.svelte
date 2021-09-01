@@ -8,7 +8,7 @@
   async function setServerSessionAndRedir(session: AuthSession) {
       await setAuthCookie(session);
       // goto('/home') - Haven't figured this out, but the session cookie doesn't set properly unless you do a real page refresh.
-      window.location = '/home';
+      window.location = '/';
   }
 
   async function signOut() {
@@ -38,7 +38,7 @@
     } else {
       await updateProfile(session.user.id);
       await setAuthCookie(session);
-      window.location = '/home';
+      window.location = '/';
     }
     loading = false;
   }

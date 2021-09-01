@@ -1,4 +1,4 @@
-export const problemSets = [
+export let pSets = [
     {
         number: 1,
         problems: [

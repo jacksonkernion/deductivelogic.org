@@ -1,165 +1,187 @@
-<script context='module'>
+<script context="module">
+
+    import supabase from "$lib/db";
+    import { courses, problemSets } from '$lib/stores.js';
+    
     export async function load({ session }) {
         const { user } = session;
+        if(user.guest){
+            return {
+                props: {
+                    user
+                }
+            };
+        }
+        else{
 
-        return {
-            props: {
-                user
+            if(user.courses.length > 0){
+                const coursesQueryStr = user.courses.map(courseId => 'id.eq.' + courseId).join(',');
+                const pSetsQueryStr = user.courses.map(courseId => 'course_id.eq.' + courseId).join(',');
+                
+                const res1 = await supabase
+                    .from('courses')
+                    .select()
+                    .or(coursesQueryStr);
+                courses.set(res1.data);
+
+                const res2 = await supabase
+                    .from('problemSets')
+                    .select()
+                    .or(pSetsQueryStr);
+                problemSets.set(res2.data);
             }
-        };
+
+            return {
+                props: {
+                    user
+                }
+            };
+        }
     }
+    
+
+    /*
+    export async function load({ fetch, session }) {
+        // Approach #1 - Call the session getter API
+		const res = await fetch('auth.json');
+		if (res.ok) {
+            const { user } = await res.json();
+            if (user && !user.guest) {
+                return {
+                    props: {
+                        user
+                    }
+                };
+            }
+            else{
+                return {};
+            }
+        } else {
+            return {
+                status: res.status,
+                error: new Error(`Could not load ${API_AUTH}`)
+            };
+        }
+    }
+    */
 
 </script>
 
 <script>
 
-import Auth from "$lib/components/Auth.svelte";
+    import Welcome from "$lib/Welcome.svelte"
+    import Auth from "$lib/components/Auth.svelte";
+    import Course from "$lib/components/Course.svelte";
+    import CreateCourse from "$lib/components/AddCourse.svelte";
 
-import supabase from '$lib/db';
-async function getProblems() {
-  let { data, error } = await supabase.from('problems').select('*');
-  if (error)
-    throw new Error(error.message);
-  
-  return data;
-}
+//import { courses, problemSets } from "$lib/stores";
 
-    import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
-	import Paraphrase from '$lib/problems/Paraphrase.svelte';
-	import TruthTable from '$lib/problems/TruthTable.svelte';
-	import Implication from '$lib/problems/Implication.svelte';
-	import ImplicationSet from '$lib/problems/ImplicationSet.svelte';
-	import Equivalence from '$lib/problems/Equivalence.svelte';
-	import EquivalenceSet from '$lib/problems/EquivalenceSet.svelte';
-	import Validity from '$lib/problems/Validity.svelte';
-	import DisjNormForm from '$lib/problems/DisjNormForm.svelte';
-	import NatLangImpSet from '$lib/problems/NatLangImpSet.svelte';
-	import NatLangArg from '$lib/problems/NatLangArg.svelte';
-    import QuantParaphrase from '$lib/problems/QuantParaphrase.svelte';
-    import QuantInterp from '$lib/problems/QuantInterp.svelte';
-
-    import {demoProblems} from '$lib/problemSets.js';
-    import ProblemForm from '$lib/components/ProblemForm.svelte';
-    import {problemTypes} from '$lib/problemTypes.js';
+    // import {problemSets} from '$lib/problemSets.js';
 
     export let user;
-
-    let problems = demoProblems;
     
-    $: problems = problems.map((problem) => {
-        if(problem.type === 'multipleChoice')
-            problem.component = MultipleChoice;
-        else if(problem.type === 'paraphrase')
-            problem.component = Paraphrase;
-        else if(problem.type === 'truthTable')
-            problem.component = TruthTable;
-        else if(problem.type === 'implication')
-            problem.component = Implication;
-        else if(problem.type === 'implicationSet')
-            problem.component = ImplicationSet;
-        else if(problem.type === 'equivalence')
-            problem.component = Equivalence;
-        else if(problem.type === 'equivalenceSet')
-            problem.component = EquivalenceSet;
-        else if(problem.type === 'validity')
-            problem.component = Validity;
-        else if(problem.type === 'natLangImpSet')
-            problem.component = NatLangImpSet;
-        else if(problem.type === 'natLangArg')
-            problem.component = NatLangArg;
-        else if(problem.type ==='disjNormForm')
-            problem.component = DisjNormForm;
-        else if(problem.type === 'quantParaphrase')
-            problem.component = QuantParaphrase;
-        else if(problem.type === 'quantInterp'){
-            problem.component = QuantInterp;
-            if(!problem.interpsRequested)
-                problem.interpsRequested = problem.sentSet.split('/');
-        }
+    //let course = {name: null, slug: null};
 
-        if (problem.question)
-            problem.sent = problem.question;
+/*
+    import {pSets} from '$lib/problemSets.js';
 
-        return problem;
+    pSets = pSets.map((problemSet) => {
+        problemSet.problems = problemSet.problems.map((problem) => {
+            if(typeof problem.logStrSet == 'string')
+                problem.logStrSet = problem.logStrSet.split(',');
+            if(typeof problem.sentSet == 'string')
+                problem.sentSet = problem.sentSet.split('/');
+            if(problem.question)
+                problem.sent = problem.question;
+            
+            delete problem.id;
+            delete problem.answer;
+            delete problem.question;
+            delete problem.assignment_id;
+              
+            return problem;
+        });
+
+        problemSet.course_id = 31;
+        problemSet.name = "Problem Set " + problemSet.number;
+        problemSet.published = true;
+
+        return problemSet;
+ 
     });
 
-    let newProblem = {
-        number: problems.length + 1,
-        type: 'none'
-    };
+async function populateDB (pSets){
+    for (pSet of pSets) {
+        try {
+            let pSetId;
 
-    function updateNewProblem() {
-        for(var attr in problemTypes[newProblem.type].attributes){
-            if(attr=='logStrSet' || attr=='sentSet')
-                newProblem[attr] = [''];
-            else
-                newProblem[attr] = '';
+            const res1 = await supabase
+                .from('problemSets')
+                .upsert([
+                    {
+                        number: pSet.number,
+                        name: pSet.name,
+                        published: pSet.published,
+                        course_id: pSet.course_id
+                    }
+                ]);
+            if (res1.error) throw res1.error;
+            if (res1.data){
+                pSetId = res1.data[0].id;
+            }
+
+            pSet.problems = pSet.problems.map((problem) => {
+                problem.problemSet_id = pSetId;
+                return problem;
+            });
+
+            const res2 = await supabase
+                .from('problems')
+                .upsert(pSet.problems);
+            if (res2.error) throw res2.error;
+
+        } catch (error) {
+            console.log(error.error_description || error.message);
         }
     }
-    function createProblem() {
-        //ADD ERROR CHECKING...
-        problems = [...problems, newProblem];
+    console.log('success?');
+};
 
+populateDB(pSets);
 
-        newProblem = {
-            number: newProblem.number + 1,
-            type: 'none'
-        };
-    }
+*/
+
 </script>
 
-<div class="bg-washed-green bb b--green bw1">
+<!-- If not logged in, display 'welcome' page -->
+{#if user.guest}
 
-    <div class="mw7 pa4 center pb4 dark-green">
-        <div class="lh-title f3 fw6 tracked pt6 pb2">DEDUCTIVELOGIC.ORG v2.0</div>
-        <p class="lh-copy f4 fw4">Interactive problem sets for deductive logic courses.<br/>Developed for Harvard's introductory course.</p>
-        <p class="lh-copy f4 fw4"><span class="fw5">Example problems below:</span> truth table, truth-functional paraphrase, implication, disjunctive normal form, natural language argument, quantificational paraphrase, quantificational interpretation.</p>
-        <p class="lh-copy f4 fw4"><span class="fw5">In progress:</span> deduction problems.</p>
-        <p class="lh-copy f4 fw4">Launching Fall 2021.</p>
+    <Welcome {user} />
+
+{:else} <!-- If logged in, display 'home' page -->
+
+<div class="bg-near-white bb b--black-10">
+
+    <div class="cf mw7 center ph4">
+        <div class="ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid">deductivelogic.org</div>
+        <div class="fr dib v-mid">
+            <Auth {user} />     
+        </div>
     </div>
-
-    <Auth {user} /> 
 
 </div>
-<div class="mw7 center ph4 pt4 pb6">
-    <ul class="list pl0"> 
-        {#each problems as problem}
-            <svelte:component this={problem.component} {...problem}/>
+
+<div class="mw7 center pa4">
+
+    {#if $courses.length > 0 }
+        {#each $courses as course}
+            <Course {course} pSets={$problemSets.filter(pSet => pSet.course_id == course.id)}/>
         {/each}
-    </ul>
-
-    <h3 class="f5 fw5 mt4">Add Problem</h3>
-
-    <div class="black-80 measure">
-        <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
-        <!-- svelte-ignore a11y-no-onchange -->
-        <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
-            <option value="none"></option>
-            {#each Object.entries(problemTypes) as [shorthand, prob]}
-                <option value="{shorthand}">{prob.description}</option> 
-            {/each}
-        </select>
-    </div>
-
-    {#if newProblem.type!='none'}
-        <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
+    {:else}
+        <div class="lh-copy pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f4 fw4 pv2 ma0">No Enrolled Courses</p></div>
     {/if}
-
-    {#await getProblems()}
-        <p>Fetching data...</p>
-    {:then data}
-        {#each data as problem}
-            <TruthTable {...problem} />
-        {/each}
-    {:catch error}
-        <p>Something went wrong while fetching the data:</p>
-        <pre>{error}</pre>
-    {/await}
-
-
+    <CreateCourse />
+    
 </div>
 
-
-
-
-
+{/if}

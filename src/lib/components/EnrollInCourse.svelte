@@ -1,11 +1,5 @@
 <script>
-    //import {user} from "$lib/sessionStore"
     import supabase from "$lib/db";
-
-    import {slugify} from "$lib/helpers.js";
-
-    import Input from '$lib/components/Input.svelte';
-
     import Modal from '$lib/jui-components/Modal.svelte';
     import { courses, problemSets } from "$lib/stores";
     import { session } from "$app/stores";
@@ -22,32 +16,31 @@
 
             const user = supabase.auth.user();
             
-            const res1 = await supabase
+            const req1 = await supabase
                 .from('courses')
                 .upsert([
                     { name: course.name, slug: slugify(course.name), admins: [user.id] }
                 ]);
-            if (res1.error) throw res1.error;
-            if (res1.data){
-                $courses = [...$courses, ...res1.data];
+            console.log(req1.data);
+            console.log($courses;
+            if (req1.error) throw error;
+            if (req1.data){
+                $courses = [...$courses, ...req1.data];
             }
 
-            const res2 = await supabase
+            const req2 = await supabase
                 .from('profiles')
                 .upsert([
-                    { id: user.id, courses: [...$session.user.courses, res1.data[0].id] }
+                    { id: user.id, courses: [...$session.user.courses, req1.data[0].id] }
                 ]);
-            if (res2.error) throw res2.error;
-            if (res2.data){
+            if (req2.error) throw error;
+            if (req2.data){
                 toggleModal();
                 loading = false;
             }
 
         } catch (error) {
             alert(error.error_description || error.message)
-        }
-        finally{
-            course = {name: null, slug: null};
         }
     }
 

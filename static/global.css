@@ -117,6 +117,8 @@ a.link :hover{
 ion-icon{
 	font-size: 20px;
 	--ionicon-stroke-width: 40px;
+	z-index:60;
+	visibility: visible;
 }
 
 .remove-button{
