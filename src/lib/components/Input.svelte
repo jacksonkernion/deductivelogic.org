@@ -24,7 +24,7 @@
 
 </style>
 
-<div class="black-80 measure">
+<div class="">
     <label for={name} class="f6 fw5 db mb2">{@html label}</label>
     {#if type == "password"}
         <input id={name} class="input-reset br2 ba b--black-20 pa2 mb2 db w-100" {placeholder} type="password" aria-describedby={desc} bind:value={value} />

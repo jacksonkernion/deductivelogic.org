@@ -29,7 +29,7 @@
 <ProblemWrapper bind:submission on:click={checkSubmission} {number}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
-        <div class="description-line serif">{sent}</div>
+        <div class="description-line">{sent}</div>
         <p>Use the following predicates:</p>
         {#each sentSet as sentence, i}
             <div class="description-line logStr">

@@ -58,7 +58,7 @@
 </script>
 
 
-<button class="mt4 f6 br2 ba ph3 pv2 mb2 black" on:click={toggleModal}>Create Course...</button>
+<a class="light-silver" on:click={toggleModal}>Create Course...</a>
   
 {#if modalShow}
 

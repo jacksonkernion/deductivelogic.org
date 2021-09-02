@@ -1,5 +1,6 @@
 <script>
 	import {unfancyLogStr} from '$lib/helpers.js';
+	import {symbols} from '$lib/stores';
 
 	export let logStr = '';
     export let label = null;
@@ -10,106 +11,67 @@
 
 	$: logStr = unfancyLogStr(value);
 
-	function getCaretPosition(ctrl) {
-		// IE < 9 Support 
-		if (document.selection) {
-			ctrl.focus();
-			var range = document.selection.createRange();
-			var rangelen = range.text.length;
-			range.moveStart('character', -ctrl.value.length);
-			var start = range.text.length - rangelen;
-			return {
-				'start': start,
-				'end': start + rangelen
-			};
-		} // IE >=9 and other browsers
-		else if (ctrl.selectionStart || ctrl.selectionStart == '0') {
-			return {
-				'start': ctrl.selectionStart,
-				'end': ctrl.selectionEnd
-			};
-		} else {
-			return {
-				'start': 0,
-				'end': 0
-			};
-		}
-	}
-
-	function setCaretPosition(ctrl, start, end) {
-		// IE >= 9 and other browsers
-		if (ctrl.setSelectionRange) {
-			ctrl.focus();
-			ctrl.setSelectionRange(start, end);
-		}
-		// IE < 9 
-		else if (ctrl.createTextRange) {
-			var range = ctrl.createTextRange();
-			range.collapse(true);
-			range.moveEnd('character', end);
-			range.moveStart('character', start);
-			range.select();
-		}
-	}
-
 	function insertSymbol(symbol) {
-		var newValue = value.substr(0, input.selectionStart) + symbol + value.substr(input.selectionEnd);
-		value = newValue;
+		var selectionStart = input.selectionStart;
+		var selectionEnd = input.selectionEnd;
+		var newValue = input.value.substr(0, selectionStart) + symbol + input.value.substr(selectionEnd);
+		input.value = newValue;
 		input.focus();
-		//input.setSelectionRange(input.selectionStart + 1, input.selectionStart + 1);
+		input.setSelectionRange(selectionStart + 1, selectionStart + 1);
 		
 	}
 
 	function replaceSymbol(e) {
-		// var unicode = e.charCode? e.charCode : e.keyCode;
-		//if(unicode == 190 || unicode == 65 || unicode == 69 || unicode == 86){
-		//Add a condition to check that $(this).val() contains one of these letters, to stop unnecessary function runs...
-
-		//Later: fix caret placement: https://developer.mozilla.org/en-US/docs/Web/API/Range
-    	var selectionStart = e.target.selectionStart;
-		var selectionEnd = e.target.selectionEnd;
-		var offset = 0;
 		
-    	var fixed = '';
-    	// var regex = new RegExp(biconditional.shortcut, "g");
-		var regex = new RegExp('<>', "g");
-    	// var fixed = value.replace(regex, biconditional.symbol);
-		var fixed = value.replace(regex, '≡');
-    	// regex = new RegExp(conditional.shortcut, "g");
-		regex = new RegExp('>', "g");
-		// fixed = fixed.replace(regex, conditional.symbol);
-		fixed = fixed.replace(regex, '⊃'); 
-		fixed = fixed.replace(/A/g,"\u2200");
-		fixed = fixed.replace(/E/g,"\u2203");
-		//fixed= fixed.replace("^","\u2227"); [from emer17.js, not sure?]
-		// regex = new RegExp(or.shortcut, "g");
-		//regex = new RegExp('|', "g");
-		// fixed= fixed.replace(regex, or.symbol);
-		fixed = fixed.replace(/v/g, '∨');
-		// regex = new RegExp(not.shortcut, "g");
-		regex = new RegExp('-', "g");
-		// fixed= fixed.replace(/-/g, not.symbol);
-		fixed = fixed.replace(/-/g, '–');
-		/*
-		if(and.shortcut == '.'){
-			fixed= fixed.replace(/\./g,and.symbol);
+		// Fix later: check for ending char in any of $symbols keyboard shortcuts
+		if(e.key == '-' || e.key == 'v' || e.key == '>'  || e.key == 'A' || e.key == 'E' ){
+		
+			var selectionStart = e.target.selectionStart;
+			var selectionEnd = e.target.selectionEnd;
+			var offset = 0;
+			var initialLength = value.length;
+			
+			var fixed = '';
+			// var regex = new RegExp(biconditional.shortcut, "g");
+			var regex = new RegExp('<>', "g");
+			// var fixed = value.replace(regex, biconditional.symbol);
+			var fixed = value.replace(regex, '≡');
+			// regex = new RegExp(conditional.shortcut, "g");
+			regex = new RegExp('>', "g");
+			// fixed = fixed.replace(regex, conditional.symbol);
+			fixed = fixed.replace(regex, '⊃'); 
+			fixed = fixed.replace(/A/g,"\u2200");
+			fixed = fixed.replace(/E/g,"\u2203");
+			// fixed= fixed.replace("^","\u2227"); [from emer17.js, not sure?]
+			// regex = new RegExp(or.shortcut, "g");
+			// regex = new RegExp('|', "g");
+			// fixed= fixed.replace(regex, or.symbol);
+			fixed = fixed.replace(/v/g, '∨');
+			// regex = new RegExp(not.shortcut, "g");
+			regex = new RegExp('-', "g");
+			// fixed= fixed.replace(/-/g, not.symbol);
+			fixed = fixed.replace(/-/g, '–');
+			/*
+			if(and.shortcut == '.'){
+				fixed= fixed.replace(/\./g,and.symbol);
+			}
+			else if(and.shortcut == '^'){
+				fixed= fixed.replace(/\^/g,and.symbol);
+			}
+			else{
+				regex = new RegExp(and.shortcut, "g");
+				fixed= fixed.replace(regex,and.symbol);
+			} */
+			fixed = fixed.replace(/!=/g,"≠");
+			
+			//If shortcut is longer than actual symbol (Ex: '<>' for '≡'), need to change where caret is
+			if(fixed.length != initialLength){
+				var offset = initialLength - fixed.length;
+			}
+			e.target.value = fixed;
+			e.target.focus();
+			e.target.setSelectionRange(selectionStart - offset, selectionEnd - offset);
 		}
-		else if(and.shortcut == '^'){
-			fixed= fixed.replace(/\^/g,and.symbol);
-		}
-		else{
-			regex = new RegExp(and.shortcut, "g");
-			fixed= fixed.replace(regex,and.symbol);
-		} */
-		fixed = fixed.replace(/!=/g,"≠");
-		
-		//If shortcut longer than actual symbol, need to change where caret is
-		
-		if(fixed.length != value.length){
-			var offset = input.value.length - fixed.length;
-    	}
-		value = fixed;
-		e.target.setSelectionRange(selectionStart - offset, selectionEnd - offset);	
 	}
 </script>
 
@@ -152,11 +114,15 @@
 
 </style>
 
-<div class="black-80 measure mb3 cf">
+<div class="mb3 cf">
 	{#if label}
 		<label for={name} class="f6 fw5 db mb2">{@html label}</label>
 	{/if}
-	<input id={name} class="logStr input-reset br2 ba b--black-20 pa2 mb2 dib w-100" type="text" bind:value bind:this={input} on:keyup={replaceSymbol} />
+	<input id={name} class="logStr input-reset br2 ba b--black-20 pa2 mb2 dib w-100" type="text" 
+		autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+		bind:value
+		bind:this={input} 
+		on:keyup={replaceSymbol} />
 	
 	<div class="logStrInput-buttons-wrapper fl">
 		<div class="logStrInput-button" on:click={() => insertSymbol('–')}>–</div>

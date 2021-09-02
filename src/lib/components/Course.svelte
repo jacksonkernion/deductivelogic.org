@@ -1,6 +1,6 @@
 <script>
 
-  import AddProblemSet from './AddProblemSet.svelte';
+  import ProblemSetForm from './ProblemSetForm.svelte';
   import Modal from '$lib/jui-components/Modal.svelte';
   import supabase from "$lib/db";
   import {session} from "$app/stores";
@@ -46,14 +46,14 @@
   <p class="fl fw5 f5 lh-title mb2 mt3">{course.name}</p>
   {#if isAdmin}
     <div class="fr">
-      <AddProblemSet bind:defaultNumber courseId={course.id}/>
+      
     </div>
   {/if}
 </div>
 
 
-<ul class="list pl0 mh0 mt0 mb5">
-    {#if pSets.length > 0}
+{#if pSets.length > 0}
+  <ul class="list pl0 mh0 mt0">
       {#each pSets as problemSet}
           <li class="lh-copy pv2 bb b--black-10 v-mid cf">
               <div class="fl">
@@ -68,11 +68,15 @@
               {/if}
           </li>
       {/each}
-    {:else}
-      <li class="lh-copy pv2 bb b--black-10 v-mid cf black-60 bg-near-white tc"><p class="dib f6 pv2 ma0">No Problem Sets </p></li>
-    {/if}
+  </ul>
+{:else}
+  <div class="lh-copy pv2 mh0 mv3 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f6 fw5 pv2 ma0">No Problem Sets </p></div>
+{/if}
 
-</ul>
+<div class="cf">
+  <div class="fr"><ProblemSetForm bind:defaultNumber courseId={course.id}/> </div>
+</div>
+
 
 {#if modalShow}
 

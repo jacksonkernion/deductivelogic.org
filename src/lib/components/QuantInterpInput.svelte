@@ -56,7 +56,8 @@
     }
 
     function decrementDomain(){
-        interpretation.domainSize = interpretation.domainSize - 1;
+        if(interpretation.domainSize > 1)
+            interpretation.domainSize = interpretation.domainSize - 1;
     }
 
     function removeExtension(predLetter, extension){
@@ -122,10 +123,30 @@
     }
 
 
-    .domain-buttons{
+    .domain-buttons-container{
         position: absolute;
-        left: -2rem;
+        left: -3.2rem;
+        top: -.2rem;
     }
+
+    .domain-button{
+        display: inline-block;
+        color: #999;
+        border: 1px solid rgb(192, 192, 192);
+        border-radius: .25rem;
+        width: 20px;
+        font-size: 12px;
+        padding-left: 0;
+        padding-right: 0;
+        text-align: center;
+    }
+    .domain-button:hover{
+        border-color: rgba(0,0,0,.2);
+        cursor: pointer;
+        color: #333;
+        background-color: #eee;
+    }
+
     .save-message{
         color:#aaa;
         font-size:12px;
@@ -133,9 +154,9 @@
     }
 </style>
 
-<div>
-    <div class="relative ml4">
-        <span class="domain-buttons"><a on:click={decrementDomain}>–</a> <a on:click={incrementDomain}>+</a> </span>
+<div style="margin-left:3.25rem;">
+    <div class="relative ml4 mt2 mb3">
+        <span class="domain-buttons-container"><button class="domain-button" on:click={decrementDomain}>–</button> <button class="domain-button" on:click={incrementDomain}>+</button> </span>
         Universe = {domain}
     </div>
 

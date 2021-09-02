@@ -43,11 +43,15 @@
         <div class="mt3 inputWrapper relative">	
 
             {#if attr=='question' || attr=='answer' || attr=='sent'}
-                <Input label={description} name={attr} bind:value={problem[attr]} />
+                <div class="w-90">
+                    <Input label={description} name={attr} bind:value={problem[attr]} />
+                </div>
             {/if}
 
             {#if attr=='logStr' || attr=='logStr1' || attr=='logStr2'}
-                <LogStrInput label={description} bind:logStr={problem[attr]} />
+                <div class="w-90">
+                    <LogStrInput label={description} bind:logStr={problem[attr]} />
+                </div>
             {/if}
 
             {#if attr=='logStrSet' && problem.logStrSet}
@@ -56,7 +60,9 @@
                     <div class="remove-button pa2" on:click={() => removeLogStr(i)}>
                         <ion-icon name="close-outline"></ion-icon>
                     </div>
-                    <LogStrInput bind:logStr />
+                    <div class="w-90">
+                        <LogStrInput bind:logStr />
+                    </div>
                 {/each}
                 <div class="lh-copy f6 mt3">
                     <a on:click={addLogStr}>+ Add schema</a>
@@ -70,7 +76,9 @@
                     <div class="remove-button pa2" on:click={() => removeSentence(i)}>
                         <ion-icon name="close-outline"></ion-icon>
                     </div>
-                    <Input name={attr} bind:value={sent} />
+                    <div class="w-90">
+                        <Input name={attr} bind:value={sent} />
+                    </div>
                     
                 {/each}
                 <div class="lh-copy f6 mt3">
@@ -109,7 +117,7 @@
 
     {/each}
 
-    <div class="cf measure">
+    <div class="cf">
         {#if mode=='update'}
             <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" on:click>Update</button>
             <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black">Cancel</button>

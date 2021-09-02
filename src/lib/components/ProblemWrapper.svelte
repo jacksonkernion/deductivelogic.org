@@ -66,7 +66,9 @@
 
 <div class="relative pv3 w-75">
     <div class="absolute left--2"><p>{number}.</p></div>
-    <slot name="description"></slot>
+    <div class="lh-copy">
+        <slot name="description"></slot>
+    </div>
     <!-- <div class="bb b--black-10 "></div> -->
     <div class="submission-input"><slot name="submission-input"></slot></div>
     
@@ -76,13 +78,13 @@
             <!-- <div class="ph3 pv3 mt4 ba br2 b--{color} bg-washed-{color}"> -->
             <div class="fl submission-message-wrapper" in:fly={{ y: -30 }}>
                 {#if submission.verdict == 'warn'}
-                    <ion-icon name="warning" class="dib v-top gold"></ion-icon>
+                    <ion-icon name="warning" class="dib v-mid gold"></ion-icon>
                 {:else if submission.verdict == 'incorrect'}
-                    <ion-icon name="close-circle" class="dib v-top red"></ion-icon>
+                    <ion-icon name="close-circle" class="dib v-mid red"></ion-icon>
                 {:else if submission.verdict == 'correct'}
-                    <ion-icon name="checkbox" class="dib v-top green"></ion-icon>
+                    <ion-icon name="checkbox" class="dib v-mid green"></ion-icon>
                 {/if}
-                <div class="submission-message dib v-top black-70 f6">{@html submission.message}</div>
+                <div class="submission-message dib v-mid black-70 f6">{@html submission.message}</div>
             </div>
         {/key}
         <button class="f6 br1 ba ph3 pv2 black fr" on:click>Check</button>

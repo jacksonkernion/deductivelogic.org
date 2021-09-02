@@ -198,7 +198,7 @@
   
   <svelte:window on:keydown={handleKeydown}/>
 
-<div class="c-modal-context c-modal-context--visible">
+<div class="c-modal-context c-modal-context--visible black">
   <div class="c-modal-backdrop c-modal-backdrop--visible"></div>
   <div
     class="c-modal c-modal--{size}"

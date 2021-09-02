@@ -23,7 +23,6 @@
 	"dependencies": {
 		"@supabase/supabase-js": "^1.21.1",
 		"cookie": "^0.4.1",
-		"mongodb": "^3.6.9",
 		"svelte-preprocess": "^4.7.4"
 	}
 }

@@ -177,7 +177,7 @@
         <p>Paraphrase the following natural language sentences and then determine any implications that hold between them.</p>
         {#each sentSet as sent, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> <span class="serif">{sent}</span>
+                <span class="description-line-marker">{i+1}.</span> {sent}
             </div>
         {/each}
     </div>

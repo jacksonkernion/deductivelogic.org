@@ -155,16 +155,15 @@
         </div>
     </div>
 
-    <div class="mw7 center ph4 pt4 pb2">
-        <div class="lh-title f3 fw5 pt3 pb2">{problemSet.name}</div>
-    </div>
-
 </div>
 
-
-
 <div class="mw7 center pa4">
-    <ul class="list pl0"> 
+    <div class="lh-title f3 fw4">{problemSet.name}</div>
+</div>
+
+<div class="mw7 center ph4 pb2">
+    <div class="divider w-75"></div>
+    <ul class="list pl0 ma0"> 
         {#if problems.length > 0}
             {#each problems as problem}
                 <svelte:component this={problem.component} {...problem}/>
@@ -174,21 +173,25 @@
         {/if}
     </ul>
 
-    <h3 class="f5 fw5 mt4">Add Problem</h3>
+    {#if isAdmin}
+    <div class="w-75">
+        <h3 class="f5 fw5 mt4">Add Problem</h3>
 
-    <div class="black-80 measure">
-        <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
-        <!-- svelte-ignore a11y-no-onchange -->
-        <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
-            <option value="none"></option>
-            {#each Object.entries(problemTypes) as [shorthand, prob]}
-                <option value="{shorthand}">{prob.description}</option> 
-            {/each}
-        </select>
+        <div class="">
+            <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
+            <!-- svelte-ignore a11y-no-onchange -->
+            <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
+                <option value="none"></option>
+                {#each Object.entries(problemTypes) as [shorthand, prob]}
+                    <option value="{shorthand}">{prob.description}</option> 
+                {/each}
+            </select>
+        </div>
+
+        {#if newProblem.type!='none'}
+            <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
+        {/if}
     </div>
-
-    {#if newProblem.type!='none'}
-        <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
     {/if}
 
 </div>

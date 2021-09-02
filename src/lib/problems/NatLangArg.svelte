@@ -150,11 +150,11 @@
         <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
         {#each sentSet as sentence, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> <span class="serif">{sentence}</span>
+                <span class="description-line-marker">{i+1}.</span> {sentence}
             </div>
         {/each}
         <div class="description-line">
-            <span class="description-line-marker">C.</span> <span class="serif">{conclusionSent}</span>
+            <span class="description-line-marker">C.</span> {conclusionSent}
         </div>
     </div>
 	

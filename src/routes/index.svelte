@@ -72,7 +72,7 @@
     import Welcome from "$lib/Welcome.svelte"
     import Auth from "$lib/components/Auth.svelte";
     import Course from "$lib/components/Course.svelte";
-    import CreateCourse from "$lib/components/AddCourse.svelte";
+    import CourseForm from "$lib/components/CourseForm.svelte";
 
 //import { courses, problemSets } from "$lib/stores";
 
@@ -180,8 +180,19 @@ populateDB(pSets);
     {:else}
         <div class="lh-copy pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f4 fw4 pv2 ma0">No Enrolled Courses</p></div>
     {/if}
-    <CreateCourse />
     
+    
+</div>
+
+<div class="footer bg-near-white">
+    <div class="cf pv2 mw7 pa4 center f6 light-silver h2">
+        <div class="fl">
+            <p></p>
+        </div>
+        <div class="fr pv2">
+            Course Instructor? <CourseForm />
+        </div>
+    </div>
 </div>
 
 {/if}
