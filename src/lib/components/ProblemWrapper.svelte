@@ -65,7 +65,7 @@
 </style>
 
 <div class="relative pv3 w-75">
-    <div class="absolute left--2"><p>{number}.</p></div>
+    <div class="absolute left--2 lh-copy"><p>{number}.</p></div>
     <div class="lh-copy">
         <slot name="description"></slot>
     </div>
