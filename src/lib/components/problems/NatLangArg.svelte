@@ -1,9 +1,9 @@
 <script>
-    import LogStrInput from '$lib/components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
     import {validity, parseLogStr, getLetterVars} from '$lib/logic.js';
-    import {findChars, permutator} from '$lib/helpers.js';
+    import {findChars, permutator} from '$lib/utils';
 
     export let logStr;
     export let sent;

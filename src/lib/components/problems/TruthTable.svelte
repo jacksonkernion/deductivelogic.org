@@ -1,9 +1,9 @@
 <script>
-    import TruthTableInput from '$lib/components/TruthTableInput.svelte';
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import TruthTableInput from '$lib/components/problems/sub-components/TruthTableInput.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     
     import {getLetterVars, parseLogStr, tVal} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/helpers.js';
+    import {dispLogStr} from '$lib/utils';
 
     export let logStr = '';
     export let number = '';

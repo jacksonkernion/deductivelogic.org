@@ -1,24 +1,24 @@
 <script>
 
-    import Auth from "$lib/components/Auth.svelte";
+    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
     import supabase from '$lib/db';
 
-    import MultipleChoice from '$lib/problems/MultipleChoice.svelte';
-	import Paraphrase from '$lib/problems/Paraphrase.svelte';
-	import TruthTable from '$lib/problems/TruthTable.svelte';
-	import Implication from '$lib/problems/Implication.svelte';
-	import ImplicationSet from '$lib/problems/ImplicationSet.svelte';
-	import Equivalence from '$lib/problems/Equivalence.svelte';
-	import EquivalenceSet from '$lib/problems/EquivalenceSet.svelte';
-	import Validity from '$lib/problems/Validity.svelte';
-	import DisjNormForm from '$lib/problems/DisjNormForm.svelte';
-	import NatLangImpSet from '$lib/problems/NatLangImpSet.svelte';
-	import NatLangArg from '$lib/problems/NatLangArg.svelte';
-    import QuantParaphrase from '$lib/problems/QuantParaphrase.svelte';
-    import QuantInterp from '$lib/problems/QuantInterp.svelte';
+    import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
+	import Paraphrase from '$lib/components/problems/Paraphrase.svelte';
+	import TruthTable from '$lib/components/problems/TruthTable.svelte';
+	import Implication from '$lib/components/problems/Implication.svelte';
+	import ImplicationSet from '$lib/components/problems/ImplicationSet.svelte';
+	import Equivalence from '$lib/components/problems/Equivalence.svelte';
+	import EquivalenceSet from '$lib/components/problems/EquivalenceSet.svelte';
+	import Validity from '$lib/components/problems/Validity.svelte';
+	import DisjNormForm from '$lib/components/problems/DisjNormForm.svelte';
+	import NatLangImpSet from '$lib/components/problems/NatLangImpSet.svelte';
+	import NatLangArg from '$lib/components/problems/NatLangArg.svelte';
+    import QuantParaphrase from '$lib/components/problems/QuantParaphrase.svelte';
+    import QuantInterp from '$lib/components/problems/QuantInterp.svelte';
 
     import ProblemForm from '$lib/components/ProblemForm.svelte';
-    import {problemTypes} from '$lib/problemTypes.js';
+    import {problemTypes} from '$lib/constants.js';
 
     export let user;
 
@@ -187,7 +187,7 @@
     <div class="cf mw7 center ph4">
         <div class="ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid">deductivelogic.org</div>
         <div class="fr dib v-mid">
-            <Auth {user} />     
+            <AuthModal {user} />     
         </div>
     </div>
 

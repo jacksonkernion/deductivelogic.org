@@ -1,6 +1,6 @@
 <script>
-    import {problemTypes} from '$lib/problemTypes.js';
-    import LogStrInput from '$lib/components/LogStrInput.svelte';
+    import {problemTypes} from '$lib/constants.js';
+    import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
     import Input from '$lib/components/Input.svelte';
 
     export let problem;

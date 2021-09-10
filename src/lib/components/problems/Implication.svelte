@@ -1,11 +1,11 @@
 <script>
 
-    import TruthAssignmentInput from '$lib/components/TruthAssignmentInput.svelte';
-    import HiddenTruthTable from '$lib/components/HiddenTruthTable.svelte';
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import TruthAssignmentInput from '$lib/components/problems/sub-components/TruthAssignmentInput.svelte';
+    import HiddenTruthTable from '$lib/components/problems/sub-components/HiddenTruthTable.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
     import {tVal, validity, parseLogStr, getLetterVars} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/helpers.js';
+    import {dispLogStr} from '$lib/utils';
 
     export let logStr1 = '';
     export let logStr2 = '';

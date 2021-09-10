@@ -1,8 +1,8 @@
 <script>
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
     import {validity} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/helpers.js';
+    import {dispLogStr} from '$lib/utils';
 
     export let number = '';
     export let logStr = '';

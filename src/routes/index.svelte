@@ -70,19 +70,17 @@
 <script>
 
     import Welcome from "$lib/Welcome.svelte"
-    import Auth from "$lib/components/Auth.svelte";
+    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
     import Course from "$lib/components/Course.svelte";
-    import CourseForm from "$lib/components/CourseForm.svelte";
-
-//import { courses, problemSets } from "$lib/stores";
-
-    // import {problemSets} from '$lib/problemSets.js';
+    import CourseModal from "$lib/components/modal-forms/CourseModal.svelte";
 
     export let user;
     
     //let course = {name: null, slug: null};
 
-/*
+/* Script used for importing json problemSet data to supabase DB
+
+
     import {pSets} from '$lib/problemSets.js';
 
     pSets = pSets.map((problemSet) => {
@@ -110,44 +108,44 @@
  
     });
 
-async function populateDB (pSets){
-    for (pSet of pSets) {
-        try {
-            let pSetId;
+    async function populateDB (pSets){
+        for (pSet of pSets) {
+            try {
+                let pSetId;
 
-            const res1 = await supabase
-                .from('problemSets')
-                .upsert([
-                    {
-                        number: pSet.number,
-                        name: pSet.name,
-                        published: pSet.published,
-                        course_id: pSet.course_id
-                    }
-                ]);
-            if (res1.error) throw res1.error;
-            if (res1.data){
-                pSetId = res1.data[0].id;
+                const res1 = await supabase
+                    .from('problemSets')
+                    .upsert([
+                        {
+                            number: pSet.number,
+                            name: pSet.name,
+                            published: pSet.published,
+                            course_id: pSet.course_id
+                        }
+                    ]);
+                if (res1.error) throw res1.error;
+                if (res1.data){
+                    pSetId = res1.data[0].id;
+                }
+
+                pSet.problems = pSet.problems.map((problem) => {
+                    problem.problemSet_id = pSetId;
+                    return problem;
+                });
+
+                const res2 = await supabase
+                    .from('problems')
+                    .upsert(pSet.problems);
+                if (res2.error) throw res2.error;
+
+            } catch (error) {
+                console.log(error.error_description || error.message);
             }
-
-            pSet.problems = pSet.problems.map((problem) => {
-                problem.problemSet_id = pSetId;
-                return problem;
-            });
-
-            const res2 = await supabase
-                .from('problems')
-                .upsert(pSet.problems);
-            if (res2.error) throw res2.error;
-
-        } catch (error) {
-            console.log(error.error_description || error.message);
         }
-    }
-    console.log('success?');
-};
+        console.log('success?');
+    };
 
-populateDB(pSets);
+    populateDB(pSets);
 
 */
 
@@ -165,7 +163,7 @@ populateDB(pSets);
     <div class="cf mw7 center ph4">
         <div class="ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid">deductivelogic.org</div>
         <div class="fr dib v-mid">
-            <Auth {user} />     
+            <AuthModal {user} />     
         </div>
     </div>
 
@@ -190,7 +188,7 @@ populateDB(pSets);
             <p></p>
         </div>
         <div class="fr pv2">
-            Course Instructor? <CourseForm />
+            Course Instructor? <CourseModal />
         </div>
     </div>
 </div>

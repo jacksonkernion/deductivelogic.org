@@ -1,5 +1,5 @@
 <script>
-	import {unfancyLogStr} from '$lib/helpers.js';
+	import {unfancyLogStr} from '$lib/utils';
 	import {symbols} from '$lib/stores';
 
 	export let logStr = '';

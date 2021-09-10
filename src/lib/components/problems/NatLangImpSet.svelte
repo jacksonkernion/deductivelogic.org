@@ -1,21 +1,19 @@
 <script>
     
-    import LogStrInput from '$lib/components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
-    import {permutator, findChars} from '$lib/helpers.js';
+    import {permutator, findChars} from '$lib/utils';
 	import {validity, getLetterVars} from '$lib/logic.js';
     
     export let number = '';
     export let sentSet = [];
     export let logStrSet = [];
-
-    let submission;
-    
     export let studentLogStrSet = [];
     export let answersArr = [[1,1]];
+
     $: correctImpArr = getCorrectImpArr(logStrSet);
-    // let correctImpArr = getCorrectImpArr(logStrSet);
+    let submission;
 
     function getCorrectImpArr(logStrSetArr){
         let correctArr = [];

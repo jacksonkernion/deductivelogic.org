@@ -5,9 +5,6 @@
     import Input from '$lib/components/Input.svelte';
     import Modal from '$lib/jui-components/Modal.svelte';
 
-    let modalShow;
-    
-
     export let defaultNumber = 1;
     export let courseId;
     export let problemSet = {
@@ -18,6 +15,8 @@
         published: true,
         course_id: courseId
     };
+
+    let modalShow;
     
     async function upsertProblemSet() {
         try {

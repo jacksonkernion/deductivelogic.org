@@ -1,9 +1,9 @@
 <script>
-    import QuantInterpInput from '$lib/components/QuantInterpInput.svelte';
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+    import QuantInterpInput from '$lib/components/problems/sub-components/QuantInterpInput.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     
     import {tVal, parseLogStr, getQuantPreds} from '$lib/logic.js';
-    import {dispLogStr} from '$lib/helpers.js';
+    import {dispLogStr} from '$lib/utils';
     
     export let logStr = '';
     export let number = '';

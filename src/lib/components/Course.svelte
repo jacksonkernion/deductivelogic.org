@@ -1,6 +1,6 @@
 <script>
 
-  import ProblemSetForm from './ProblemSetForm.svelte';
+  import ProblemSetModal from '$lib/components/modal-forms/ProblemSetModal.svelte';
   import Modal from '$lib/jui-components/Modal.svelte';
   import supabase from "$lib/db";
   import {session} from "$app/stores";
@@ -74,7 +74,7 @@
 {/if}
 
 <div class="cf">
-  <div class="fr"><ProblemSetForm bind:defaultNumber courseId={course.id}/> </div>
+  <div class="fr"><ProblemSetModal bind:defaultNumber courseId={course.id}/> </div>
 </div>
 
 

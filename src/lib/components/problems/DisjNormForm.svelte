@@ -1,10 +1,10 @@
 <script>
 
-	import LogStrInput from '$lib/components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
+	import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
     import {tVal, parseLogStr, getLetterVars} from '$lib/logic.js';
-	import {dispLogStr} from '$lib/helpers.js';
+	import {dispLogStr} from '$lib/utils';
 
     export let number = '';
     export let logStr = '';

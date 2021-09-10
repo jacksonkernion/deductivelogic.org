@@ -1,19 +1,15 @@
 <script>
-    //import {user} from "$lib/sessionStore"
     import supabase from "$lib/db";
-
-    import {slugify} from "$lib/helpers.js";
-
-    import Input from '$lib/components/Input.svelte';
-
-    import Modal from '$lib/jui-components/Modal.svelte';
-    import { courses, problemSets } from "$lib/stores";
+    import {slugify} from "$lib/utils";
+    import { courses } from "$lib/stores";
     import { session } from "$app/stores";
 
-    let modalShow;
-
+    import Input from '$lib/components/Input.svelte';
+    import Modal from '$lib/jui-components/Modal.svelte';
+    
     export let course = {name: null, slug: null};
-  
+
+    let modalShow;
     let loading = false;
 
     async function upsertCourse(){

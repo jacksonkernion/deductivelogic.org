@@ -7,11 +7,12 @@
 <script>
     //import {user} from "$lib/sessionStore"
     import supabase from "$lib/db"
-    import Auth from "$lib/components/Auth.svelte"
+    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte"
+    import Modal from '$lib/jui-components/Modal.svelte';
 
     export let courseSlug = '';
 
-    import Modal from '$lib/jui-components/Modal.svelte';
+    
 </script>
 
 <div class="bg-washed-green bb b--green bw1">

@@ -1,6 +1,6 @@
 <script>
     import {getLetterVars} from '$lib/logic.js';
-    import TruthTableInput from '$lib/components/TruthTableInput.svelte';
+    import TruthTableInput from '$lib/components/problems/sub-components/TruthTableInput.svelte';
 
     export let logStr;
 

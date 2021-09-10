@@ -1,6 +1,6 @@
 <script>
-    import ProblemWrapper from '$lib/components/ProblemWrapper.svelte';
-    import {shuffle} from '$lib/helpers.js';
+    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
+    import {shuffle} from '$lib/utils';
 
     export let number = '';
     export let question = '';
