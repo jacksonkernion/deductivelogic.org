@@ -6,11 +6,11 @@
     import {permutator, findChars} from '$lib/utils';
 	import {validity, getLetterVars} from '$lib/logic.js';
     
-    export let number = '';
-    export let sentSet = [];
-    export let logStrSet = [];
-    export let studentLogStrSet = [];
-    export let answersArr = [[1,1]];
+    export let problem, number, isAdmin;
+    let sentSet = problem.sentSet;
+    let logStrSet = problem.logStrSet;
+    let studentLogStrSet = [];
+    let answersArr = [[1,1]];
 
     $: correctImpArr = getCorrectImpArr(logStrSet);
     let submission;
@@ -170,7 +170,7 @@
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Paraphrase the following natural language sentences and then determine any implications that hold between them.</p>
         {#each sentSet as sent, i}

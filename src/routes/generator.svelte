@@ -98,8 +98,8 @@
 <div class="mw7 center pa4">
 
     <ul class="list pl0"> 
-        {#each problems as problem}
-            <svelte:component this={problem.component} {...problem}/>
+        {#each problems as problem, i}
+            <svelte:component this={problem.component} {problem} number={i+1} isAdmin={true}/>
         {/each}
     </ul>
 
@@ -115,7 +115,10 @@
     </div>
 
     {#if newProblem.type!='none'}
-        <ProblemForm bind:problem={newProblem} mode='generate' on:click={createProblem}/>
+        <form on:submit|preventDefault={createProblem}>
+            <ProblemForm bind:problem={newProblem}/>
+            <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit">Add Problem</button>
+        </form>
     {/if}
 </div>
 

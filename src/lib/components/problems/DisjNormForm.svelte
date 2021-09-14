@@ -5,9 +5,10 @@
 
     import {tVal, parseLogStr, getLetterVars} from '$lib/logic.js';
 	import {dispLogStr} from '$lib/utils';
+	import {connectives} from '$lib/stores';
 
-    export let number = '';
-    export let logStr = '';
+	export let number, isAdmin;
+	export let problem;
 
     let studentLogStr = '';
 	
@@ -49,7 +50,7 @@
 		var studentLogStrs = studentLogStr.split('|');
 		var studentArr = [];
 		
-		var letterVars = getLetterVars(logStr);
+		var letterVars = getLetterVars(problem.logStr);
 		
 		for(var subLogStr of studentLogStrs){
 			logProp = parseLogStr(subLogStr);
@@ -77,7 +78,7 @@
 		
 		var correctArr = [];
 		
-		var logProp = parseLogStr(logStr);
+		var logProp = parseLogStr(problem.logStr);
 		
 		//as if for each row in a truth table
 		for(var i=0; i < Math.pow(2, letterVars.length); i++){
@@ -116,10 +117,10 @@
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Transform the following schema into disjunctive normal form:</p>
-        <div class="description-line logStr">{dispLogStr(logStr)}</div>
+        <div class="description-line logStr">{dispLogStr(problem.logStr, $connectives)}</div>
     </div>
 	<div slot="submission-input" class="submission-input-line">
         <LogStrInput bind:logStr={studentLogStr} />

@@ -1,5 +1,6 @@
 <script context="module">
     import supabase from "$lib/db";
+    import { submissions, problems, connectives} from '$lib/stores.js';
 
     export async function load({page, session }) {
 
@@ -13,7 +14,9 @@
 
         if(!res1.error){
 
-            const course = res1.data;
+            let course = res1.data;
+            connectives.set(course.connectives);
+            
             const res2 = await supabase
                 .from('problemSets')
                 .select()
@@ -25,16 +28,29 @@
                 const res3 = await supabase
                     .from('problems')
                     .select()
-                    .eq('problemSet_id', problemSet.id)
-                    .order('number', {ascending: true});
+                    .eq('problemSet_id', problemSet.id);
                 if(!res3.error){
-                    let problems = res3.data;
+                    problems.set(res3.data.sort((a, b) => {return problemSet.problemsOrder.indexOf(a.id) - problemSet.problemsOrder.indexOf(b.id)}));
+
+                    //get and set submissions only if user is logged in
+                    // And only get correct ones to show. Incorrect submissions will just reset.
+                    if(!user.guest){
+                        let problem_ids = problemSet.problemsOrder;
+                        const res4 = await supabase
+                            .from('submissions')
+                            .select()
+                            .match({user_id: user.id, verdict: 'correct'})
+                            .in('problem_id', problem_ids);
+                        if(!res4.error){
+                            submissions.set(res4.data);
+                        }
+                    }
+
                     return {
                         props: {
                             user,
                             course,
-                            problemSet,
-                            problems
+                            problemSet
                         }
                     };
                 }
@@ -43,7 +59,7 @@
         
         return {
             status: 404,
-            error: new Error('No problem set matches this URL.')
+            error: new Error('No problem sets match this URL.')
         };
          
     }
@@ -71,11 +87,10 @@
     export let user;
     export let course;
     export let problemSet = {};
-    export let problems = [];
 
     let isAdmin = course.admins.includes(user.id) ? true : false;
 
-    $: problems = problems.map((problem) => {
+    $: $problems = $problems.map((problem) => {
         if(problem.type === 'multipleChoice')
             problem.component = MultipleChoice;
         else if(problem.type === 'paraphrase')
@@ -107,7 +122,6 @@
     });
 
     let newProblem = {
-        number: problems.length + 1,
         type: 'none'
     };
 
@@ -127,29 +141,40 @@
 
             const { data, error } = await supabase
                 .from('problems')
-                .upsert([newProblem]);
+                .upsert(newProblem);
                 
             if (error) throw error;
             if (data){
-                problems = [...problems, ...data];
+                $problems = [...$problems, ...data];
+                problemSet.problemsOrder = [...problemSet.problemsOrder, data[0].id];
                 newProblem = {
-                    number: newProblem.number + 1,
                     type: 'none'
                 };
             }
+
+            console.log(problemSet.problemsOrder);
+
+            const res2 = await supabase
+                .from('problemSets')
+                .update({'problemsOrder': problemSet.problemsOrder})
+                .eq('id', problemSet.id);
+            if (res2.error) throw res2.error;
+
+            console.log(res2);
 
         } catch (error) {
             alert(error.error_description || error.message);
         }
     }
    
-	
+	console.log($connectives);
+    console.log(course);
 </script> 
 
 <div class="bg-near-white bb b--black-10">
 
     <div class="cf mw7 center ph4">
-        <div class="ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid">deductivelogic.org</div>
+        <a class="logo ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid" href="/">deductivelogic.org</a>
         <div class="fr dib v-mid">
             <AuthModal {user} />     
         </div>
@@ -164,9 +189,9 @@
 <div class="mw7 center ph4 pb2">
     <div class="divider w-75"></div>
     <ul class="list pl0 ma0"> 
-        {#if problems.length > 0}
-            {#each problems as problem}
-                <svelte:component this={problem.component} {...problem}/>
+        {#if $problems.length > 0}
+            {#each $problems as problem, i (problem.id)}
+                <svelte:component this={problem.component} {problem} number={i+1} {isAdmin}/>
             {/each}
         {:else}
             <li class="lh-copy w-75 mt3 pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f4 fw4 pv2 ma0">No Problems</p></li>
@@ -189,7 +214,10 @@
         </div>
 
         {#if newProblem.type!='none'}
-            <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
+            <form on:submit|preventDefault={createProblem}>
+                <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
+                <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit">Add Problem</button>
+            </form>
         {/if}
     </div>
     {/if}

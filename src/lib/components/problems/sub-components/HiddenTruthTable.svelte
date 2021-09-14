@@ -40,7 +40,7 @@
 
 
 <div class="show_t_table_wrapper br1 tc">
-    <a class="show_t_table" on:click={toggleTruthTable}>{showTruthTable ? 'Hide' : 'Show'} Truth Table</a>
+    <a class="f6 show_t_table" on:click={toggleTruthTable}>{showTruthTable ? 'Hide' : 'Show'} Truth Table</a>
     
     <div hidden={!showTruthTable}>
         <TruthTableInput bind:tTableData={tTableData} />

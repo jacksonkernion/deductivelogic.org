@@ -12,7 +12,7 @@
         number: defaultNumber,
         description: null,
         dueDate: null,
-        published: true,
+        published: false,
         course_id: courseId
     };
 
@@ -34,7 +34,7 @@
                     number: defaultNumber,
                     description: null,
                     dueDate: null,
-                    published: true,
+                    published: false,
                     course_id: courseId
                 };
             }

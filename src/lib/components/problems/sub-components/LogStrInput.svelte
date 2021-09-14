@@ -1,15 +1,25 @@
 <script>
-	import {unfancyLogStr} from '$lib/utils';
-	import {symbols} from '$lib/stores';
+	import {unfancyLogStr, dispLogStr, escapeRegExp} from '$lib/utils';
+	import {connectives} from '$lib/stores';
 
 	export let logStr = '';
     export let label = null;
     export let name = null;
 
-	let value = '';
 	let input;
 
-	$: logStr = unfancyLogStr(value);
+	/* Problem: 'shift' mixed with "<", ">", or any chosen shortcut mucks this up
+	const endingChars = [
+			'A',
+			'E',
+			'=',
+			$connectives.andShortcuts.slice(-1),
+			$connectives.orShortcuts.slice(-1),
+			$connectives.notShortcuts.slice(-1),
+			$connectives.conditionalShortcuts.slice(-1),
+			$connectives.biconditionalShortcuts.slice(-1),
+		];
+	*/
 
 	function insertSymbol(symbol) {
 		var selectionStart = input.selectionStart;
@@ -21,56 +31,43 @@
 		
 	}
 
-	function replaceSymbol(e) {
-		
-		// Fix later: check for ending char in any of $symbols keyboard shortcuts
-		if(e.key == '-' || e.key == 'v' || e.key == '>'  || e.key == 'A' || e.key == 'E' ){
-		
-			var selectionStart = e.target.selectionStart;
-			var selectionEnd = e.target.selectionEnd;
-			var offset = 0;
-			var initialLength = value.length;
+	function replaceSymbols() {
+
+		if(input){
+
+			let str = input.value;
+			let selectionStart = input.selectionStart;
+			let selectionEnd = input.selectionEnd;
+			let offset = 0;
+			let initialLength = str.length;
 			
-			var fixed = '';
-			// var regex = new RegExp(biconditional.shortcut, "g");
-			var regex = new RegExp('<>', "g");
-			// var fixed = value.replace(regex, biconditional.symbol);
-			var fixed = value.replace(regex, '≡');
-			// regex = new RegExp(conditional.shortcut, "g");
-			regex = new RegExp('>', "g");
-			// fixed = fixed.replace(regex, conditional.symbol);
-			fixed = fixed.replace(regex, '⊃'); 
+			let fixed = '';
+			let regex = new RegExp(escapeRegExp($connectives.biconditionalShortcuts), "g");
+			fixed = str.replace(regex, $connectives.biconditionalSymbol);
+			regex = new RegExp(escapeRegExp($connectives.conditionalShortcuts), "g");
+			fixed = fixed.replace(regex, $connectives.conditionalSymbol);
+			regex = new RegExp(escapeRegExp($connectives.andShortcuts), "g");
+			fixed = fixed.replace(regex, $connectives.andSymbol);
+			regex = new RegExp(escapeRegExp($connectives.orShortcuts), "g");
+			fixed = fixed.replace(regex, $connectives.orSymbol);
+			regex = new RegExp(escapeRegExp($connectives.notShortcuts), "g");
+			fixed = fixed.replace(regex, $connectives.notSymbol);
 			fixed = fixed.replace(/A/g,"\u2200");
 			fixed = fixed.replace(/E/g,"\u2203");
-			// fixed= fixed.replace("^","\u2227"); [from emer17.js, not sure?]
-			// regex = new RegExp(or.shortcut, "g");
-			// regex = new RegExp('|', "g");
-			// fixed= fixed.replace(regex, or.symbol);
-			fixed = fixed.replace(/v/g, '∨');
-			// regex = new RegExp(not.shortcut, "g");
-			regex = new RegExp('-', "g");
-			// fixed= fixed.replace(/-/g, not.symbol);
-			fixed = fixed.replace(/-/g, '–');
-			/*
-			if(and.shortcut == '.'){
-				fixed= fixed.replace(/\./g,and.symbol);
-			}
-			else if(and.shortcut == '^'){
-				fixed= fixed.replace(/\^/g,and.symbol);
-			}
-			else{
-				regex = new RegExp(and.shortcut, "g");
-				fixed= fixed.replace(regex,and.symbol);
-			} */
 			fixed = fixed.replace(/!=/g,"≠");
-			
-			//If shortcut is longer than actual symbol (Ex: '<>' for '≡'), need to change where caret is
-			if(fixed.length != initialLength){
-				var offset = initialLength - fixed.length;
+
+			if(fixed != str){
+				//If shortcut is longer than actual symbol (Ex: '<>' for '≡'), need to change where caret is
+				if(fixed.length != initialLength){
+					offset = initialLength - fixed.length;
+				}
+				input.value = fixed;
+				input.focus();
+				input.setSelectionRange(selectionStart - offset, selectionEnd - offset);
+
+				logStr = unfancyLogStr(fixed, $connectives);
 			}
-			e.target.value = fixed;
-			e.target.focus();
-			e.target.setSelectionRange(selectionStart - offset, selectionEnd - offset);
+
 		}
 	}
 </script>
@@ -120,16 +117,16 @@
 	{/if}
 	<input id={name} class="logStr input-reset br2 ba b--black-20 pa2 mb2 dib w-100" type="text" 
 		autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-		bind:value
+		value={dispLogStr(logStr, $connectives)}
 		bind:this={input} 
-		on:keyup={replaceSymbol} />
+		on:input={replaceSymbols} />
 	
 	<div class="logStrInput-buttons-wrapper fl">
-		<div class="logStrInput-button" on:click={() => insertSymbol('–')}>–</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('.')}>.</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('∨')}>∨</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('⊃')}>⊃</div>
-		<div class="logStrInput-button" on:click={() => insertSymbol('≡')}>≡</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol($connectives.notSymbol)}>{$connectives.notSymbol}</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol($connectives.andSymbol)}>{$connectives.andSymbol}</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol($connectives.orSymbol)}>{$connectives.orSymbol}</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol($connectives.conditionalSymbol)}>{$connectives.conditionalSymbol}</div>
+		<div class="logStrInput-button" on:click={() => insertSymbol($connectives.biconditionalSymbol)}>{$connectives.biconditionalSymbol}</div>
 		<div class="logStrInput-button" on:click={() => insertSymbol('∀')}>∀</div>
 		<div class="logStrInput-button" style="margin-right:0px;" on:click={() => insertSymbol('∃')}>∃</div>
 	</div>

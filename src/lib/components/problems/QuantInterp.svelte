@@ -4,10 +4,11 @@
     
     import {tVal, parseLogStr, getQuantPreds} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
     
-    export let logStr = '';
-    export let number = '';
-    export let sentSet = [];
+    export let problem, number, isAdmin;
+    let logStr = problem.logStr;
+    let sentSet = problem.sentSet;
 
     let interpretations = {true: {domainSize:1}, false: {domainSize:1}};
     let quantPreds = getQuantPreds(logStr);
@@ -35,10 +36,10 @@
 </script>
 
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Specify an interpretation that makes the following schema {#if sentSet.includes('true')}true{/if}{#if sentSet.includes('true') && sentSet.includes('false')}, and an intrepretation that makes it {/if}{#if sentSet.includes('false')}false{/if}:</p>
-        <div class="description-line logStr">{dispLogStr(logStr)}</div>
+        <div class="description-line logStr">{dispLogStr(logStr, $connectives)}</div>
     </div>
 	
     <div slot="submission-input" >

@@ -5,11 +5,11 @@
     
     import {parseLogStr, getLetterVars, validity} from '$lib/logic.js';
     import {dispLogStr, findChars, permutator} from '$lib/utils';
+    import {connectives} from '$lib/stores';
 
-    
-    export let sent = '';
-    export let logStr = '';
-    export let number = '';
+    export let problem, number, isAdmin;
+    let sent = problem.sent;
+    let logStr = problem.logStr;
 
     let studentLogStr = '';
     let submission;
@@ -17,7 +17,7 @@
     function checkSubmission(){
 
         if(!parseLogStr(studentLogStr))
-            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr));
+            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr, $connectives));
 		
 		var correctVars = getLetterVars(logStr);
 		var studentVars = getLetterVars(studentLogStr);
@@ -55,7 +55,7 @@
 </script>
 
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
         <p class="description-line">{sent}</p>

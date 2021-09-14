@@ -1,11 +1,11 @@
 <script context="module">
 
     import supabase from "$lib/db";
-    import { courses, problemSets } from '$lib/stores.js';
+    import { courses, problemSets} from '$lib/stores.js';
     
     export async function load({ session }) {
         const { user } = session;
-        if(user.guest){
+        if(user.guest || !user.courses){
             return {
                 props: {
                     user
@@ -21,14 +21,36 @@
                 const res1 = await supabase
                     .from('courses')
                     .select()
-                    .or(coursesQueryStr);
-                courses.set(res1.data);
+                    .or(coursesQueryStr)
+                    .order('name', {ascending: true});
+                
+                let coursesList = [];
+
+                //If a course admin, populate userProfiles, for course management
+                for(let course of res1.data){
+                    if(course.admins.includes(user.id)){
+                        const { data, error } = await supabase
+                            .from('profiles')
+                            .select()
+                            .in('id', course.users)
+                            .order('lastName');
+                        if (data){
+                            course.userProfiles = data;
+                        } else {
+                            //throw new Error(error);
+                        }
+                    }
+                    coursesList.push(course);
+                }
+
+                courses.set(coursesList);
 
                 const res2 = await supabase
                     .from('problemSets')
                     .select()
                     .or(pSetsQueryStr);
                 problemSets.set(res2.data);
+
             }
 
             return {
@@ -73,6 +95,7 @@
     import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
     import Course from "$lib/components/Course.svelte";
     import CourseModal from "$lib/components/modal-forms/CourseModal.svelte";
+    import Button from "$lib/components/atoms/Button.svelte"
 
     export let user;
     
@@ -161,7 +184,7 @@
 <div class="bg-near-white bb b--black-10">
 
     <div class="cf mw7 center ph4">
-        <div class="ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid">deductivelogic.org</div>
+        <a class="logo ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid" href="/">deductivelogic.org</a>
         <div class="fr dib v-mid">
             <AuthModal {user} />     
         </div>
@@ -173,10 +196,17 @@
 
     {#if $courses.length > 0 }
         {#each $courses as course}
-            <Course {course} pSets={$problemSets.filter(pSet => pSet.course_id == course.id)}/>
+            <Course
+                {user}
+                {course}
+                pSets={$problemSets.filter(pSet => pSet.course_id == course.id).sort((a, b) => {return a.number - b.number})}
+            />
         {/each}
     {:else}
-        <div class="lh-copy pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f4 fw4 pv2 ma0">No Enrolled Courses</p></div>
+        <div class="lh-copy pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc">
+            <p class="dib f4 fw4 pv2 mh0 mt0 mb3">No Joined Courses</p><br/>
+            <a class="f6" href="/browse">Browse Courses</a>
+        </div>
     {/if}
     
     

@@ -2,10 +2,10 @@
     import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     import {shuffle} from '$lib/utils';
 
-    export let number = '';
-    export let question = '';
-    export let sentSet = [];
-    export let answer = '';
+    export let problem, number, isAdmin;
+    let question = problem.question;
+    let sentSet = problem.sentSet;
+    let answer = problem.answer;
 
     let studentAnswer = '';
 
@@ -24,7 +24,7 @@
 </script>
 
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>{question}</p>
     </div>

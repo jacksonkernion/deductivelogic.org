@@ -6,10 +6,13 @@
 
     import {tVal, validity, parseLogStr, getLetterVars} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
 
-    export let logStr1 = '';
-    export let logStr2 = '';
-    export let number = '';
+    export let number, isAdmin;
+    export let problem;
+
+    let logStr1 = problem.logStr1;
+    let logStr2 = problem.logStr2;
 
     let letterVars = getLetterVars(logStr1+' <> '+logStr2);
     let submission;
@@ -56,11 +59,11 @@
 </script>
 
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Determine whether schema (1) and schema (2) are equivalent:</p>
-        <div class="description-line"><span class="description-line-marker">1.</span> <span class="logStr">{dispLogStr(logStr1)}</span></div>
-        <div class="description-line"><span class="description-line-marker">2.</span> <span class="logStr">{dispLogStr(logStr2)}</span></div>
+        <div class="description-line"><span class="description-line-marker">1.</span> <span class="logStr">{dispLogStr(logStr1, $connectives)}</span></div>
+        <div class="description-line"><span class="description-line-marker">2.</span> <span class="logStr">{dispLogStr(logStr2, $connectives)}</span></div>
         <p>If equivalence fails to hold, provide an interpretation that witnesses this fact.</p>
     </div>
 	

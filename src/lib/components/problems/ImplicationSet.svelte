@@ -3,9 +3,10 @@
 
     import {validity} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
 
-    export let number = '';
-    export let logStrSet = [];
+    export let problem, number, isAdmin;
+    let logStrSet = problem.logStrSet;
 
     let submission;
     
@@ -81,12 +82,12 @@
 	
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Determine the implications that hold among the following set of schemata:</p>
         {#each logStrSet as logStr, i}
             <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> <span class="logStr">{dispLogStr(logStr)}</span>
+                <span class="description-line-marker">{i+1}.</span> <span class="logStr">{dispLogStr(logStr, $connectives)}</span>
             </div>
         {/each}
     </div>

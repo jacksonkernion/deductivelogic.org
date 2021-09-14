@@ -5,11 +5,11 @@
     import {validity, parseLogStr, getLetterVars} from '$lib/logic.js';
     import {findChars, permutator} from '$lib/utils';
 
-    export let logStr;
-    export let sent;
-    export let sentSet = [];
-    export let logStrSet = [];
-    export let number;
+    export let problem, number, isAdmin;
+    let logStr = problem.logStr;
+    let sent = problem.sent;
+    let sentSet = problem.sentSet;
+    let logStrSet = problem.logStrSet;
 
     let conclusionSent = sent;
     let conclusionLogStr = logStr;
@@ -145,7 +145,7 @@
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
         {#each sentSet as sentence, i}

@@ -1,5 +1,6 @@
 <script>
     import {dispLogStr} from '$lib/utils';
+    import { connectives } from '$lib/stores';
 
     export let tTableData = {
         logStr: '',
@@ -188,7 +189,7 @@
         {#each tTableData.letterVars as letterVar}
         <td>{letterVar}</td>
         {/each}
-        <td>{dispLogStr(tTableData.logStr)}</td>
+        <td>{dispLogStr(tTableData.logStr, $connectives)}</td>
     </tr>
 
     {#each tTableData.tAssignmentRows as tAssignmentRow, rowIndex}

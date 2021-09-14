@@ -1,4 +1,4 @@
-import { permutator } from '$lib/utils/helpers.js';
+import { permutator } from '$lib/utils';
 
 export function LogProp(logStr='') {
     this.symbol = null;

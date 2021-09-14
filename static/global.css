@@ -64,6 +64,17 @@ a:hover {
 	cursor: pointer;
 }
 
+a.logo {
+	color: rgba(0,0,0,.8);
+	text-decoration: none;
+}
+
+a.logo:hover {
+	color: rgba(0,0,0,.5);
+	text-decoration: none;
+	cursor: pointer;
+}
+
 /*
 label {
 	display: block;

@@ -117,14 +117,4 @@
 
     {/each}
 
-    <div class="cf">
-        {#if mode=='update'}
-            <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" on:click>Update</button>
-            <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black">Cancel</button>
-        {:else if mode=='generate'}
-            <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit" on:click>Generate Problem</button>
-        {:else}
-            <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit" on:click>Add Problem</button>
-        {/if}
-    </div>
 </div>

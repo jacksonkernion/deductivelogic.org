@@ -3,10 +3,11 @@
 
     import {validity} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
 
-    export let number = '';
-    export let logStr = '';
-    export let logStrSet = [];
+    export let problem, number, isAdmin;
+    let logStr = problem.logStr;
+    let logStrSet = problem.logStrSet;
     
     let selectedLogStrIndexes = [];
 
@@ -53,9 +54,9 @@
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
-        <p>Determine which of the following schemata are equivalent to <span class="logStr">{dispLogStr(logStr)}</span>:</p>     
+        <p>Determine which of the following schemata are equivalent to <span class="logStr">{dispLogStr(logStr, $connectives)}</span>:</p>     
     </div>
 	
     <div slot="submission-input">
@@ -64,7 +65,7 @@
             <div class="submission-input-line">
                 <label class="db">
                     <input type=checkbox bind:group={selectedLogStrIndexes} value={i} />
-                    <span class="logStr">{dispLogStr(logStr)}</span>
+                    <span class="logStr">{dispLogStr(logStr, $connectives)}</span>
                 </label>
             </div>
         {/each}    

@@ -4,9 +4,10 @@
     
     import {getLetterVars, parseLogStr, tVal} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import { connectives } from '$lib/stores';
 
-    export let logStr = '';
-    export let number = '';
+    export let problem, number, isAdmin;
+    let logStr = problem.logStr;
     
     let logProp = parseLogStr(logStr);
     
@@ -55,9 +56,9 @@
     }
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
-        <p>Construct a truth table for <span class='logStr'>{dispLogStr(logStr)}</span></p>
+        <p>Construct a truth table for <span class='logStr'>{dispLogStr(logStr, $connectives)}</span></p>
     </div>
     <div slot="submission-input">
         <TruthTableInput bind:tTableData />

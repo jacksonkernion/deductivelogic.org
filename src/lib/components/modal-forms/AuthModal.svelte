@@ -78,7 +78,8 @@
         //id: user.id,
         id: userId,
         firstName,
-        lastName
+        lastName,
+        email
       };
 
       let { error } = await supabase.from('profiles').upsert(updates, {

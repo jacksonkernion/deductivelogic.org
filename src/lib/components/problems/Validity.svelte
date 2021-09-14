@@ -6,9 +6,10 @@
 
     import {tVal, validity, parseLogStr, getLetterVars} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
 
-    export let logStr = '';
-    export let number = '';
+    export let problem, number, isAdmin;
+    let logStr = problem.logStr;
 
 	let letterVars = getLetterVars(logStr);
     let submission;
@@ -56,10 +57,10 @@
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Test the following schema for validity:</p>
-        <div class="description-line logStr">{dispLogStr(logStr)}</div>
+        <div class="description-line logStr">{dispLogStr(logStr, $connectives)}</div>
         <p>If not valid, provide an interpretation under which the schema is false.</p>
     </div>
 	

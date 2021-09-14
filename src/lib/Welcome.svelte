@@ -1,7 +1,6 @@
 <script>
 
     import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
-    import supabase from '$lib/db';
 
     import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/components/problems/Paraphrase.svelte';
@@ -185,7 +184,7 @@
 <div class="bg-near-white bb b--black-10">
 
     <div class="cf mw7 center ph4">
-        <div class="ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid">deductivelogic.org</div>
+        <a class="logo ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid" href="/">deductivelogic.org</a>
         <div class="fr dib v-mid">
             <AuthModal {user} />     
         </div>
@@ -203,8 +202,8 @@
 
 <div class="mw7 center ph4 pt4 pb6">
     <ul class="list pl0"> 
-        {#each problems as problem}
-            <svelte:component this={problem.component} {...problem}/>
+        {#each problems as problem, i}
+            <svelte:component this={problem.component} {problem} number={i + 1} isAdmin={false}/>
         {/each}
     </ul>
 
@@ -223,7 +222,10 @@
         </div>
 
         {#if newProblem.type!='none'}
-            <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
+            <form on:submit|preventDefault={createProblem}>
+                <ProblemForm bind:problem={newProblem}/>
+                <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit">Add Problem</button>
+            </form>
         {/if}
     </div>
 

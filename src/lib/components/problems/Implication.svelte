@@ -6,10 +6,11 @@
 
     import {tVal, validity, parseLogStr, getLetterVars} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
 
-    export let logStr1 = '';
-    export let logStr2 = '';
-    export let number = '';
+    export let problem, number,isAdmin;
+    let logStr1 = problem.logStr1;
+    let logStr2 = problem.logStr2;
 
     // let isQ = false;
     let letterVars = getLetterVars(logStr1+' > '+logStr2);
@@ -62,11 +63,11 @@
 
 </style>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Does schema (1) imply schema (2)?</p>
-        <div class="description-line"><span class="description-line-marker">1.</span> <span class="logStr">{dispLogStr(logStr1)}</span></div>
-        <div class="description-line"><span class="description-line-marker">2.</span> <span class="logStr">{dispLogStr(logStr2)}</span></div>
+        <div class="description-line"><span class="description-line-marker">1.</span> <span class="logStr">{dispLogStr(logStr1, $connectives)}</span></div>
+        <div class="description-line"><span class="description-line-marker">2.</span> <span class="logStr">{dispLogStr(logStr2, $connectives)}</span></div>
         <p>If implication fails to hold, provide an interpretation that witnesses this fact.</p>
     </div>
 	

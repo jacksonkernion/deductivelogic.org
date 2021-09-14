@@ -1,15 +1,15 @@
-export function dispLogStr(logStr){
+export function dispLogStr(logStr, connectives){
     for(var i=0; i < logStr.length; i++){
         if(logStr[i] == "<" && logStr[i+1] == ">")
-            logStr = logStr.substring(0, i) + "≡" + logStr.substring(i+2);
+            logStr = logStr.substring(0, i) + connectives.biconditionalSymbol + logStr.substring(i+2);
         else if(logStr[i] == ">")
-            logStr = logStr.substring(0, i) + "⊃" + logStr.substring(i+1);
+            logStr = logStr.substring(0, i) + connectives.conditionalSymbol + logStr.substring(i+1);
         else if(logStr[i] == "|")
-            logStr = logStr.substring(0, i) + "∨" + logStr.substring(i+1);
-        //else if($logStr[$i] == ".")
-            //$logStr = substr($logStr, 0, $i) . "·" . substr($logStr, $i+1);
+            logStr = logStr.substring(0, i) + connectives.orSymbol + logStr.substring(i+1);
+        else if(logStr[i] == ".")
+            logStr = logStr.substring(0, i) + connectives.andSymbol + logStr.substring(i+1);
         else if(logStr[i] == "-")
-            logStr = logStr.substring(0, i) + "–" + logStr.substring(i+1);
+            logStr = logStr.substring(0, i) + connectives.notSymbol + logStr.substring(i+1);
         else if(logStr[i] == "A")
             logStr = logStr.substring(0, i) + "∀" + logStr.substring(i+1);
         else if(logStr[i] == "E")
@@ -19,27 +19,25 @@ export function dispLogStr(logStr){
     return logStr;
 }
 
-export function unfancyLogStr(str){
-	var fixed = str;
-	//regex = new RegExp(biconditional.symbol, "g");
-    var regex = new RegExp('≡', "g");
+export function escapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+export function unfancyLogStr(str, connectives){
+	let fixed = str;
+    let regex = new RegExp(escapeRegExp(connectives.biconditionalSymbol), "g");
 	fixed= fixed.replace(regex, "<>");
-	//regex = new RegExp(conditional.symbol, "g");
-    regex = new RegExp('⊃', "g");
+    regex = new RegExp(escapeRegExp(connectives.conditionalSymbol), "g");
 	fixed = fixed.replace(regex, ">"); 
 	fixed = fixed.replace(/\u2200/g, "A");
 	fixed = fixed.replace(/\u2203/g, "E");
-	//regex = new RegExp(or.symbol, "g");
-    regex = new RegExp('∨', "g");
+    regex = new RegExp(escapeRegExp(connectives.orSymbol), "g");
 	fixed = fixed.replace(regex, "|");
-	//regex = new RegExp(not.symbol, "g");
-    regex = new RegExp('–', "g");
+    regex = new RegExp(escapeRegExp(connectives.notSymbol), "g");
 	fixed = fixed.replace(regex, "-");
-	/* if(and.symbol != '.'){
-        regex = new RegExp(and.symbol, "g");
-		fixed = fixed.replace(regex, ".");
-	} */
-	fixed= fixed.replace(/≠/g,"!=");
+    regex = new RegExp(escapeRegExp(connectives.andSymbol), "g");
+	fixed = fixed.replace(regex, ".");
+	fixed = fixed.replace(/≠/g,"!=");
 	return fixed;
 }
 

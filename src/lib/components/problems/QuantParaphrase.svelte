@@ -5,11 +5,12 @@
     
     import {parseLogStr, quantParaphrase} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
+    import {connectives} from '$lib/stores';
     
-    export let sent = '';
-    export let logStr = '';
-    export let number = '';
-    export let sentSet = [];
+    export let problem, number, isAdmin;
+    let sent = problem.sent;
+    let logStr = problem.logStr;
+    let sentSet = problem.sentSet;
 
     let studentLogStr = '';
     let submission;
@@ -17,7 +18,7 @@
     function checkSubmission(){
 
         if(!parseLogStr(studentLogStr))
-            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr));
+            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr, $connectives));
 		
 		if(quantParaphrase(logStr, studentLogStr))
             submission.log('correct', 'Correct');
@@ -26,7 +27,7 @@
     }
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {number}>
+<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
     <div slot="description">
         <p>Paraphrase the following sentence in logical notation:</p>
         <div class="description-line">{sent}</div>
