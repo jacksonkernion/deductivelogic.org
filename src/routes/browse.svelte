@@ -1,7 +1,6 @@
 <script context="module">
 
     import supabase from "$lib/db";
-    let courses, problemSets;
     
     export async function load({ session }) {
         const { user } = session;
@@ -10,20 +9,16 @@
                 .from('courses')
                 .select()
                 .order('name', {ascending: true});
-        courses = res1.data;
-
         const res2 = await supabase
                 .from('problemSets')
                 .select()
                 .eq('published', true);
-        
-        problemSets = res2.data;
 
         return {
             props: {
-                user,
-                courses,
-                problemSets
+                user: user,
+                courses: res1.data,
+                problemSets: res2.data,
             }
         };
 

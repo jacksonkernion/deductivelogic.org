@@ -84,7 +84,6 @@
     import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
 
     export let user;
-    export let course;
     export let problemSet = {};
     export let problems = [];
     export let submissions = [];
