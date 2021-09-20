@@ -23,11 +23,11 @@
 
     function checkSubmission() {
 
-        var submissionError = false;
+        let submissionError = false;
         
-		for(var i=0; i < tTableData.tAnswerRows.length; i++){
+		for(let i=0; i < tTableData.tAnswerRows.length; i++){
 
-            var answer = tTableData.tAnswerRows[i][tTableData.tAnswerRows[i].length-1];
+            let answer = tTableData.tAnswerRows[i][tTableData.tAnswerRows[i].length-1];
             
             if(answer === null){
                 submission.log('warn', "Not all rows of the truth table have been completed.");
@@ -36,13 +36,13 @@
             }
             
 
-            var tValues = {};
-            for(var j=0; j < tTableData.letterVars.length; j++){
+            let tValues = {};
+            for(let j=0; j < tTableData.letterVars.length; j++){
                 tValues[tTableData.letterVars[j]] = tTableData.tAssignmentRows[i][j];
             }
 
-            var correctResult = tVal(logProp, tValues);
-
+            let correctResult = tVal(logProp, tValues);
+            
 			if(answer != correctResult){
                 submission.log('incorrect', "Incorrect");
                 submissionError = true;

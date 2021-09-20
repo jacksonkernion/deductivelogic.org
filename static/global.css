@@ -136,33 +136,6 @@ ion-icon{
 	visibility: visible;
 }
 
-.remove-button{
-	display: inline-block;
-	line-height: .8;
-	color: #999;
-	border: 1px solid white;
-	border-radius: .25rem;
-}
-.remove-button:hover{
-	border-color: rgba(0,0,0,.2);
-	cursor: pointer;
-	color: #333;
-}
-
-.icon-button{
-	display: inline-block;
-	line-height: .8;
-	color: #999;
-	border: 1px solid rgb(192, 192, 192);
-	border-radius: .25rem;
-}
-.icon-button:hover{
-	border-color: rgba(0,0,0,.2);
-	cursor: pointer;
-	color: #333;
-	background-color: #eee;
-}
-
 /* Problem Elements */
 
 .description-line{

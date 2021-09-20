@@ -18,6 +18,17 @@
         return str;
     };
 
+    function printPlaceholder(n){
+        let str = '';
+        for(let i=0; i < n; i++){
+            if(i > 0){
+                str += ', ';
+            }
+            str += (i+1);
+        }
+        return str;
+    }
+
     function getExtensions(interpretation){
         var extensions = {};
 
@@ -166,7 +177,13 @@
             {#each extensions[quantPred.letter] as {extension, extensionStr}}
                 <a class="extension" on:click={removeExtension(quantPred.letter, extension)}>{extensionStr}</a>,&nbsp;
             {/each}
-            <input class="br1 ba b--black-20" style="width:{17 * quantPred.n}px" on:keydown={(e) => handleKeyDown(quantPred, e)} on:focusin={(e) => handleFocusIn(e)} on:focusout={(e) => handleFocusOut(e)}/>
+            <input 
+                class="br1 ba b--black-20"
+                style="width:{17 * quantPred.n}px" 
+                placeholder = {printPlaceholder(quantPred.n)}
+                on:keydown={(e) => handleKeyDown(quantPred, e)} 
+                on:focusin={(e) => handleFocusIn(e)} 
+                on:focusout={(e) => handleFocusOut(e)}/>
             {'}'}
             <span class="save-message sans-serif" style="" hidden>Press 'Enter' to log extension</span>
             

@@ -1,10 +1,15 @@
 <script context="module">
 
+    let loading = false;
+
     import supabase from "$lib/db";
     import { courses, problemSets} from '$lib/stores.js';
     
     export async function load({ session }) {
+        loading = true;
+        
         const { user } = session;
+        let submissions = [];
         if(user.guest || !user.courses){
             return {
                 props: {
@@ -49,10 +54,41 @@
                     .from('problemSets')
                     .select()
                     .or(pSetsQueryStr);
-                problemSets.set(res2.data);
-
+                
+                let problem_ids = [];
+                let pSets = [];
+                for(const pSet of res2.data){
+                    pSets = [...pSets, {...pSet, correctSubmissions: 0 }];
+                    problem_ids = [...problem_ids, ...pSet.problemsOrder];
+                }
+                const res3 = await supabase
+                    .from('submissions')
+                    .select()
+                    .match({user_id: user.id, verdict: 'correct'});
+                if(res3.data){
+                    submissions = [...res3.data];
+                    pSets = pSets.map(pSet => {
+                        if(pSet.problemsOrder.length == 0){
+                            return pSet;
+                        }
+                        let correctProblemIds = [];
+                        for(const submission of submissions.filter(submission => pSet.problemsOrder.includes(submission.problem_id))){
+                            if(submission.verdict == 'correct'){
+                                if(!correctProblemIds.includes(submission.problem_id)){
+                                    pSet.correctSubmissions++;
+                                    correctProblemIds = [...correctProblemIds, submission.problem_id];
+                                }
+                            }
+                        }
+                        return pSet;
+                    });
+                    problemSets.set(pSets);
+                }             
+                else{
+                    problemSets.set(pSets);
+                }                       
             }
-
+            loading = false;
             return {
                 props: {
                     user
@@ -90,6 +126,8 @@
 </script>
 
 <script>
+
+    import { navigating } from '$app/stores';
 
     import Welcome from "$lib/Welcome.svelte"
     import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
@@ -192,9 +230,13 @@
 
 </div>
 
-<div class="mw7 center pa4">
+<div class="mw7 center ph4 pb4">
 
-    {#if $courses.length > 0 }
+    {#if loading}
+
+        <p class="f3 tc black-50">Loading...</p>
+
+    {:else if $courses.length > 0 }
         {#each $courses as course}
             <Course
                 {user}

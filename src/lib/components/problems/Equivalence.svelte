@@ -46,6 +46,7 @@
             }
 		}
 		else if(answer){
+
 			//Evaluate validity of biconditional
 			if(validity('('+logStr1+') <> ('+logStr2+')')){
 				submission.log('correct', "Correct");
@@ -69,7 +70,7 @@
 	
     <div slot="submission-input">
         
-        <HiddenTruthTable logStr={'[' + logStr1 + '] > [' + logStr2 + ']'} />   
+        <HiddenTruthTable logStr={'[' + logStr1 + '] <> [' + logStr2 + ']'} />   
         
         <div class="submission-input-line">
             <div class="mb2">

@@ -2,7 +2,7 @@
 
     import supabase from '$lib/db';
     import { fly } from 'svelte/transition';
-    import { submissions, problems } from '$lib/stores';
+    import { submissions, problems, problemSets} from '$lib/stores';
     import { session } from "$app/stores";
     import ProblemForm from '$lib/components/ProblemForm.svelte';
     import Modal from '$lib/jui-components/Modal.svelte'
@@ -18,7 +18,7 @@
 
     let submitting = false;
     let problemSubmissions = $submissions.filter(sub => sub.problem_id == problem.id);
-    let updatedProblem = problem;
+    let updatedProblem = JSON.parse(JSON.stringify(problem));
     let editModalShow = false;
     let deleteModalShow = false;
 
@@ -59,7 +59,10 @@
         
     }
 
+    submission.log = logSubmission;
+
     function toggleEditModal() {
+        updatedProblem =JSON.parse(JSON.stringify(problem));
         editModalShow = !editModalShow;
     }
 
@@ -71,11 +74,15 @@
                 
             if (error) throw error;
             if (data){
-                problem = updatedProblem;
+                const index = number-1;
+                $problems[index] = updatedProblem;
             }
 
         } catch (error) {
             alert(error.error_description || error.message);
+        }
+        finally{
+            toggleEditModal();
         }
     }
 
@@ -90,7 +97,20 @@
         $problems = [...$problems.slice(0, index), ...$problems.slice(index+1)];
         const problemsOrder = $problems.map(p => p.id);
 
+        for(let i=0; i < $problemSets.length; i++){
+            if($problemSets[i].id == problemSet_id){
+                $problemSets[i].problemsOrder = problemsOrder;
+            }
+        }
+        
+
         try {
+            const res1 = await supabase
+                .from('submissions')
+                .delete()
+                .eq('problem_id', id);
+            if (res1.error) throw res1.error;
+
             const { data, error } = await supabase
                 .from('problems')
                 .delete()
@@ -107,6 +127,9 @@
 
         } catch (error) {
             alert(error.error_description || error.message);
+        }
+        finally{
+            toggleDeleteModal();
         }
         
     }
@@ -155,37 +178,6 @@
 
     }
 
-    submission.log = logSubmission;
-
-    let color = '';
-    //let icon = '';
-    //let iconColor = '';
-
-    $: {
-        if(submission.verdict == 'warn'){
-            color = 'yellow';
-            //icon = 'warning';
-            //iconColor = 'gold';
-        }
-        if(submission.verdict == 'incorrect'){
-            color = 'red';
-            //icon = 'close-circle';
-            //iconColor = 'red';
-        }
-        if(submission.verdict == 'correct'){
-            color = 'green';
-            //icon = 'checkbox';
-            //iconColor = 'green';
-        }
-    }
-
-    /*
-    let isCorrect = submission.verdict == 'correct' ? true : false;
-
-    let bgColor = isCorrect ? 'washed-green' : 'washed-red';
-    let borderColor = isCorrect ? 'green' : 'red';
-    */
-
 </script>
 
 <style>
@@ -205,7 +197,7 @@
 </style>
 
 {#if isAdmin}
-    <div class="w-75 mt1 mb2 relative z-1">
+    <div class="ml3 ml0-ns w-75-ns mt1 mb2 relative z-1">
         <div class="absolute top-0 right-0">
             <Button icon="create-outline" on:click={toggleEditModal}></Button>
             <Button icon="trash-outline" on:click={toggleDeleteModal}></Button>
@@ -214,7 +206,7 @@
         </div>
     </div>
 {/if}
-<div class="relative pv3 w-75">
+<div class="relative ml3 ml0-ns pv3 w-75-ns ">
     <div class="absolute left--2 lh-copy">
         <p>{number}.</p>
     </div>
@@ -243,7 +235,7 @@
     </div>
 </div>
 
-<div class="divider w-75"></div>
+<div class="divider ml3 ml0-ns w-75-ns"></div>
 
 {#if isAdmin}
 

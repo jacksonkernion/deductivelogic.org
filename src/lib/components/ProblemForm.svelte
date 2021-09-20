@@ -1,5 +1,6 @@
 <script>
     import {problemTypes} from '$lib/constants.js';
+    import Button from '$lib/components/atoms/Button.svelte';
     import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
     import Input from '$lib/components/Input.svelte';
 
@@ -22,18 +23,10 @@
 </script>
 
 <style>
-    .remove-button{
+    .end-button{
         position: absolute;
         left: 30.5rem;
-        line-height: .8;
-        color: #999;
-        border: 1px solid white;
-        border-radius: .25rem;
-    }
-    .remove-button:hover{
-        border-color: rgba(0,0,0,.2);
-        cursor: pointer;
-        color: #333;
+        margin-top: 2px;
     }
 </style>
 
@@ -42,7 +35,13 @@
 
         <div class="mt3 inputWrapper relative">	
 
-            {#if attr=='question' || attr=='answer' || attr=='sent'}
+            {#if attr=='answer'}
+                <div class="w-90">
+                    <Input label={description} name="logStr" bind:value={problem.logStr} />
+                </div>
+            {/if}
+
+            {#if attr=='sent'}
                 <div class="w-90">
                     <Input label={description} name={attr} bind:value={problem[attr]} />
                 </div>
@@ -57,8 +56,8 @@
             {#if attr=='logStrSet' && problem.logStrSet}
                 <div class="f6 fw5 db mb2 mt3">{@html description}</div>
                 {#each problem.logStrSet as logStr, i}
-                    <div class="remove-button pa2" on:click={() => removeLogStr(i)}>
-                        <ion-icon name="close-outline"></ion-icon>
+                    <div class="end-button">
+                        <Button icon="close-outline" on:click={() => removeLogStr(i)} />
                     </div>
                     <div class="w-90">
                         <LogStrInput bind:logStr />
@@ -70,11 +69,28 @@
                 
             {/if}
 
-            {#if attr=='sentSet' && problem.sentSet}
+            {#if attr=='sentSet' && problem.type == 'quantInterp'}
                 <div class="f6 fw5 db mb2 mt3">{@html description}</div>
+                <div class="ml2">
+                    <div class="mb2">
+                        <input class="mr2" type=radio bind:group={problem.sentSet} name="implies" value={['true']}  />
+                        <label class="lh-copy f6 black-70">True</label>
+                    </div>
+                    <div class="mb2">
+                        <input class="mr2" type=radio bind:group={problem.sentSet} name="implies" value={['false']}  />
+                        <label class="lh-copy f6 black-70">False</label>
+                    </div>
+                    <div>
+                        <input class="mr2" type=radio bind:group={problem.sentSet} name="implies" value={['true', 'false']} />
+                        <label class="lh-copy f6 black-70">True & False</label>
+                    </div>
+                </div>
+
+            {:else if attr=='sentSet' && problem.sentSet}
+                <div class="f6 fw5 db mb2">{@html description}</div>
                 {#each problem.sentSet as sent, i}
-                    <div class="remove-button pa2" on:click={() => removeSentence(i)}>
-                        <ion-icon name="close-outline"></ion-icon>
+                    <div class="end-button">
+                        <Button icon="close-outline" on:click={() => removeSentence(i)} />
                     </div>
                     <div class="w-90">
                         <Input name={attr} bind:value={sent} />
@@ -95,23 +111,6 @@
                 
             {/if}
 
-            {#if attr=='interpsRequested'}
-                <div class="f6 fw5 db mb2 mt3">{@html description}</div>
-                <div class="ml2">
-                    <div class="mb2">
-                        <input class="mr2" type=radio bind:group={problem.interpsRequested} name="implies" value="true" />
-                        <label class="lh-copy f6 black-70">True</label>
-                    </div>
-                    <div class="mb2">
-                        <input class="mr2" type=radio bind:group={problem.interpsRequested} name="implies" value="false" />
-                        <label class="lh-copy f6 black-70">False</label>
-                    </div>
-                    <div>
-                        <input class="mr2" type=radio bind:group={problem.interpsRequested} name="implies" value="true/false" />
-                        <label class="lh-copy f6 black-70">True & False</label>
-                    </div>
-                </div>
-            {/if}
             
         </div>
 

@@ -33,6 +33,22 @@
   }
 
   async function deleteProblemSet() {
+
+    if(selectedProblemSet.problemsOrder.length){
+      const submissionsQueryStr = selectedProblemSet.problemsOrder.map(problemId => 'problem_id.eq.' + problemId).join(',');
+      const res0 = await supabase
+          .from('submissions')
+          .delete()
+          .or(submissionsQueryStr);
+      if (res0.error) alert(res0.error.error_description || res0.error.message);
+
+      const res1 = await supabase
+        .from('problems')
+        .delete()
+        .eq('problemSet_id', selectedProblemSet.id);              
+      if (res1.error) alert(res1.error.error_description || res1.error.message);
+    }
+
     const { data, error } = await supabase
       .from('problemSets')
       .delete()
@@ -120,7 +136,12 @@
 </script>
 
 <div class="mt3 cf bb b--black-40">
-  <p class="fl fw5 f5 lh-title mb2 mt3">{course.name}</p>
+  <p class="fl fw5 f5 lh-title mb2 mt3">
+      {course.name}
+      {#if course.institution}
+        <span class="fw4 black-50"> ・ {course.institution}</span>
+      {/if}
+  </p>
   
   {#if isAdmin}
     <div class="fr mt2">
@@ -145,21 +166,34 @@
       {#each pSets as problemSet, i}
           {#if isAdmin || problemSet.published}
             <li class="lh-copy pv2 bb b--black-10 v-mid cf">
+
                 <div class="fl">
                   <a class="dib f6 pv2" href="{course.slug}/pset{problemSet.number}">{problemSet.name}</a> 
-                  {#if !problemSet.published}<span class="ml1"></span> <Label>Unpublished</Label>{/if} 
+                  {#if !problemSet.published}
+                    <span class="ml1"></span> <Label>Unpublished</Label>
+                  {:else}
+                  <div class="dib black-50">
+                    <p class="dib f6 pv2 ma0"> ・ <span class="dn di-ns">Completed: </span>{problemSet.correctSubmissions}/{problemSet.problemsOrder.length}</p>
+                    {#if problemSet.problemsOrder.length > 0 && problemSet.correctSubmissions == problemSet.problemsOrder.length }
+                      <div class="icon dib v-mid ph2 green">
+                          <ion-icon name="checkmark-outline"></ion-icon>   
+                      </div>   
+                    {/if}
+                  </div>
+                  {/if} 
                 </div>
                 {#if isAdmin}
-                <div class="fr">
-                  {#if !problemSet.published}
-                    <Button icon="cloud-upload-outline" on:click={publishProblemSet(problemSet, i)}/>
-                  {:else}
-                  <Button icon="cloud-offline-outline" on:click={unpublishProblemSet(problemSet, i)}/>
-                  {/if}
-                  <Button icon="receipt-outline" href="{course.slug}/pset{problemSet.number}/report" />
-                  <Button icon="trash-outline" on:click={deleteProblemSetModal(problemSet)}/>
-                </div>
+                  <div class="fr">
+                    {#if !problemSet.published}
+                      <Button icon="cloud-upload-outline" on:click={publishProblemSet(problemSet, i)}/>
+                    {:else}
+                    <Button icon="cloud-offline-outline" on:click={unpublishProblemSet(problemSet, i)}/>
+                    {/if}
+                    <Button icon="receipt-outline" href="{course.slug}/pset{problemSet.number}/report" />
+                    <Button icon="trash-outline" on:click={deleteProblemSetModal(problemSet)}/>
+                  </div>
                 {/if}
+
             </li>
           {/if}
       {/each}

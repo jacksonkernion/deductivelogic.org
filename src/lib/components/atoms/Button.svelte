@@ -22,6 +22,7 @@
         appearance: none; /* Fix for Mobile Safari */
         text-decoration: none; /* to reset <a> element */
         font-size: .875rem;
+        font-weight: 400;
         line-height: 1.15;
         padding: .5rem 1rem;
         color: #333;
@@ -86,6 +87,7 @@
     }
 
     ion-icon{
+        margin-top: 2px;
         font-size: 16px;
         --ionicon-stroke-width: 44px;
         z-index:60;
@@ -120,7 +122,7 @@
             class:button-icon={icon}
             class:button-disabled={disabled}
             class:button-active={active}
-            on:submit|preventDefault on:click|preventDefault
+            
         >
             {#if icon}
                 <ion-icon name={icon}></ion-icon>

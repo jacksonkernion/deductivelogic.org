@@ -57,6 +57,7 @@
     <div class="lh-title f3 fw4">Browse Courses</div>
 
     {#each courses as course}
+        <div class="mv4"></div>
         <Course mode="browse" {user} {course} pSets={problemSets.filter(pSet => pSet.course_id == course.id).sort((a, b) => {return a.number - b.number})}/>
     {/each}
     

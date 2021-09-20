@@ -36,7 +36,7 @@
         try {
             loading = true;
             
-            //nor upserting whole course object because I've added userProfiles array, which doen't exist in DB table
+            //not upserting whole course object because I've added userProfiles array, which doen't exist in DB table
             const res1 = await supabase
                 .from('courses')
                 .update({'admins': adminIds, 'users': userIds})
@@ -79,16 +79,16 @@
                     {#if userIds.includes(profile.id)}
                         {profile.lastName}, {profile.firstName} 
                         {#if profile.email}
-                            <span class="black-50">・ {profile.email}</span> 
+                            <span class="black-50 dn di-ns">・ {profile.email}</span> 
                         {/if}
                         {#if adminIds.includes(profile.id)}
                             <span class="ml2"></span><Label>Admin</Label>
                         {/if}
-                    {:else}
+                    {:else} <!-- Crossed-out effect, before removal-->
                         <del class="black-40">
                             {profile.lastName}, {profile.firstName} 
                             {#if profile.email}
-                                <span class="black-50">・ {profile.email}</span> 
+                                <span class="black-50 dn di-ns">・ email {profile.email}</span> 
                             {/if}
                             {#if adminIds.includes(profile.id)}
                                 <span class="ml2"></span><Label>Admin</Label>

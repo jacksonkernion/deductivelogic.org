@@ -13,7 +13,8 @@
         description: null,
         dueDate: null,
         published: false,
-        course_id: courseId
+        course_id: courseId,
+        problemsOrder: []
     };
 
     let modalShow;
@@ -28,6 +29,7 @@
             if (error) throw error;
             if (data){
                 $problemSets = [...$problemSets, ...data];
+                $problemSets[$problemSets.length - 1].correctSubmissions = 0;
                 toggleModal();
                 problemSet = {
                     name: null,
@@ -35,7 +37,8 @@
                     description: null,
                     dueDate: null,
                     published: false,
-                    course_id: courseId
+                    course_id: courseId,
+                    problemsOrder: []
                 };
             }
 

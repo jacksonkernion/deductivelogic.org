@@ -100,8 +100,8 @@
 
   async function setServerSessionAndRedir(session: AuthSession) {
       await setAuthCookie(session);
-      // goto('/home') - Haven't figured this out, but the session cookie doesn't set properly unless you do a real page refresh.
-      window.location = '/';
+      // goto('/home'); Haven't figured this out, but the session cookie doesn't set properly unless you do a real page refresh.
+      location.reload();
   }
 
 /* Templates for using server endpoints

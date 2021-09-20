@@ -3,9 +3,9 @@
     import {shuffle} from '$lib/utils';
 
     export let problem, number, isAdmin;
-    let question = problem.question;
+    let question = problem.sent;
     let sentSet = problem.sentSet;
-    let answer = problem.answer;
+    let answer = problem.logStr;
 
     let studentAnswer = '';
 

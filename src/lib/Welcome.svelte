@@ -16,12 +16,12 @@
     import QuantParaphrase from '$lib/components/problems/QuantParaphrase.svelte';
     import QuantInterp from '$lib/components/problems/QuantInterp.svelte';
 
-    import ProblemForm from '$lib/components/ProblemForm.svelte';
-    import {problemTypes} from '$lib/constants.js';
+    import AddProblem from "./components/AddProblem.svelte";
+    import { problems } from '$lib/stores.js';
 
     export let user;
 
-    let problems = [
+    $problems = [
         {
             "number": 1,
             "type": 'truthTable',
@@ -61,13 +61,24 @@
             "question": null,
             "answer": null,
             "logStr": null,
-            "logStr1": "(p <> q) <> r",
+            "logStr1": "p <> q <> r",
             "logStr2": "p . -q | -p . r",
             "logStrSet": null,
             "sentSet": null
         },
         {
             "number": 5,
+            "type": "equivalence",
+            "question": null,
+            "answer": null,
+            "logStr": null,
+            "logStr1": "p <> q <> r",
+            "logStr2": "p . q . r | -p . -q . -r",
+            "logStrSet": null,
+            "sentSet": null
+        },
+        {
+            "number": 6,
             "type": "disjNormForm",
             "question": null,
             "answer": null,
@@ -78,7 +89,7 @@
             "sentSet": null
         },
         {
-            "number": 6,
+            "number": 7,
             "type": "natLangArg",
             "sent": "Therefore, Smith was the murderer.",
             "answer": null,
@@ -89,7 +100,7 @@
             "sentSet": ["If Jones did not meet Smith last night, then either Smith was the murderer or Jones is lying.","If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight.","If the murder took place after midnight, then either Smith was the murderer or Jones is lying."]
         },
         {
-            "number": 7,
+            "number": 8,
             "type": "quantParaphrase",
             "sent": "There are sopranos who respect only those tenors who are louder than they.",
             "answer": null,
@@ -100,7 +111,7 @@
             "sentSet": ['S = "(1) is a soprano"','T = "(1) is a tenor"','L = "(1) is louder than (2)"','R = "(1) respects (2)"']
         },
         {
-            "number": 8,
+            "number": 9,
             "type": "quantInterp",
             "question": null,
             "answer": null,
@@ -111,7 +122,7 @@
             "sentSet": 'true'
         },
         {
-            "number": 9,
+            "number": 10,
             "type": "quantInterp",
             "question": null,
             "answer": null,
@@ -124,7 +135,7 @@
 
     ];
     
-    $: problems = problems.map((problem) => {
+    $: $problems = $problems.map((problem) => {
         if(problem.type === 'multipleChoice')
             problem.component = MultipleChoice;
         else if(problem.type === 'paraphrase')
@@ -156,29 +167,6 @@
         return problem;
     });
 
-    let newProblem = {
-        number: problems.length + 1,
-        type: 'none'
-    };
-
-    function updateNewProblem() {
-        for(var attr in problemTypes[newProblem.type].attributes){
-            if(attr=='logStrSet' || attr=='sentSet')
-                newProblem[attr] = [''];
-            else
-                newProblem[attr] = '';
-        }
-    }
-    function createProblem() {
-        //ADD ERROR CHECKING...
-        problems = [...problems, newProblem];
-
-
-        newProblem = {
-            number: newProblem.number + 1,
-            type: 'none'
-        };
-    }
 </script>
 
 <div class="bg-near-white bb b--black-10">
@@ -202,34 +190,12 @@
 
 <div class="mw7 center ph4 pt4 pb6">
     <ul class="list pl0"> 
-        {#each problems as problem, i}
+        {#each $problems as problem, i}
             <svelte:component this={problem.component} {problem} number={i + 1} isAdmin={false}/>
         {/each}
     </ul>
 
-    <div class="w-75">
-        <h3 class="f5 fw5 mt4">Add Problem</h3>
-
-        <div class="measure">
-            <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
-            <!-- svelte-ignore a11y-no-onchange -->
-            <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
-                <option value="none"></option>
-                {#each Object.entries(problemTypes) as [shorthand, prob]}
-                    <option value="{shorthand}">{prob.description}</option> 
-                {/each}
-            </select>
-        </div>
-
-        {#if newProblem.type!='none'}
-            <form on:submit|preventDefault={createProblem}>
-                <ProblemForm bind:problem={newProblem}/>
-                <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit">Add Problem</button>
-            </form>
-        {/if}
-    </div>
-
-
+    <AddProblem mode="welcome"/>
 
 </div>
 

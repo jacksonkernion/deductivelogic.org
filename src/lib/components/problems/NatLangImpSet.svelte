@@ -2,9 +2,10 @@
     
     import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
     import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
+    import Button from '$lib/components/atoms/Button.svelte';
 
     import {permutator, findChars} from '$lib/utils';
-	import {validity, getLetterVars} from '$lib/logic.js';
+	import {parseLogStr, validity, getLetterVars} from '$lib/logic.js';
     
     export let problem, number, isAdmin;
     let sentSet = problem.sentSet;
@@ -207,9 +208,7 @@
                         {/each}
                     </select>
                 </div>
-                <div class="remove-button pa2 v-mid" on:click={() => removeImplication(i)}>
-                    <ion-icon name="close-outline"></ion-icon>
-                </div>
+                <Button icon="close-outline" on:click={() => removeImplication(i)} />
             </div>
         {/each}
         <div class="lh-copy f6 mt3 ml4">

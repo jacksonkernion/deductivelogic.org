@@ -109,10 +109,11 @@
         box-sizing: content-box;
     }
 
-    .t_table-button_F:hover, .t_table-button_T:hover{
+    .t_table-button_F:hover, .t_table-button_T:hover, .t_table-highlight_F:hover, .t_table-highlight_T:hover{
         cursor:pointer;
-        border:1px solid black;
-        color:black;
+        color: black;
+        background-color: #eee;
+        border-color: #999;
     }
 
     .t_table-fill{
@@ -156,13 +157,6 @@
         background-color:white;
         padding:3px 6px;
         box-sizing: content-box;
-    }
-
-
-    .t_table-highlight_F:hover, .t_table-highlight_T:hover{
-        cursor:pointer;
-        border:1px solid black;
-        color:black;
     }
 
     .highlightT, .highlightF{

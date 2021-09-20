@@ -79,13 +79,13 @@ export const problemTypes = {
         description: "(Quant) Interpretations",
         attributes: {
             logStr: "Schema to be interpretted",
-            interpsRequested: "Interpretations to ask for"
+            sentSet: "Interpretations to ask for"
         }
     },
     multipleChoice: {
         description: "Multiple Choice",
         attributes: {
-            question: "Question",
+            sent: "Question",
             answer: "Answer",
             sentSet: "Other (incorrect) choices"
         }

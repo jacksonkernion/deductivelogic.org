@@ -25,13 +25,16 @@
 		var selectionStart = input.selectionStart;
 		var selectionEnd = input.selectionEnd;
 		var newValue = input.value.substr(0, selectionStart) + symbol + input.value.substr(selectionEnd);
+
+		logStr = unfancyLogStr(newValue, $connectives);
+
 		input.value = newValue;
 		input.focus();
 		input.setSelectionRange(selectionStart + 1, selectionStart + 1);
 		
 	}
 
-	function replaceSymbols() {
+	function updateLogStr() {
 
 		if(input){
 
@@ -56,6 +59,8 @@
 			fixed = fixed.replace(/E/g,"\u2203");
 			fixed = fixed.replace(/!=/g,"≠");
 
+			logStr = unfancyLogStr(fixed, $connectives);
+
 			if(fixed != str){
 				//If shortcut is longer than actual symbol (Ex: '<>' for '≡'), need to change where caret is
 				if(fixed.length != initialLength){
@@ -63,9 +68,7 @@
 				}
 				input.value = fixed;
 				input.focus();
-				input.setSelectionRange(selectionStart - offset, selectionEnd - offset);
-
-				logStr = unfancyLogStr(fixed, $connectives);
+				input.setSelectionRange(selectionStart - offset, selectionEnd - offset);	
 			}
 
 		}
@@ -98,7 +101,6 @@
 		border: 1px solid rgb(192, 192, 192);
 		border-radius: .18rem;
 		color: #aaa;
-
 		align-items: center;
 		justify-content: center;
 	}
@@ -117,9 +119,9 @@
 	{/if}
 	<input id={name} class="logStr input-reset br2 ba b--black-20 pa2 mb2 dib w-100" type="text" 
 		autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-		value={dispLogStr(logStr, $connectives)}
+		value={ (!logStr) ? '' : dispLogStr(logStr, $connectives)}
 		bind:this={input} 
-		on:input={replaceSymbols} />
+		on:input={updateLogStr} />
 	
 	<div class="logStrInput-buttons-wrapper fl">
 		<div class="logStrInput-button" on:click={() => insertSymbol($connectives.notSymbol)}>{$connectives.notSymbol}</div>

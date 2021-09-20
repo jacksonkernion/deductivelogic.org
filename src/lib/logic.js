@@ -49,13 +49,13 @@ export function tVal(logProp, tValues){
         if(isA || isE){
 
             //skip first parentheses
-            var oldLogStr = logStrTrim(logProp.parts[0].logStr);
+            let oldLogStr = logStrTrim(logProp.parts[0].logStr);
              
-            for(var unit=1; unit<=tValues['domainSize']; unit++){
-                var regex = new RegExp(logProp.symbol[1], 'g');
-                var newLogStr = oldLogStr.replace(regex, unit);
-                var newLogProp = parseLogStr(newLogStr);
-                var val = tVal(newLogProp, tValues);
+            for(let unit=1; unit<=tValues['domainSize']; unit++){
+                let regex = new RegExp(logProp.symbol[1], 'g');
+                let newLogStr = oldLogStr.replace(regex, unit);
+                let newLogProp = parseLogStr(newLogStr);
+                let val = tVal(newLogProp, tValues);
                 if(!val && isA)
                     return false;
                 else if(val && isE)
@@ -74,46 +74,42 @@ export function tVal(logProp, tValues){
                     var p = tVal(logProp.parts[0], tValues);
                     var q = tVal(logProp.parts[1], tValues);
                     return (p && q) || (!p && !q);
-                    break;
                     
                 case ">":
-                    var p = tVal(logProp.parts[0], tValues);
-                    var q = tVal(logProp.parts[1], tValues);
-                    return !p || q;
-                    break;
+                    var r = tVal(logProp.parts[0], tValues);
+                    var s = tVal(logProp.parts[1], tValues);
+                    return !r || s;
                     
                 case "|":
                     var response = false;
-                    for(var part of logProp.parts){
+                    for(const part of logProp.parts){
                         if(tVal(part, tValues) == true){
                             response = true;
                             break;
                         }
                     }
                     return response;
-                    break;
                     
                 case ".":
                     var response = true;
                     var part;
-                    for(part of logProp.parts){
+                    for(const part of logProp.parts){
                         if(tVal(part, tValues) == false){
                             response = false;
                             break;
                         }
                     }
                     return response;
-                    break;
                     
                 case "-":
                     return !tVal(logProp.parts[0], tValues);
-                    break;
             }
         }
     }
 }
 
 export function logStrTrim(logStr){
+
     logStr = logStr.trim();
 
     //This check to see if logStr is wrapped in parentheses, and gets rid of them
@@ -131,7 +127,7 @@ export function logStrTrim(logStr){
                 
             if(parens == 0){
                 if(j == (logStr.length-1)){
-                    logStr = logStr.substring(1, logStr.length-1).trim();
+                    logStr = logStrTrim(logStr.substring(1, logStr.length-1).trim());
                 }
                 return logStr;
             }
@@ -142,6 +138,7 @@ export function logStrTrim(logStr){
 }
 
 export function parseLogStr(logStr){
+
 
     logStr = logStrTrim(logStr);
 
@@ -267,13 +264,11 @@ export function parseLogStr(logStr){
             return false;
     }) 
 
-    //console.log("End: "+logStr);
-    //console.log(logProp);
     return logProp;
 }
 
 export function validity(logStr){
-
+    
     var isQ = false;
 
     // see logic.php for handling quant schema...

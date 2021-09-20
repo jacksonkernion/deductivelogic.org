@@ -1,5 +1,6 @@
 <script>
     import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
+    import Button from '$lib/components/atoms/Button.svelte';
 
     import {validity} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
@@ -61,8 +62,6 @@
 		//check that they have no extraneous implications
 		for(var imp1 of answersArr){
 			if(!correctImpArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-                console.log(imp1);
-                console.log(correctImpArr);
 				submission.log('incorrect', "Some of your implications are wrong.");
                 return;
             }
@@ -113,9 +112,7 @@
                     {/each}
                 </select>
             </div>
-            <div class="remove-button pa2 v-mid" on:click={() => removeImplication(i)}>
-                <ion-icon name="close-outline"></ion-icon>
-            </div>
+            <Button icon="close-outline" on:click={() => removeImplication(i)} />
         </div>
         {/each}
         <div class="lh-copy f6 mt3 ml4">

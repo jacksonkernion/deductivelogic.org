@@ -67,8 +67,7 @@
 <script>
 
     import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
-    import ProblemForm from '$lib/components/ProblemForm.svelte';
-    import {problemTypes} from '$lib/constants.js';
+    import AddProblem from '$lib/components/AddProblem.svelte';
 
 	import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/components/problems/Paraphrase.svelte';
@@ -121,54 +120,7 @@
         return problem;
     });
 
-    let newProblem = {
-        type: 'none'
-    };
 
-    function updateNewProblem() {
-        for(var attr in problemTypes[newProblem.type].attributes){
-            if(attr=='logStrSet' || attr=='sentSet')
-                newProblem[attr] = [''];
-            else
-                newProblem[attr] = '';
-        }
-    }
-
-    async function createProblem() {
-        try {
-
-            newProblem.problemSet_id = problemSet.id;
-
-            const { data, error } = await supabase
-                .from('problems')
-                .upsert(newProblem);
-                
-            if (error) throw error;
-            if (data){
-                $problems = [...$problems, ...data];
-                problemSet.problemsOrder = [...problemSet.problemsOrder, data[0].id];
-                newProblem = {
-                    type: 'none'
-                };
-            }
-
-            console.log(problemSet.problemsOrder);
-
-            const res2 = await supabase
-                .from('problemSets')
-                .update({'problemsOrder': problemSet.problemsOrder})
-                .eq('id', problemSet.id);
-            if (res2.error) throw res2.error;
-
-            console.log(res2);
-
-        } catch (error) {
-            alert(error.error_description || error.message);
-        }
-    }
-   
-	console.log($connectives);
-    console.log(course);
 </script> 
 
 <div class="bg-near-white bb b--black-10">
@@ -183,43 +135,25 @@
 </div>
 
 <div class="mw7 center pa4">
-    <div class="lh-title f3 fw4">{problemSet.name}</div>
+    <div class="ml3 ml0-ns lh-title f3 fw4">{problemSet.name}</div>
 </div>
 
 <div class="mw7 center ph4 pb2">
-    <div class="divider w-75"></div>
+    <div class="divider ml3 ml0-ns w-75-ns"></div>
     <ul class="list pl0 ma0"> 
         {#if $problems.length > 0}
             {#each $problems as problem, i (problem.id)}
-                <svelte:component this={problem.component} {problem} number={i+1} {isAdmin}/>
+                {#key problem}
+                    <svelte:component this={problem.component} {problem} number={i+1} {isAdmin}/>
+                {/key}
             {/each}
         {:else}
-            <li class="lh-copy w-75 mt3 pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f4 fw4 pv2 ma0">No Problems</p></li>
+            <li class="lh-copy w-75-ns mt3 pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc"><p class="dib f4 fw4 pv2 ma0">No Problems</p></li>
         {/if}
     </ul>
 
     {#if isAdmin}
-    <div class="w-75">
-        <h3 class="f5 fw5 mt4">Add Problem</h3>
-
-        <div class="">
-            <label for="problemType" class="f6 fw5 db mb2">Select problem type</label>
-            <!-- svelte-ignore a11y-no-onchange -->
-            <select name="problemType" bind:value={newProblem.type} on:change={updateNewProblem}>
-                <option value="none"></option>
-                {#each Object.entries(problemTypes) as [shorthand, prob]}
-                    <option value="{shorthand}">{prob.description}</option> 
-                {/each}
-            </select>
-        </div>
-
-        {#if newProblem.type!='none'}
-            <form on:submit|preventDefault={createProblem}>
-                <ProblemForm bind:problem={newProblem} on:click={createProblem}/>
-                <button class="fr mt4 f6 br2 ba ph3 pv2 mb2 black" type="submit">Add Problem</button>
-            </form>
-        {/if}
-    </div>
+        <AddProblem bind:problemSet/>
     {/if}
 
 </div>

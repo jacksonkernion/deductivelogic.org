@@ -17,6 +17,7 @@
         instructor: null,
         admins: [user.id],
         users: [user.id],
+        userProfiles: [user],
         connectives: {
             andSymbol: '∙',
             orSymbol: '∨',
@@ -55,11 +56,12 @@
             if (res1.error) throw res1.error;
             
             if(res1.data && mode == 'create'){
-                $courses = [...$courses, ...res1.data];
+                $courses = [...$courses, course];
+                $session.user.courses = [...$session.user.courses, res1.data[0].id];
                 const res2 = await supabase
                     .from('profiles')
                     .upsert([
-                        { id: user.id, courses: [...$session.user.courses, res1.data[0].id] }
+                        { id: user.id, courses: $session.user.courses }
                     ]);
                 if (res2.error) throw res2.error;
             }
@@ -80,7 +82,7 @@
 
     async function deleteCourse(){
 
-        //should maybe delete course.id from uother ser.courses arrays...
+        //should maybe delete course.id from user.courses arrays...
 
         deleteModalShow = !deleteModalShow;
         if(deleteName == course.name){
@@ -93,21 +95,30 @@
                 
                 if (res0.error) throw res0.error;
 
-                const pQueryStr = res0.data.map(p => 'problemSet_id.eq.' + p.id).join(',');
-
-                const res00 = await supabase
-                    .from('problems')
-                    .delete()
-                    .or(pQueryStr);
-                
-                if (res00.error) throw res00.error;
+                if(res0.data.length){
+                    const pQueryStr = res0.data.map(p => 'problemSet_id.eq.' + p.id).join(',');
+                    const submissionsQueryStr = res0.data.map(p => p.problemsOrder.map(problemId => 'problem_id.eq.' + problemId).join(',')).filter(str => str).join(',');
                     
-                const res1 = await supabase
-                    .from('problemSets')
-                    .delete()
-                    .match({ course_id: course.id });
+                    const res000 = await supabase
+                        .from('submissions')
+                        .delete()
+                        .or(submissionsQueryStr);
+                    if (res000.error) alert(res000.error.error_description || res000.error.message);
+
+                    const res00 = await supabase
+                        .from('problems')
+                        .delete()
+                        .or(pQueryStr);
+                    
+                    if (res00.error) throw res00.error;
+                        
+                    const res1 = await supabase
+                        .from('problemSets')
+                        .delete()
+                        .match({ course_id: course.id });
                 
-                if (res1.error) throw res1.error;
+                    if (res1.error) throw res1.error;
+                }
 
                 const res2 = await supabase
                     .from('courses')
@@ -116,10 +127,18 @@
 
                 if (res2.error) throw res2.error;
 
+                const res3 = await supabase
+                    .from('profiles')
+                    .update({'courses': user.courses.filter(cId => cId !== course.id)})
+                    .eq('id', user.id);
+
+                if (res3.error) throw res2.error;
+
             } catch (error) {
                 alert(error.error_description || error.message);
             } finally{
                 $courses = $courses.filter(c => c.id !== course.id);
+                $session.user.courses = $session.user.courses.filter(cId => cId !== course.id);
             }
         }   
         else{
@@ -164,7 +183,7 @@
 
     <div class="mv3">
 
-        <p class="f5 mb2">Customize Symbols and Keyboard Shortcuts</p>
+        <p class="f5 mb3">Symbols and Keyboard Shortcuts</p>
 
         <div class="mb2">
             <label for="andSymbol" class="f6 db fw5">Conjunction</label>
@@ -211,7 +230,7 @@
             <label for="biconditionalSymbol" class="f6 fw5 db">Bionditional</label>
             <select class="w3 mr3 dib f3" name="biconditionalSymbol" bind:value={course.connectives.biconditionalSymbol}>
                 <option value="≡">≡</option>
-                <option value="↔︎">↔︎</option>
+                <option value="↔">↔</option>
             </select>
             <div class="dib f7">
                 <Input bind:value={course.connectives.biconditionalShortcuts}/>
@@ -222,9 +241,11 @@
 
     <div class="divider"></div>
 
-    <div class="pv3 mt3">
-        <Button on:click={toggleDeleteModal}>Delete course...</Button>
-    </div>
+    {#if mode != 'create'}
+        <div class="pt3 mt2">
+            <Button on:click={toggleDeleteModal}>Delete course...</Button>
+        </div>
+    {/if}
   
 </Modal>
 </form>

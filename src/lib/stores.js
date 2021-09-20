@@ -10,9 +10,9 @@ export const connectives = writable({
     notSymbol: '–',
     conditionalSymbol: '⊃',
     biconditionalSymbol: '≡',
-    andShortcuts: ['.'],
-    orShortcuts: ['v'],
-    notShortcuts: ['-'],
-    conditionalShortcuts: ['>'],
-    biconditionalShortcuts: ['<>']
+    andShortcuts: '.',
+    orShortcuts: 'v',
+    notShortcuts: '-',
+    conditionalShortcuts: '>',
+    biconditionalShortcuts: '<>'
 });

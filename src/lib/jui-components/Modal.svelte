@@ -1,16 +1,17 @@
 <script>
 
+    import Button from '$lib/components/atoms/Button.svelte'
+    import { clickOutside } from '$lib/jui-components/clickOutside.js';
+    import { trapFocus } from "$lib/jui-components/trapFocus";
+
     export let size = "medium";
     export let title = "";
     export let confirmText = "Confirm";
     export let cancelText = "Cancel";
   
-    import { clickOutside } from '$lib/jui-components/clickOutside.js';
+    
     
     export let modalShow = false;
-  
-    // Trap focus
-    import { trapFocus } from "$lib/jui-components/trapFocus";
   
     function switchModalVisibility() {
       modalShow = !modalShow;
@@ -103,7 +104,7 @@
 .c-modal__body {
   flex: 1 1 auto;
   overflow: auto;
-  max-height: calc(100vh - 4rem);
+  max-height: calc(100vh - 8rem);
   padding: 1.5rem;
 }
 
@@ -213,10 +214,8 @@
         <div class="fl">
           <p class="fw5 f5">{title}</p>
         </div>
-        <div class="fr">
-          <div class="remove-button pa2 mt2" on:click={handleCloseClick}>
-            <ion-icon name="close-outline"></ion-icon>
-          </div>
+        <div class="fr mt2">
+          <Button icon="close-outline" on:click={handleCloseClick} />
         </div>
       </div>
     </div>
@@ -229,8 +228,8 @@
     <div class="c-modal__footer">
       <div class="c-toolbar">
           <div class="tr f6">
-              <a on:click={handleCancelClick}>{cancelText}</a> 
-              <button type="submit" class="ml2 br2 ba ph3 pv2 black">{confirmText}</button>
+              <a class="mr2" on:click={handleCancelClick}>{cancelText}</a> 
+              <Button on:submit type="submit">{confirmText}</Button>
           </div>
         </div>
     </div>
