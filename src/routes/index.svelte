@@ -245,7 +245,7 @@
 <div class="footer bg-near-white">
     <div class="cf pv2 mw7 pa4 center f6 light-silver h2">
         <div class="fl">
-            <p></p>
+            <p><a href="/browse"> Browse Courses</a></p>
         </div>
         <div class="fr pv2">
             Course Instructor? <CourseModal />
