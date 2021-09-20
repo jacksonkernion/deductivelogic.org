@@ -3,7 +3,7 @@
 
 Deductivelogic.org is a work in progress.
 
-Most of the important files in this project are Svelte components. But the one big exception is <code>src/$lib/logic.js<code>. That's the 'engine' that drives the functionality of the web app.
+Most of the important files in this project are Svelte components. But the one big exception is <code>src/$lib/logic.js</code>. That's the 'engine' that drives the functionality of the web app.
 
 ## Tech stack
 
