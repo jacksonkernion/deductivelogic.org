@@ -245,7 +245,7 @@
             />
         {/each}
     {:else}
-        <div class="lh-copy pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc">
+        <div class="lh-copy mt4 pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc">
             <p class="dib f4 fw4 pv2 mh0 mt0 mb3">No Joined Courses</p><br/>
             <a class="f6" href="/browse">Browse Courses</a>
         </div>
