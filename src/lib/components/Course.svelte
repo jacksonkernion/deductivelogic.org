@@ -171,7 +171,7 @@
                   <a class="dib f6 pv2" href="{course.slug}/pset{problemSet.number}">{problemSet.name}</a> 
                   {#if !problemSet.published}
                     <span class="ml1"></span> <Label>Unpublished</Label>
-                  {:else}
+                  {:else if !user.guest}
                   <div class="dib black-50">
                     <p class="dib f6 pv2 ma0"> ・ <span class="dn di-ns">Completed: </span>{problemSet.correctSubmissions}/{problemSet.problemsOrder.length}</p>
                     {#if problemSet.problemsOrder.length > 0 && problemSet.correctSubmissions == problemSet.problemsOrder.length }
