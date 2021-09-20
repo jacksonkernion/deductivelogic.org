@@ -123,17 +123,6 @@
 
 </script> 
 
-<div class="bg-near-white bb b--black-10">
-
-    <div class="cf mw7 center ph4">
-        <a class="logo ttu lh-title f7 fw6 tracked mv3 pt1 tl black-80 dib v-mid" href="/">deductivelogic.org</a>
-        <div class="fr dib v-mid">
-            <AuthModal {user} />     
-        </div>
-    </div>
-
-</div>
-
 <div class="mw7 center pa4">
     <div class="ml3 ml0-ns lh-title f3 fw4">{problemSet.name}</div>
 </div>

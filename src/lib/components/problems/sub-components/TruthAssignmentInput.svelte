@@ -55,9 +55,10 @@
     }
 
     .t_table-button_F:hover, .t_table-button_T:hover{
-        cursor:pointer;
-        border:1px solid black;
-        color:black;
+        cursor: pointer;
+        color: black;
+        background-color: #eee;
+        border-color: #999;
     }
 
     .t_table-fill{
