@@ -128,7 +128,7 @@
 </script>
 
 {#if user.firstName !== undefined}
-  <p class="lh-copy f6"><span class="dn di-ns">{user.firstName} {user.lastName}</span><span class="dn-ns">{user.firstName[0]} {user.lastName[0]}</span> ・ 
+  <p class="lh-copy f6"><span class="dn di-ns">{user.firstName} {user.lastName}</span><span class="dn-ns">{user.firstName[0]}{user.lastName[0]}</span> ・ 
     <a on:click={signOut}>Sign Out</a>
   </p>
   
