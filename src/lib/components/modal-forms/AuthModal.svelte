@@ -5,7 +5,7 @@
   import { setAuthCookie, unsetAuthCookie } from '$lib/utils/session';
   import {goto} from '$app/navigation';
 
-  import Input from '$lib/components/Input.svelte';
+  import Input from '$lib/components/atoms/Input.svelte';
   import Modal from '$lib/jui-components/Modal.svelte';
 
   export let user;

@@ -11,17 +11,16 @@
   import Button from "$lib/components/atoms/Button.svelte"
   import Label from "$lib/components/atoms/Label.svelte"
 
-  export let user;
   export let course = {name: null, slug: null};
   export let pSets = [];
   export let mode = "dashboard";
 
   $: defaultNumber = pSets.length + 1;
 
-  let isAdmin = course.admins.includes(user.id) ? true : false;
+  let isAdmin = course.admins.includes($session.user.id) ? true : false;
   let isJoined;
-  if(!user.guest){
-    isJoined = (user.courses.includes(course.id)) ? true : false;
+  if(!$session.user.guest){
+    isJoined = ($session.user.courses.includes(course.id)) ? true : false;
   }
 
   let modalShow;
@@ -87,10 +86,10 @@
 
   async function joinCourse() {
     isJoined = true;
-    user.courses = [...user.courses, course.id];
+    $session.user.courses = [...$session.user.courses, course.id];
     const res1 = await supabase
       .from('courses')
-      .update({'users': [...course.users, user.id]})
+      .update({'users': [...course.users, $session.user.id]})
       .eq('id', course.id);
     if(res1.error){
       alert(res1.error.error_description || res1.error.message);
@@ -99,8 +98,8 @@
       $courses = [...$courses, res1.data];
       const res2 = await supabase
         .from('profiles')
-        .update({'courses': user.courses})
-        .eq('id', user.id);
+        .update({'courses': $session.user.courses})
+        .eq('id', $session.user.id);
       if(res2.error){
         alert(res2.error.error_description || res2.error.message);
       }
@@ -109,8 +108,8 @@
 
   async function unjoinCourse() {
     isJoined = false;
-    course.users = course.users.filter(userId => userId != user.id);
-    user.courses = user.courses.filter(courseId => courseId != course.id);
+    course.users = course.users.filter(userId => userId != $session.user.id);
+    $session.user.courses = $session.user.courses.filter(courseId => courseId != course.id);
     const res1 = await supabase
       .from('courses')
       .update({'users': course.users})
@@ -121,8 +120,8 @@
     else{
       const res2 = await supabase
         .from('profiles')
-        .update({'courses': user.courses})
-        .eq('id', user.id);
+        .update({'courses': $session.user.courses})
+        .eq('id', $session.user.id);
       if(res2.error){
         alert(res1.error.error_description || res1.error.message);
       }
@@ -148,7 +147,7 @@
       <ManageAccessModal userProfiles={course.userProfiles} bind:course />
       <CourseModal mode='edit' {course} bind:updatedCourse={course} />
     </div>
-  {:else if mode == "browse" & !user.guest}
+  {:else if mode == "browse" & !$session.user.guest}
     <div class="fr">
         {#if isJoined}
           <Button active=true on:click={unjoinCourse}>Joined</Button>
@@ -171,7 +170,7 @@
                   <a class="dib f6 pv2" href="{course.slug}/pset{problemSet.number}">{problemSet.name}</a> 
                   {#if !problemSet.published}
                     <span class="ml1"></span> <Label>Unpublished</Label>
-                  {:else if !user.guest && mode != "browse"}
+                  {:else if !$session.user.guest && mode != "browse"}
                   <div class="dib black-50">
                     <p class="dib f6 pv2 ma0"> ・ <span class="dn di-ns">Completed: </span>{problemSet.correctSubmissions}/{problemSet.problemsOrder.length}</p>
                     {#if problemSet.problemsOrder.length > 0 && problemSet.correctSubmissions == problemSet.problemsOrder.length }
@@ -185,12 +184,12 @@
                 {#if isAdmin}
                   <div class="fr">
                     {#if !problemSet.published}
-                      <Button icon="cloud-upload-outline" on:click={publishProblemSet(problemSet, i)}/>
+                      <Button icon="cloud-upload" on:click={publishProblemSet(problemSet, i)}/>
                     {:else}
-                    <Button icon="cloud-offline-outline" on:click={unpublishProblemSet(problemSet, i)}/>
+                    <Button icon="cloud-done" on:click={unpublishProblemSet(problemSet, i)}/>
                     {/if}
-                    <Button icon="receipt-outline" href="{course.slug}/pset{problemSet.number}/report" />
-                    <Button icon="trash-outline" on:click={deleteProblemSetModal(problemSet)}/>
+                    <Button icon="bar-chart" href="{course.slug}/pset{problemSet.number}/report" />
+                    <Button icon="trash" on:click={deleteProblemSetModal(problemSet)}/>
                   </div>
                 {/if}
 

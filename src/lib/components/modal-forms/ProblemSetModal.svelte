@@ -2,7 +2,7 @@
 
     import { problemSets } from '$lib/stores.js';
     import supabase from "$lib/db";
-    import Input from '$lib/components/Input.svelte';
+    import Input from '$lib/components/atoms/Input.svelte';
     import Modal from '$lib/jui-components/Modal.svelte';
 
     export let defaultNumber = 1;

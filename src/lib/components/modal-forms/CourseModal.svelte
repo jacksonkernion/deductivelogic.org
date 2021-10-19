@@ -4,7 +4,7 @@
     import { courses } from "$lib/stores";
     import { session } from "$app/stores";
 
-    import Input from '$lib/components/Input.svelte';
+    import Input from '$lib/components/atoms/Input.svelte';
     import Modal from '$lib/jui-components/Modal.svelte';
     import Button from "$lib/components/atoms/Button.svelte";
 
@@ -159,7 +159,7 @@
 </script>
 
 {#if mode == 'edit'}
-    <Button icon="ellipsis-horizontal"on:click={toggleModal}></Button>
+    <Button icon="settings-sharp" on:click={toggleModal}></Button>
 {:else}
     <a class="light-silver" on:click={toggleModal}>Create Course...</a>
 {/if}

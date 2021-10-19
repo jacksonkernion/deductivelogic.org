@@ -3,19 +3,15 @@
     let loading = false;
 
     import supabase from "$lib/db";
-    import { courses, problemSets} from '$lib/stores.js';
+    import { courses, problemSets } from '$lib/stores.js';
     
     export async function load({ session }) {
-        loading = true;
         
+        loading = true;
         const { user } = session;
-        let submissions = [];
+
         if(user.guest || !user.courses){
-            return {
-                props: {
-                    user
-                }
-            };
+            return {};
         }
         else{
 
@@ -66,7 +62,7 @@
                     .select()
                     .match({user_id: user.id, verdict: 'correct'});
                 if(res3.data){
-                    submissions = [...res3.data];
+                    let submissions = [...res3.data];
                     pSets = pSets.map(pSet => {
                         if(pSet.problemsOrder.length == 0){
                             return pSet;
@@ -89,11 +85,7 @@
                 }                       
             }
             loading = false;
-            return {
-                props: {
-                    user
-                }
-            };
+            return {};
         }
     }
     
@@ -127,94 +119,18 @@
 
 <script>
 
-    import { navigating } from '$app/stores';
+    import { session } from "$app/stores";
 
     import Welcome from "$lib/Welcome.svelte"
     import Course from "$lib/components/Course.svelte";
     import CourseModal from "$lib/components/modal-forms/CourseModal.svelte";
-    import Button from "$lib/components/atoms/Button.svelte"
-
-    export let user;
-    
-    //let course = {name: null, slug: null};
-
-/* Script used for importing json problemSet data to supabase DB
-
-
-    import {pSets} from '$lib/problemSets.js';
-
-    pSets = pSets.map((problemSet) => {
-        problemSet.problems = problemSet.problems.map((problem) => {
-            if(typeof problem.logStrSet == 'string')
-                problem.logStrSet = problem.logStrSet.split(',');
-            if(typeof problem.sentSet == 'string')
-                problem.sentSet = problem.sentSet.split('/');
-            if(problem.question)
-                problem.sent = problem.question;
-            
-            delete problem.id;
-            delete problem.answer;
-            delete problem.question;
-            delete problem.assignment_id;
-              
-            return problem;
-        });
-
-        problemSet.course_id = 31;
-        problemSet.name = "Problem Set " + problemSet.number;
-        problemSet.published = true;
-
-        return problemSet;
- 
-    });
-
-    async function populateDB (pSets){
-        for (pSet of pSets) {
-            try {
-                let pSetId;
-
-                const res1 = await supabase
-                    .from('problemSets')
-                    .upsert([
-                        {
-                            number: pSet.number,
-                            name: pSet.name,
-                            published: pSet.published,
-                            course_id: pSet.course_id
-                        }
-                    ]);
-                if (res1.error) throw res1.error;
-                if (res1.data){
-                    pSetId = res1.data[0].id;
-                }
-
-                pSet.problems = pSet.problems.map((problem) => {
-                    problem.problemSet_id = pSetId;
-                    return problem;
-                });
-
-                const res2 = await supabase
-                    .from('problems')
-                    .upsert(pSet.problems);
-                if (res2.error) throw res2.error;
-
-            } catch (error) {
-                console.log(error.error_description || error.message);
-            }
-        }
-        console.log('success?');
-    };
-
-    populateDB(pSets);
-
-*/
 
 </script>
 
 <!-- If not logged in, display 'welcome' page -->
-{#if user.guest}
+{#if $session.user.guest}
 
-    <Welcome {user} />
+    <Welcome />
 
 {:else} <!-- If logged in, display 'home' page -->
 
@@ -227,7 +143,6 @@
     {:else if $courses.length > 0 }
         {#each $courses as course}
             <Course
-                {user}
                 {course}
                 pSets={$problemSets.filter(pSet => pSet.course_id == course.id).sort((a, b) => {return a.number - b.number})}
             />
@@ -244,8 +159,8 @@
 
 <div class="footer bg-near-white">
     <div class="cf pv2 mw7 pa4 center f6 light-silver h2">
-        <div class="fl">
-            <p><a href="/browse"> Browse Courses</a></p>
+        <div class="fl pv2">
+            <a class="light-silver" href="/browse"> Browse Courses</a>
         </div>
         <div class="fr pv2">
             Course Instructor? <CourseModal />

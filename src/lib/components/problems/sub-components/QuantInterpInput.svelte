@@ -152,10 +152,10 @@
         text-align: center;
     }
     .domain-button:hover{
-        border-color: rgba(0,0,0,.2);
-        cursor: pointer;
-        color: #333;
+        cursor:pointer;
+        color: black;
         background-color: #eee;
+        border-color: #999;
     }
 
     .save-message{

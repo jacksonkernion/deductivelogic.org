@@ -63,8 +63,6 @@
 
 </script>
 
-<Button icon="people" on:click={toggleModal}></Button>
-
 {#if modalShow}
 
 <form on:submit|preventDefault={updateUsers}>
@@ -118,3 +116,5 @@
 </form>
 
 {/if}
+
+<Button icon="people" on:click={toggleModal}></Button>

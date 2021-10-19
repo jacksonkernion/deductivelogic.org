@@ -2,7 +2,7 @@
     import {problemTypes} from '$lib/constants.js';
     import Button from '$lib/components/atoms/Button.svelte';
     import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
-    import Input from '$lib/components/Input.svelte';
+    import Input from '$lib/components/atoms/Input.svelte';
 
     export let problem;
     export let mode = 'create';

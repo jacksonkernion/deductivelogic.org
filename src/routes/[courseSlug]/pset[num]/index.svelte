@@ -31,17 +31,35 @@
                     .eq('problemSet_id', problemSet.id);
                 if(!res3.error){
                     problems.set(res3.data.sort((a, b) => {return problemSet.problemsOrder.indexOf(a.id) - problemSet.problemsOrder.indexOf(b.id)}));
+                    let problem_ids = problemSet.problemsOrder;
+                    let questions =[];
+                    let replies = [];
+
+                    const res4 = await supabase
+                        .from('questions')
+                        .select()
+                        .in('problem_id', problem_ids);
+                    if(!res4.error){
+                        questions = res4.data;
+                    }
+
+                    const res5 = await supabase
+                        .from('questionReplies')
+                        .select()
+                        .in('problem_id', problem_ids);
+                    if(!res5.error){
+                        replies = res5.data;
+                    }
 
                     //get and set submissions only if user is logged in
                     // And only get correct ones to show. Incorrect submissions will just reset.
                     if(!user.guest){
-                        let problem_ids = problemSet.problemsOrder;
-                        const res4 = await supabase
+                        const res6 = await supabase
                             .from('submissions')
                             .select()
                             .match({user_id: user.id, verdict: 'correct'})
                             .in('problem_id', problem_ids);
-                        if(!res4.error){
+                        if(!res6.error){
                             submissions.set(res4.data);
                         }
                     }
@@ -50,7 +68,9 @@
                         props: {
                             user,
                             course,
-                            problemSet
+                            problemSet,
+                            questions,
+                            replies
                         }
                     };
                 }
@@ -66,7 +86,6 @@
 </script>
 <script>
 
-    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
     import AddProblem from '$lib/components/AddProblem.svelte';
 
 	import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
@@ -86,6 +105,8 @@
     export let user;
     export let course;
     export let problemSet = {};
+    export let questions = [];
+    export let replies = [];
 
     let isAdmin = course.admins.includes(user.id) ? true : false;
 
@@ -133,7 +154,12 @@
         {#if $problems.length > 0}
             {#each $problems as problem, i (problem.id)}
                 {#key problem}
-                    <svelte:component this={problem.component} {problem} number={i+1} {isAdmin}/>
+                    <svelte:component this={problem.component} 
+                        {problem} 
+                        number={i+1} 
+                        {isAdmin} 
+                        questions={questions.filter(question => question.problem_id == problem.id)} 
+                        replies={replies.filter(reply => reply.problem_id == problem.id)} />
                 {/key}
             {/each}
         {:else}

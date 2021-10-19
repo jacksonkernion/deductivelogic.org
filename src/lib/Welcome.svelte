@@ -1,7 +1,5 @@
 <script>
 
-    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
-
     import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/components/problems/Paraphrase.svelte';
 	import TruthTable from '$lib/components/problems/TruthTable.svelte';
@@ -18,8 +16,6 @@
 
     import AddProblem from "./components/AddProblem.svelte";
     import { problems } from '$lib/stores.js';
-
-    export let user;
 
     $problems = [
         {

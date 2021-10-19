@@ -5,16 +5,21 @@
     import { submissions, problems, problemSets} from '$lib/stores';
     import { session } from "$app/stores";
     import ProblemForm from '$lib/components/ProblemForm.svelte';
+    import QuestionsPanel from '$lib/components/QuestionsPanel.svelte';
     import Modal from '$lib/jui-components/Modal.svelte'
     import Button from '$lib/components/atoms/Button.svelte';
 
     export let problem = {id: null, number: null};
     export let number, isAdmin;
+    export let questions = [];
+    export let replies = [];
     export let submission = {
         problem_id: problem.id,
         verdict: '',
         message: '',
     };
+
+    console.log(questions);
 
     let submitting = false;
     let problemSubmissions = $submissions.filter(sub => sub.problem_id == problem.id);
@@ -206,7 +211,7 @@
         </div>
     </div>
 {/if}
-<div class="relative ml3 ml0-ns pv3 w-75-ns ">
+<div class="relative dib ml3 ml0-ns pv3 w-75-ns ">
     <div class="absolute left--2 lh-copy">
         <p>{number}.</p>
     </div>
@@ -235,31 +240,35 @@
     </div>
 </div>
 
+<div class="w-20-ns dib">
+    <QuestionsPanel problem_id={problem.id} {isAdmin} {questions} {replies} />
+</div>
+
 <div class="divider ml3 ml0-ns w-75-ns"></div>
 
 {#if isAdmin}
 
     {#if editModalShow}
 
-    <form on:submit|preventDefault={updateProblem}>
-        <Modal title="Edit Problem" bind:modalShow={editModalShow}>
-        
-            <ProblemForm bind:problem={updatedProblem} />
-        
-        </Modal>
-    </form>
+        <form on:submit|preventDefault={updateProblem}>
+            <Modal title="Edit Problem" bind:modalShow={editModalShow}>
+            
+                <ProblemForm bind:problem={updatedProblem} />
+            
+            </Modal>
+        </form>
 
     {/if}
 
     {#if deleteModalShow}
 
-    <form on:submit|preventDefault={deleteProblem}>
-        <Modal title="Delete Problem" bind:modalShow={deleteModalShow} confirmText="Delete">
-        
-            Are you sure you want to delete problem {number}?
-        
-        </Modal>
-    </form>
+        <form on:submit|preventDefault={deleteProblem}>
+            <Modal title="Delete Problem" bind:modalShow={deleteModalShow} confirmText="Delete">
+            
+                Are you sure you want to delete problem {number}?
+            
+            </Modal>
+        </form>
 
     {/if}
 {/if}

@@ -119,6 +119,9 @@
 
 .c-modal__footer {
   border-radius: 0 0 0.4rem 0.4rem;
+  border-top: .1rem solid rgba(0,0,0,.05);
+  padding-top: .5rem;
+
 }
 
 .c-modal__header,
@@ -187,7 +190,7 @@
     visibility: visible;
   }
 
-  /* The 'toolar' header */
+  /* The 'toolbar' header */
 
   .c-toolbar {
     width: 100%;
