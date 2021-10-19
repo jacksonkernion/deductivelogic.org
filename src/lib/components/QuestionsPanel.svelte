@@ -26,7 +26,7 @@
             //TODO Visually update non-sent message?
         }
 
-        draftMessage.content = '';
+        draftQuestion.content = '';
         
     }
 

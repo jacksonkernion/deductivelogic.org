@@ -5,21 +5,16 @@
     import { submissions, problems, problemSets} from '$lib/stores';
     import { session } from "$app/stores";
     import ProblemForm from '$lib/components/ProblemForm.svelte';
-    import QuestionsPanel from '$lib/components/QuestionsPanel.svelte';
     import Modal from '$lib/jui-components/Modal.svelte'
     import Button from '$lib/components/atoms/Button.svelte';
 
     export let problem = {id: null, number: null};
     export let number, isAdmin;
-    export let questions = [];
-    export let replies = [];
     export let submission = {
         problem_id: problem.id,
         verdict: '',
         message: '',
     };
-
-    console.log(questions);
 
     let submitting = false;
     let problemSubmissions = $submissions.filter(sub => sub.problem_id == problem.id);
@@ -239,12 +234,6 @@
         <button class="f6 br1 ba ph3 pv2 black fr" disabled={submitting} on:click>{submitting ? "Checking..." : "Check"}</button>
     </div>
 </div>
-
-<div class="w-20-ns dib">
-    <QuestionsPanel problem_id={problem.id} {isAdmin} {questions} {replies} />
-</div>
-
-<div class="divider ml3 ml0-ns w-75-ns"></div>
 
 {#if isAdmin}
 

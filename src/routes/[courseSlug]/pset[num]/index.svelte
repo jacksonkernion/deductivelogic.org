@@ -60,7 +60,7 @@
                             .match({user_id: user.id, verdict: 'correct'})
                             .in('problem_id', problem_ids);
                         if(!res6.error){
-                            submissions.set(res4.data);
+                            submissions.set(res6.data);
                         }
                     }
 
@@ -87,20 +87,7 @@
 <script>
 
     import AddProblem from '$lib/components/AddProblem.svelte';
-
-	import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
-	import Paraphrase from '$lib/components/problems/Paraphrase.svelte';
-	import TruthTable from '$lib/components/problems/TruthTable.svelte';
-	import Implication from '$lib/components/problems/Implication.svelte';
-	import ImplicationSet from '$lib/components/problems/ImplicationSet.svelte';
-	import Equivalence from '$lib/components/problems/Equivalence.svelte';
-	import EquivalenceSet from '$lib/components/problems/EquivalenceSet.svelte';
-	import Validity from '$lib/components/problems/Validity.svelte';
-	import DisjNormForm from '$lib/components/problems/DisjNormForm.svelte';
-	import NatLangImpSet from '$lib/components/problems/NatLangImpSet.svelte';
-	import NatLangArg from '$lib/components/problems/NatLangArg.svelte';
-    import QuantParaphrase from '$lib/components/problems/QuantParaphrase.svelte';
-    import QuantInterp from '$lib/components/problems/QuantInterp.svelte';
+    import Problem from '$lib/components/Problem.svelte';
 
     export let user;
     export let course;
@@ -109,37 +96,6 @@
     export let replies = [];
 
     let isAdmin = course.admins.includes(user.id) ? true : false;
-
-    $: $problems = $problems.map((problem) => {
-        if(problem.type === 'multipleChoice')
-            problem.component = MultipleChoice;
-        else if(problem.type === 'paraphrase')
-            problem.component = Paraphrase;
-        else if(problem.type === 'truthTable')
-            problem.component = TruthTable;
-        else if(problem.type === 'implication')
-            problem.component = Implication;
-        else if(problem.type === 'implicationSet')
-            problem.component = ImplicationSet;
-        else if(problem.type === 'equivalence')
-            problem.component = Equivalence;
-        else if(problem.type === 'equivalenceSet')
-            problem.component = EquivalenceSet;
-        else if(problem.type === 'validity')
-            problem.component = Validity;
-        else if(problem.type === 'natLangImpSet')
-            problem.component = NatLangImpSet;
-        else if(problem.type === 'natLangArg')
-            problem.component = NatLangArg;
-        else if(problem.type ==='disjNormForm')
-            problem.component = DisjNormForm;
-        else if(problem.type === 'quantParaphrase')
-            problem.component = QuantParaphrase;
-        else if(problem.type === 'quantInterp'){
-            problem.component = QuantInterp;
-        }
-        return problem;
-    });
 
 
 </script> 
@@ -154,7 +110,7 @@
         {#if $problems.length > 0}
             {#each $problems as problem, i (problem.id)}
                 {#key problem}
-                    <svelte:component this={problem.component} 
+                    <Problem
                         {problem} 
                         number={i+1} 
                         {isAdmin} 
