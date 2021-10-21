@@ -14,13 +14,6 @@
         type: 'none'
     };
 
-    async function insertProblem(prob) {
-        let { data, error } = await supabase.from('problems').insert([prob]);
-        if (error)
-            throw new Error(error.message);  
-        return data;
-    }
-
     function updateNewProblem() {
         for(var attr in problemTypes[newProblem.type].attributes){
             if(attr=='logStrSet' || attr=='sentSet')
@@ -32,8 +25,6 @@
     function createProblem() {
         //ADD ERROR CHECKING...
         problems = [...problems, newProblem];
-
-        insertProblem(newProblem);
 
         newProblem = {
             number: newProblem.number + 1,

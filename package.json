@@ -23,6 +23,9 @@
 	"dependencies": {
 		"@supabase/supabase-js": "^1.21.1",
 		"cookie": "^0.4.1",
+		"node-mailjet": "^3.0.5",
+		"sanitize-html": "^2.5.2",
+		"showdown": "^1.9.0",
 		"svelte-preprocess": "^4.7.4"
 	}
 }

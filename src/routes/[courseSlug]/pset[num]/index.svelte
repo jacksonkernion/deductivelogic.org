@@ -96,6 +96,7 @@
     export let replies = [];
 
     let isAdmin = course.admins.includes(user.id) ? true : false;
+    let adminsList = course.admins;
 
 
 </script> 
@@ -114,6 +115,7 @@
                         {problem} 
                         number={i+1} 
                         {isAdmin} 
+                        {adminsList}
                         questions={questions.filter(question => question.problem_id == problem.id)} 
                         replies={replies.filter(reply => reply.problem_id == problem.id)} />
                 {/key}

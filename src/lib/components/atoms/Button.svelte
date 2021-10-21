@@ -13,6 +13,8 @@
     // Styling
     export let icon = null;
     export let active = null;
+    export let size = 'normal';
+    export let fullwidth = false;
 </script>
 
 <style>
@@ -64,6 +66,20 @@
         color: #666;
     }
 
+    .button-small{
+        font-size: .75rem;
+        font-weight: 400;
+        line-height: 1.15;
+        padding: .25rem .5rem;
+        color: #333;
+        border: 1px solid rgb(192, 192, 192);
+        border-radius: .125rem;
+    }
+
+    .fullwidth{
+        width: 100%;
+    }
+
     /* icon Button (Square) */
 
     .button-icon{
@@ -106,6 +122,7 @@
         class:button-icon={icon}
         class:button-disabled={disabled}
         class:button-active={active}
+        class:button-small={size === 'small'}
         >
             {#if icon}
                 <ion-icon name={icon}></ion-icon>
@@ -122,7 +139,8 @@
             class:button-icon={icon}
             class:button-disabled={disabled}
             class:button-active={active}
-            
+            class:button-small={size === 'small'}
+            class:fullwidth={fullwidth}
         >
             {#if icon}
                 <ion-icon name={icon}></ion-icon>
@@ -137,6 +155,7 @@
             class:button-icon={icon}
             class:button-disabled={disabled}
             class:button-active={active}
+            class:button-small={size === 'small'}
             on:submit|preventDefault on:click|preventDefault
         >
             {#if icon}

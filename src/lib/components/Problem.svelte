@@ -1,5 +1,6 @@
 <script>
     import QuestionsPanel from '$lib/components/QuestionsPanel.svelte';
+    import {session} from "$app/stores";
 
     import MultipleChoice from '$lib/components/problems/MultipleChoice.svelte';
 	import Paraphrase from '$lib/components/problems/Paraphrase.svelte';
@@ -17,6 +18,7 @@
 
     export let problem = {id: null, number: null};
     export let number, isAdmin;
+    export let adminsList = [];
     export let questions = [];
     export let replies = [];
     
@@ -48,15 +50,18 @@
         problem.component = QuantInterp;
     }
 </script>
+<li class="cf">
+    <svelte:component this={problem.component} 
+        {problem}
+        {number}
+        {isAdmin}
+    />
 
-<svelte:component this={problem.component} 
-    {problem}
-    {number}
-    {isAdmin}
-/>
-
-<div class="w-20-ns dib">
-    <QuestionsPanel problem_id={problem.id} {isAdmin} {questions} {replies} />
-</div>
+    {#if !$session.user.guest}
+        <div class="fl w-25-ns">
+            <QuestionsPanel problem_id={problem.id} {number} {isAdmin} {adminsList} {questions} {replies} />
+        </div>
+    {/if}
+</li>
 
 <div class="divider ml3 ml0-ns w-75-ns"></div>

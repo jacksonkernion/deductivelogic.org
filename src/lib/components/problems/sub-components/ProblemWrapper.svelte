@@ -197,7 +197,7 @@
 </style>
 
 {#if isAdmin}
-    <div class="ml3 ml0-ns w-75-ns mt1 mb2 relative z-1">
+    <div class="ml3 ml0-ns w-75-ns mt1 mb2 pr3 relative z-1">
         <div class="absolute top-0 right-0">
             <Button icon="create-outline" on:click={toggleEditModal}></Button>
             <Button icon="trash-outline" on:click={toggleDeleteModal}></Button>
@@ -206,7 +206,7 @@
         </div>
     </div>
 {/if}
-<div class="relative dib ml3 ml0-ns pv3 w-75-ns ">
+<div class="fl relative ml3 ml0-ns pv3 pr3 w-75-ns" id="problem{number}">
     <div class="absolute left--2 lh-copy">
         <p>{number}.</p>
     </div>
