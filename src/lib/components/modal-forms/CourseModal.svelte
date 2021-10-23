@@ -18,6 +18,7 @@
         admins: [user.id],
         users: [user.id],
         userProfiles: [user],
+        problemSets: [],
         connectives: {
             andSymbol: '∙',
             orSymbol: '∨',
@@ -44,7 +45,7 @@
 
         //filter out userProfiles property
         const filteredCourse = Object.fromEntries(
-            Object.entries(course).filter(([key, value]) => key != 'userProfiles')
+            Object.entries(course).filter(([key, value]) => (key != 'userProfiles' && key != 'problemSets'))
         );
 
         try {
@@ -56,8 +57,9 @@
             if (res1.error) throw res1.error;
             
             if(res1.data && mode == 'create'){
+                course.id = res1.data[0].id;
                 $courses = [...$courses, course];
-                $session.user.courses = [...$session.user.courses, res1.data[0].id];
+                $session.user.courses = [...$session.user.courses, course.id];
                 const res2 = await supabase
                     .from('profiles')
                     .upsert([
@@ -88,51 +90,19 @@
         if(deleteName == course.name){
             try{
 
-                const res0 = await supabase
-                    .from('problemSets')
-                    .select()
-                    .eq('course_id', course.id);
-                
-                if (res0.error) throw res0.error;
-
-                if(res0.data.length){
-                    const pQueryStr = res0.data.map(p => 'problemSet_id.eq.' + p.id).join(',');
-                    const submissionsQueryStr = res0.data.map(p => p.problemsOrder.map(problemId => 'problem_id.eq.' + problemId).join(',')).filter(str => str).join(',');
-                    
-                    const res000 = await supabase
-                        .from('submissions')
-                        .delete()
-                        .or(submissionsQueryStr);
-                    if (res000.error) alert(res000.error.error_description || res000.error.message);
-
-                    const res00 = await supabase
-                        .from('problems')
-                        .delete()
-                        .or(pQueryStr);
-                    
-                    if (res00.error) throw res00.error;
-                        
-                    const res1 = await supabase
-                        .from('problemSets')
-                        .delete()
-                        .match({ course_id: course.id });
-                
-                    if (res1.error) throw res1.error;
-                }
-
-                const res2 = await supabase
+                const res1 = await supabase
                     .from('courses')
                     .delete()
                     .match({ id: course.id });
 
-                if (res2.error) throw res2.error;
+                if (res1.error) throw res1.error;
 
-                const res3 = await supabase
+                const res2 = await supabase
                     .from('profiles')
                     .update({'courses': user.courses.filter(cId => cId !== course.id)})
                     .eq('id', user.id);
 
-                if (res3.error) throw res2.error;
+                if (res2.error) throw res2.error;
 
             } catch (error) {
                 alert(error.error_description || error.message);

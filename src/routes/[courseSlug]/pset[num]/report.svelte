@@ -7,13 +7,16 @@
             
         const res1 = await supabase
             .from('courses')
-            .select()
+            .select('*, problemSets(name, problemsOrder, problems(id, submissions(*)))')
             .eq('slug', page.params.courseSlug)
+            .eq("problemSets.number", page.params.num)
             .single();
 
         if(!res1.error){
 
             const course = res1.data;
+            const problemSet = course.problemSets[0];
+            problemSet.problems = problemSet.problems.sort((a, b) => {return problemSet.problemsOrder.indexOf(a.id) - problemSet.problemsOrder.indexOf(b.id)});
             let isAdmin = course.admins.includes(user.id) ? true : false;
 
             if(!isAdmin){
@@ -23,53 +26,24 @@
                 };
             }
 
+            
+
             const res2 = await supabase
-                .from('problemSets')
+                .from('profiles')
                 .select()
-                .match({course_id: course.id, number: page.params.num})
-                .single();
+                .in('id', course.users)
+                .order('lastName', { ascending: true });
             
             if(!res2.error){
-
-                const problemSet = res2.data;
-                const res3 = await supabase
-                    .from('problems')
-                    .select()
-                    .eq('problemSet_id', problemSet.id);
-                    
-                if(!res3.error){
-
-                    const problems = res3.data.sort((a, b) => {return problemSet.problemsOrder.indexOf(a.id) - problemSet.problemsOrder.indexOf(b.id)});
-                    let problem_ids = problemSet.problemsOrder;
-                    const res4 = await supabase
-                        .from('submissions')
-                        .select()
-                        .in('problem_id', problem_ids);
-                    
-                    if(!res4.error){
-                        const submissions = res4.data;
-                        const res5 = await supabase
-                            .from('profiles')
-                            .select()
-                            .in('id', course.users)
-                            .order('lastName', { ascending: true });
-                        
-                        if(!res5.error){
-                            const students = res5.data;
-                            return {
-                                props: {
-                                    user,
-                                    course,
-                                    problemSet,
-                                    problems,
-                                    submissions,
-                                    students
-                                }
-                            };
-                        }
+                const students = res2.data;
+                return {
+                    props: {
+                        problemSet,
+                        students
                     }
-                }
+                };
             }
+
         }
         
         return {
@@ -81,60 +55,37 @@
 </script>
 <script>
 
-    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
-
-    export let user;
-    export let problemSet = {};
-    export let problems = [];
-    export let submissions = [];
+    export let problemSet = {problems:[]};
     export let students = [];
 
-    let problemSetSize = problems.length;
-    let submissionRecords = [];
+    let problemSetSize = problemSet.problems.length;
     let problemRecords = {};
-    
-    for(let i=0; i < problems.length; i++){
-        problemRecords[problems[i].id] = {number: (i+1), correct: 0, incorrect: 0};
+
+    for(let i=0; i < problemSet.problems.length; i++){
+        problemRecords[problemSet.problems[i].id] = {number: (i+1), correct: 0, incorrect: 0};
     }
 
-    for(const student of students){
-        let incorrect = 0;
-        let correct = 0;
-        let completed = false;
-        let correctProblemIds = [];
+    for(let i=0; i < students.length; i++){
+        students[i].incorrect = 0;
+        students[i].correct = 0;
+    }
+    
+    for(const problem of problemSet.problems){
 
-        let studentSubmissions = submissions.filter(sub => sub.user_id == student.id);
+        for(let i in students){
 
-        for(const submission of studentSubmissions){
-            if(submission.verdict == 'correct'){
-                if(!correctProblemIds.includes(submission.problem_id)){
-                    correct++;
-                    correctProblemIds = [...correctProblemIds, submission.problem_id];
-                    problemRecords[submission.problem_id].correct++;
-                }
+            let submissions = problem.submissions.filter(sub => sub.user_id === students[i].id);
+
+            if(submissions.some(s => s.verdict === 'correct')){
+                students[i].correct++;
+                problemRecords[problem.id].correct++;
             }
             else{
-                incorrect++;
-                problemRecords[submission.problem_id].incorrect++;
+                problemRecords[problem.id].incorrect += submissions.reduce((count, sub) => sub.verdict !== 'correct' ? count++ : count, 0);
+                // students[i].incorrect += submissions.reduce((count, sub) => sub.verdict !== 'correct' ? count++ : count, 0);
             }
         }
 
-        // Make sure the answered correctly every currently-listed problem
-        let result = false;
-        for(const problem of problems){
-            if(!correctProblemIds.includes(problem.id))
-                result = true;
-        }
-        if(!result){
-            completed = true;
-        }
-
-        submissionRecords.push({
-            displayName: student.lastName + ', ' + student.firstName,
-            correct: correct,
-            incorrect: incorrect,
-            completed: completed
-        });
     }
 	
 </script> 
@@ -156,15 +107,15 @@
         <p class="fl fw5 f5 lh-title mb2 mt3">Individual Progress</p>
     </div>
     <ul class="list pl0 mh0 mt0">
-        {#each submissionRecords as submissionRecord}
+        {#each students as student}
             <li class="lh-copy pv2 bb b--black-10 v-mid cf">
                 <div class="fl">
-                  <p class="dib f6 pv2 ma0">{submissionRecord.displayName}</p>
+                  <p class="dib f6 pv2 ma0">{student.lastName}, {student.firstName}</p>
                 </div>
                 <div class="fr black-50">
-                    <p class="dib f6 pv2 ma0">Completed: {submissionRecord.correct}/{problemSetSize}</p>
+                    <p class="dib f6 pv2 ma0">Completed: {student.correct}/{problemSetSize}</p>
                   
-                    {#if submissionRecord.completed}
+                    {#if student.correct === problemSetSize}
                         <div class="icon dib v-mid ph2 green">
                             <ion-icon name="checkmark-outline"></ion-icon>   
                         </div>   
@@ -178,27 +129,18 @@
         {/each}
     </ul>
 
+
     <div class="mt3 cf bb b--black-40">
         <p class="fl fw5 f5 lh-title mb2 mt3">Per Problem Stats</p>
     </div>
     <ul class="list pl0 mh0 mt0">
-        {#each problems as problem}
+        {#each problemSet.problems as problem}
             <li class="lh-copy pv2 bb b--black-10 v-mid cf">
                 <div class="fl">
                   <p class="dib f6 pv2 ma0">Problem {problemRecords[problem.id].number}</p>
                 </div>
                 <div class="fr black-50">
                     <p class="dib f6 pv2 ma0">Correct/Incorrect submissions: {problemRecords[problem.id].correct}/{problemRecords[problem.id].incorrect}</p>
-                    
-                    <!--
-                    <div class="icon dib v-mid ph2">
-                        {#if problemRecords[problem.id].completed}
-                            <ion-icon name="checkmark-outline"></ion-icon>      
-                        {:else}
-                            <ion-icon name="remove-outline"></ion-icon>  
-                        {/if}
-                    </div>
-                    -->
                 </div>
             </li>
         {/each}

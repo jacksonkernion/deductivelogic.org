@@ -13,7 +13,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": null
+            "sentSet": null,
+            submissions: [],
+            questions: []
         },
         {
             "number": 2,
@@ -24,7 +26,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": null
+            "sentSet": null,
+            submissions: [],
+            questions: []
         },
         {
             "number": 3,
@@ -35,7 +39,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": null
+            "sentSet": null,
+            submissions: [],
+            questions: []
         },
         {
             "number": 4,
@@ -46,7 +52,9 @@
             "logStr1": "p <> q <> r",
             "logStr2": "p . -q | -p . r",
             "logStrSet": null,
-            "sentSet": null
+            "sentSet": null,
+            submissions: [],
+            questions: []
         },
         {
             "number": 5,
@@ -57,7 +65,9 @@
             "logStr1": "p <> q <> r",
             "logStr2": "p . q . r | -p . -q . -r",
             "logStrSet": null,
-            "sentSet": null
+            "sentSet": null,
+            submissions: [],
+            questions: []
         },
         {
             "number": 6,
@@ -68,7 +78,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": null
+            "sentSet": null,
+            submissions: [],
+            questions: []
         },
         {
             "number": 7,
@@ -79,7 +91,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": ["-p > q | r", "-q > -p . s","s > q | r"],
-            "sentSet": ["If Jones did not meet Smith last night, then either Smith was the murderer or Jones is lying.","If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight.","If the murder took place after midnight, then either Smith was the murderer or Jones is lying."]
+            "sentSet": ["If Jones did not meet Smith last night, then either Smith was the murderer or Jones is lying.","If Smith wasn't the murderer, then Jones did not meet Smith last night and the murder took place after midnight.","If the murder took place after midnight, then either Smith was the murderer or Jones is lying."],
+            submissions: [],
+            questions: []
         },
         {
             "number": 8,
@@ -90,7 +104,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": ['S = "(1) is a soprano"','T = "(1) is a tenor"','L = "(1) is louder than (2)"','R = "(1) respects (2)"']
+            "sentSet": ['S = "(1) is a soprano"','T = "(1) is a tenor"','L = "(1) is louder than (2)"','R = "(1) respects (2)"'],
+            submissions: [],
+            questions: []
         },
         {
             "number": 9,
@@ -101,7 +117,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": 'true'
+            "sentSet": 'true',
+            submissions: [],
+            questions: []
         },
         {
             "number": 10,
@@ -112,7 +130,9 @@
             "logStr1": null,
             "logStr2": null,
             "logStrSet": null,
-            "sentSet": 'true/false'
+            "sentSet": 'true/false',
+            submissions: [],
+            questions: []
         },    
 
     ];

@@ -1,20 +1,18 @@
 <script>
     
     import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     import Button from '$lib/components/atoms/Button.svelte';
 
     import {permutator, findChars} from '$lib/utils';
 	import {parseLogStr, validity, getLetterVars} from '$lib/logic.js';
     
-    export let problem, number, isAdmin;
+    export let problem, submission;
     let sentSet = problem.sentSet;
     let logStrSet = problem.logStrSet;
     let studentLogStrSet = [];
     let answersArr = [[1,1]];
 
     $: correctImpArr = getCorrectImpArr(logStrSet);
-    let submission;
 
     function getCorrectImpArr(logStrSetArr){
         let correctArr = [];
@@ -41,7 +39,7 @@
        answersArr = answersArr;
     }
 
-    function checkSubmission(){
+    submission.check = function(){
         // I've removed logic to allow the specfication, in error message, of the specific paraphrase line that is wrong
         /*  var lineMarker = '(' + (i + 1) + ')';
             if(i == (correctLogStrArr.length - 1)){
@@ -57,7 +55,7 @@
             var studentVars = getLetterVars(studentLogStrSet[i]);
             
             if(correctVars.length != studentVars.length){
-                submission.log('warn', "Incorrect number of letters in your paraphrasing of ("+(i + 1)+").");
+                this.log('warn', "Incorrect number of letters in your paraphrasing of ("+(i + 1)+").");
                 return;
             }
         }
@@ -67,7 +65,7 @@
         var studentVars = getLetterVars(studentLogStrSet.join(' . '));
 
         if(correctVars.length != studentVars.length){
-            submission.log('warn', "Total number of letters used across paraphrased lines does not match correct total number.");
+            this.log('warn', "Total number of letters used across paraphrased lines does not match correct total number.");
             return
         }
 
@@ -85,7 +83,7 @@
 
                 // Throw error if submitted logStr can't be parsed
                 if(!parseLogStr(studentStr)){
-                    submission.log('warn', "Schema "+lineMarker+" could not be understood.");
+                    this.log('warn', "Schema "+lineMarker+" could not be understood.");
                     return;
                 }
                 
@@ -123,7 +121,7 @@
             }
         }
         if(!allMatch){
-            submission.log('incorrect', "At least one paraphrase is incorrect.");
+            this.log('incorrect', "At least one paraphrase is incorrect.");
             return;
             //The reasons I *don't* provide the paraphrasing line that did not result in a match, is because earlier line may 'accidentally' match, meaning that we can't in principle find the exact line of mismatch. Ex: correct = p.r/q.-r & student = p.q/q.-r
         }
@@ -134,13 +132,13 @@
         for(var i in answersArr){
             var imp = answersArr[i];
             if(imp[0] == imp[1]){
-                submission.log('warn', "Please don't include self-implications (Ex. n implies n)");
+                this.log('warn', "Please don't include self-implications (Ex. n implies n)");
                 return;
             }
             for(var j in answersArr){
                 if(j != i){
                     if(imp[0] == answersArr[j][0] && imp[1] == answersArr[j][1]){
-                        submission.log('warn', "Remove duplicate: '("+imp[0]+') implies ('+imp[1]+")'");
+                        this.log('warn', "Remove duplicate: '("+imp[0]+') implies ('+imp[1]+")'");
                         return;
                     }
                 }
@@ -151,7 +149,7 @@
         //Check that they have no extraneous implications
         for(var imp1 of answersArr){
             if(!correctImpArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-                submission.log('incorrect', "Some of your implications are wrong.");
+                this.log('incorrect', "Some of your implications are wrong.");
                 return;
             }
         }
@@ -159,62 +157,59 @@
         //check that they have all the implications
         for(var imp1 of correctImpArr){
             if(!answersArr.some((imp2) => imp1[0] == imp2[0] && imp1[1] == imp2[1])){
-                submission.log('incorrect', "You're missing some implications.");
+                this.log('incorrect', "You're missing some implications.");
                 return;
             }
         }
 
-        submission.log('correct', 'Correct');
+        this.log('correct');
         return;
     }
 	
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
-    <div slot="description">
-        <p>Paraphrase the following natural language sentences and then determine any implications that hold between them.</p>
-        {#each sentSet as sent, i}
-            <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> {sent}
-            </div>
-        {/each}
-    </div>
-	
-    <div slot="submission-input">
-        
-        {#each logStrSet as logStr, i}
-            <div class="relative submission-input-line"> 
-                <span class="description-line-marker mt2">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
-            </div>
-        {/each}
-        
-        {#each answersArr as implication, i}
-            <div class="submission-input-line">
-                <div class="dib v-mid">
-                    <select bind:value={implication[0]} >
-                        {#each logStrSet as logStr, j}
-                            <option value={(j+1)}>
-                                {j+1}
-                            </option>
-                        {/each}
-                    </select>
-                    implies
-                    <select bind:value={implication[1]} >
-                        {#each logStrSet as logStr, j}
-                            <option value={(j+1)}>
-                                {j+1}
-                            </option>
-                        {/each}
-                    </select>
-                </div>
-                <Button icon="close-outline" on:click={() => removeImplication(i)} />
-            </div>
-        {/each}
-        <div class="lh-copy f6 mt3 ml4">
-            <a on:click={addImplication}>+ Add implication</a>
+<div class="lh-copy">
+    <p>Paraphrase the following natural language sentences and then determine any implications that hold between them.</p>
+    {#each sentSet as sent, i}
+        <div class="description-line">
+            <span class="description-line-marker">{i+1}.</span> {sent}
         </div>
-        
-    </div>
+    {/each}
+</div>
 
-</ProblemWrapper>
+<div class="submission-input">
+    
+    {#each logStrSet as logStr, i}
+        <div class="relative submission-input-line"> 
+            <span class="description-line-marker mt2">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+        </div>
+    {/each}
+    
+    {#each answersArr as implication, i}
+        <div class="submission-input-line">
+            <div class="dib v-mid">
+                <select bind:value={implication[0]} >
+                    {#each logStrSet as logStr, j}
+                        <option value={(j+1)}>
+                            {j+1}
+                        </option>
+                    {/each}
+                </select>
+                implies
+                <select bind:value={implication[1]} >
+                    {#each logStrSet as logStr, j}
+                        <option value={(j+1)}>
+                            {j+1}
+                        </option>
+                    {/each}
+                </select>
+            </div>
+            <Button icon="close-outline" on:click={() => removeImplication(i)} />
+        </div>
+    {/each}
+    <div class="lh-copy f6 mt3 ml4">
+        <a on:click={addImplication}>+ Add implication</a>
+    </div>
+    
+</div>

@@ -1,29 +1,27 @@
 <script>
 
     import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     
     import {parseLogStr, getLetterVars, validity} from '$lib/logic.js';
     import {dispLogStr, findChars, permutator} from '$lib/utils';
     import {connectives} from '$lib/stores';
 
-    export let problem, number, isAdmin;
+    export let problem, submission;
     let sent = problem.sent;
     let logStr = problem.logStr;
 
     let studentLogStr = '';
-    let submission;
 
-    function checkSubmission(){
+    submission.check = function(){
 
         if(!parseLogStr(studentLogStr))
-            submission.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr, $connectives));
+            this.log('warn', "Could not parse schema: "+dispLogStr(studentLogStr, $connectives));
 		
 		var correctVars = getLetterVars(logStr);
 		var studentVars = getLetterVars(studentLogStr);
 		
 		if(correctVars.length != studentVars.length){
-			submission.log('warn', "Hmm...You don't seem to have the correct number of letters.");
+			this.log('warn', "Hmm...You don't seem to have the correct number of letters.");
             return;
 		}
 		
@@ -45,22 +43,24 @@
 			
 			//Evaluate equivalency
 			if(validity('('+logStr+') <> ('+testStr+')')){
-				submission.log('correct', 'Correct');
+				this.log('correct');
                 return;
 			}
 		}
-		submission.log('incorrect', 'Incorrect');
+		this.log('incorrect', 'Incorrect');
         return;
     }
 </script>
 
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
-    <div slot="description">
-        <p>Paraphrase the following sentence in logical notation:</p>
-        <p class="description-line">{sent}</p>
-    </div>
-	<div slot="submission-input" class="submission-input-line">
+
+<div class="lh-copy">
+    <p>Paraphrase the following sentence in logical notation:</p>
+    <p class="description-line">{sent}</p>
+</div>
+<div class="submission-input">
+    <div class="submission-input-line">
         <LogStrInput bind:logStr={studentLogStr} />
     </div>
-</ProblemWrapper>
+    
+</div>

@@ -3,7 +3,6 @@
     let loading = false;
 
     import supabase from "$lib/db";
-    import { courses, problemSets } from '$lib/stores.js';
     
     export async function load({ session }) {
         
@@ -15,105 +14,70 @@
         }
         else{
 
+            let courses = [];
+
             if(user.courses.length > 0){
                 const coursesQueryStr = user.courses.map(courseId => 'id.eq.' + courseId).join(',');
-                const pSetsQueryStr = user.courses.map(courseId => 'course_id.eq.' + courseId).join(',');
                 
                 const res1 = await supabase
                     .from('courses')
-                    .select()
+                    .select('*, problemSets(*)')
                     .or(coursesQueryStr)
                     .order('name', {ascending: true});
                 
-                let coursesList = [];
+                courses = res1.data;
+                
+                let submissions = [];
 
-                //If a course admin, populate userProfiles, for course management
-                for(let course of res1.data){
-                    if(course.admins.includes(user.id)){
+                const res2 = await supabase
+                    .from('submissions')
+                    .select()
+                    .match({user_id: user.id, verdict: 'correct'});
+                if(res2.data)
+                    submissions = [...res2.data];
+                
+                for(let i in courses){
+                    courses[i].problemSets = courses[i].problemSets.sort((a, b) => {return a.number - b.number});
+
+                    //If a course admin, populate userProfiles, for course management
+                    if(courses[i].admins.includes(user.id)){
                         const { data, error } = await supabase
                             .from('profiles')
                             .select()
-                            .in('id', course.users)
+                            .in('id', courses[i].users)
                             .order('lastName');
                         if (data){
-                            course.userProfiles = data;
+                            courses[i].userProfiles = data;
                         } else {
                             //throw new Error(error);
                         }
                     }
-                    coursesList.push(course);
-                }
-
-                courses.set(coursesList);
-
-                const res2 = await supabase
-                    .from('problemSets')
-                    .select()
-                    .or(pSetsQueryStr);
-                
-                let problem_ids = [];
-                let pSets = [];
-                for(const pSet of res2.data){
-                    pSets = [...pSets, {...pSet, correctSubmissions: 0 }];
-                    problem_ids = [...problem_ids, ...pSet.problemsOrder];
-                }
-                const res3 = await supabase
-                    .from('submissions')
-                    .select()
-                    .match({user_id: user.id, verdict: 'correct'});
-                if(res3.data){
-                    let submissions = [...res3.data];
-                    pSets = pSets.map(pSet => {
-                        if(pSet.problemsOrder.length == 0){
-                            return pSet;
-                        }
-                        let correctProblemIds = [];
-                        for(const submission of submissions.filter(submission => pSet.problemsOrder.includes(submission.problem_id))){
-                            if(submission.verdict == 'correct'){
-                                if(!correctProblemIds.includes(submission.problem_id)){
-                                    pSet.correctSubmissions++;
-                                    correctProblemIds = [...correctProblemIds, submission.problem_id];
+                    //add a correctSubmission property to every pSet
+                    for(let j in courses[i].problemSets){
+                        courses[i].problemSets[j].correctSubmissions = 0;
+                        if(courses[i].problemSets[j].problemsOrder.length !== 0){
+                            let correctProblemIds = [];
+                            for(const submission of submissions.filter(submission => courses[i].problemSets[j].problemsOrder.includes(submission.problem_id))){
+                                if(submission.verdict == 'correct'){
+                                    if(!correctProblemIds.includes(submission.problem_id)){
+                                        courses[i].problemSets[j].correctSubmissions++;
+                                        correctProblemIds = [...correctProblemIds, submission.problem_id];
+                                    }
                                 }
                             }
                         }
-                        return pSet;
-                    });
-                    problemSets.set(pSets);
-                }             
-                else{
-                    problemSets.set(pSets);
-                }                       
+                    }
+
+                }
+                                  
             }
             loading = false;
-            return {};
-        }
-    }
-    
-
-    /*
-    export async function load({ fetch, session }) {
-        // Approach #1 - Call the session getter API
-		const res = await fetch('auth.json');
-		if (res.ok) {
-            const { user } = await res.json();
-            if (user && !user.guest) {
-                return {
-                    props: {
-                        user
-                    }
-                };
-            }
-            else{
-                return {};
-            }
-        } else {
             return {
-                status: res.status,
-                error: new Error(`Could not load ${API_AUTH}`)
+                props: { coursesList: courses }
             };
         }
     }
-    */
+    
 
 </script>
 
@@ -124,6 +88,11 @@
     import Welcome from "$lib/Welcome.svelte"
     import Course from "$lib/components/Course.svelte";
     import CourseModal from "$lib/components/modal-forms/CourseModal.svelte";
+    import { courses } from "$lib/stores";
+
+    export let coursesList = [];
+
+    $courses = coursesList;
 
 </script>
 
@@ -142,10 +111,7 @@
 
     {:else if $courses.length > 0 }
         {#each $courses as course}
-            <Course
-                {course}
-                pSets={$problemSets.filter(pSet => pSet.course_id == course.id).sort((a, b) => {return a.number - b.number})}
-            />
+            <Course {course} />
         {/each}
     {:else}
         <div class="lh-copy mt4 pv6 ba br2 b--black-10 v-mid cf black-40 bg-near-white tc">

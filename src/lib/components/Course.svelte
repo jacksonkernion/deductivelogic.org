@@ -2,7 +2,7 @@
 
   import supabase from "$lib/db";
   import {session} from "$app/stores";
-  import { courses, problemSets } from '$lib/stores.js';
+  import { courses } from '$lib/stores.js';
 
   import Modal from '$lib/jui-components/Modal.svelte';
   import ProblemSetModal from '$lib/components/modal-forms/ProblemSetModal.svelte';
@@ -11,11 +11,10 @@
   import Button from "$lib/components/atoms/Button.svelte"
   import Label from "$lib/components/atoms/Label.svelte"
 
-  export let course = {name: null, slug: null};
-  export let pSets = [];
+  export let course = {name: null, slug: null, problemSets:[]};
   export let mode = "dashboard";
 
-  $: defaultNumber = pSets.length + 1;
+  $: defaultNumber = course.problemSets.length + 1;
 
   let isAdmin = course.admins.includes($session.user.id) ? true : false;
   let isJoined;
@@ -33,21 +32,6 @@
 
   async function deleteProblemSet() {
 
-    if(selectedProblemSet.problemsOrder.length){
-      const submissionsQueryStr = selectedProblemSet.problemsOrder.map(problemId => 'problem_id.eq.' + problemId).join(',');
-      const res0 = await supabase
-          .from('submissions')
-          .delete()
-          .or(submissionsQueryStr);
-      if (res0.error) alert(res0.error.error_description || res0.error.message);
-
-      const res1 = await supabase
-        .from('problems')
-        .delete()
-        .eq('problemSet_id', selectedProblemSet.id);              
-      if (res1.error) alert(res1.error.error_description || res1.error.message);
-    }
-
     const { data, error } = await supabase
       .from('problemSets')
       .delete()
@@ -57,13 +41,13 @@
       alert(error.error_description || error.message);
     }
     else{
-      $problemSets = $problemSets.filter(pSet => pSet.id !== selectedProblemSet.id);
+      course.problemSets = course.problemSets.filter(pSet => pSet.id !== selectedProblemSet.id);
       selectedProblemSet = null;
     }
   }
 
   async function publishProblemSet(problemSet, i){
-    pSets[i].published = true;
+    course.problemSets[i].published = true;
     const res1 = await supabase
       .from('problemSets')
       .update({'published': true})
@@ -74,7 +58,7 @@
   }
 
   async function unpublishProblemSet(problemSet, i){
-    pSets[i].published = false;
+    course.problemSets[i].published = false;
     const res1 = await supabase
       .from('problemSets')
       .update({'published': false})
@@ -160,9 +144,9 @@
 </div>
 
 
-{#if pSets.length > 0}
+{#if course.problemSets.length > 0}
   <ul class="list pl0 mh0 mt0">
-      {#each pSets as problemSet, i}
+      {#each course.problemSets as problemSet, i}
           {#if isAdmin || problemSet.published}
             <li class="lh-copy pv2 bb b--black-10 v-mid cf">
 

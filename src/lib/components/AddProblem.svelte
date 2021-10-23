@@ -25,9 +25,8 @@
 
     function createWelcomeProblem() {
         //ADD ERROR CHECKING...
-        $problems = [...$problems, newProblem];
-
-
+        $problems = [...$problems, {...newProblem, submissions:[], questions:[]}];
+        
         newProblem = {
             type: 'none'
         };
@@ -47,7 +46,7 @@
                 
             if (error) throw error;
             if (data){
-                $problems = [...$problems, ...data];
+                $problems = [...$problems, {...data[0], submissions:[], questions:[]}];
                 problemSet.problemsOrder = [...problemSet.problemsOrder, data[0].id];
                 newProblem = {
                     type: 'none'

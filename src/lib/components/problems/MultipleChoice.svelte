@@ -1,8 +1,7 @@
 <script>
-    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     import {shuffle} from '$lib/utils';
 
-    export let problem, number, isAdmin;
+    export let problem, submission;
     let question = problem.sent;
     let sentSet = problem.sentSet;
     let answer = problem.logStr;
@@ -11,11 +10,9 @@
 
     let options = shuffle([...sentSet, answer]);
 
-    let submission;
-
-    function checkSubmission() {
+    submission.check = function() {
         if(studentAnswer == answer){
-            submission.log('correct', 'Correct');
+            submission.log('correct');
         }
         else{
             submission.log('incorrect', 'Incorrect');
@@ -23,21 +20,17 @@
     }
 </script>
 
-
-<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
-    <div slot="description">
-        <p>{question}</p>
-    </div>
+<div class="lh-copy">
+    <p>{question}</p>
+</div>
 	
-    <div slot="submission-input">
+<div class="submission-input">
         
-        <select bind:value={studentAnswer}>
-            <option value="none"></option>
-            {#each options as option}
-                <option value="{option}">{option}</option>
-            {/each}
-        </select>
+    <select bind:value={studentAnswer}>
+        <option value="none"></option>
+        {#each options as option}
+            <option value="{option}">{option}</option>
+        {/each}
+    </select>
     
-    </div>
-
-</ProblemWrapper>
+</div>

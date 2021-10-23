@@ -51,8 +51,6 @@ export async function post(req) {
             .single();
         if (res2.error) throw res2.error;
 
-        console.log(res2.data);
-
         to = [{
                 "Email": res2.data.user_id.email
             }];

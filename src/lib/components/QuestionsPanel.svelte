@@ -9,12 +9,9 @@
     var converter = new showdown.Converter();
 
     export let questions = [];
-    export let replies = [];
     export let problem_id = null;
     export let isAdmin = false;
-    export let number;
-
-    /* $: questionsMap = questions.map(); */
+    export let number = null;
 
     async function sendQuestion(e) {
 
@@ -29,7 +26,7 @@
         data.problem_id = problem_id;
         data.content = converter.makeHtml(data.content);
 
-        questions = [...questions, data];
+        questions = [...questions, {...data, replies:[]}];
         
         const res1 = await supabase
             .from('questions')
@@ -37,6 +34,9 @@
         if (res1.error){
             alert(error.error_description || error.message);
             //TODO Visually update non-sent message?
+        }
+        else{
+            questions[questions.length - 1].id = res1.data[0].id
         }
 
         const res2 = await fetch('/notify', {
@@ -55,7 +55,7 @@
 
     }
 
-    async function sendReply(e) {
+    async function sendReply(e, index) {
         const formData = new FormData(e.target);
         e.target.reset();
         const data = {};
@@ -64,17 +64,20 @@
             data[key] = value;
         }
         data.user_id = $session.user.id;
-        data.problem_id = problem_id;
         data.content = converter.makeHtml(data.content);
 
-        replies = [...replies, data];
+        questions[index].replies = [...questions[index].replies, data];
         
         const res1 = await supabase
-            .from('questionReplies')
+            .from('replies')
             .upsert(data);
         if (res1.error){
             alert(error.error_description || error.message);
             //TODO Visually update non-sent message?
+        }
+        else{
+            //update with the id of the newly created reply
+            questions[index].replies[questions[index].replies.length - 1].id = res1.data[0].id
         }
 
         const res2 = await fetch('/notify', {
@@ -109,10 +112,7 @@
         box-shadow: inset 0 0 0 0.1rem #5584EB;
     }
 
-    
 </style>
-
-
 
 <div class="mt3 br3 bg-near-white">
 
@@ -121,14 +121,16 @@
     {#if questions.length > 0}
 
         <div classs="lh-copy w-100">
-            {#each questions as question}
+            {#each questions as question, i (question.id)}
                 <div class="f7 fw5 ph2 pb2">
                     <div class="black-60">{@html sanitizeHtml(question.content)}</div>
-                    {#each replies.filter(reply => reply.question_id === question.id) as reply}
-                        <div class="black-40">{@html sanitizeHtml(reply.content)}</div>
-                    {/each}
+                    {#if question.replies && question.replies.length > 0}
+                        {#each question.replies as reply}
+                            <div class="black-40">{@html sanitizeHtml(reply.content)}</div>
+                        {/each}
+                    {/if}
                     {#if isAdmin}           
-                        <form on:submit|preventDefault={sendReply}>
+                        <form on:submit|preventDefault={(e) => sendReply(e, i)}>
                             <textarea name="content" placeholder="Add a markdown-formatted reply..." class="input-reset br2 ba b--black-20 pa2 mb2 w-100"></textarea>
                             <input name="question_id" type="hidden" value={question.id}/>
                             <Button type="submit" size="small" fullwidth>Add Reply</Button>
@@ -146,10 +148,11 @@
 
     {/if}
 </div>
-    <div class="pa2 f7 ">
-        <form on:submit|preventDefault={sendQuestion}>
-            <textarea name="content" placeholder="Ask a markdown-formatted question..." class="input-reset br2 ba b--black-20 pa2 mb2 w-100"/>
-            <Button type="submit" size="small" fullwidth>Submit Question</Button>
-        </form>
-    </div>
+
+<div class="pa2 f7 ">
+    <form on:submit|preventDefault={sendQuestion}>
+        <textarea name="content" placeholder="Ask a markdown-formatted question..." class="input-reset br2 ba b--black-20 pa2 mb2 w-100"/>
+        <Button type="submit" size="small" fullwidth>Submit Question</Button>
+    </form>
+</div>
     

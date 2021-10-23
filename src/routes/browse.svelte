@@ -2,23 +2,23 @@
 
     import supabase from "$lib/db";
     
-    export async function load({ session }) {
-        const { user } = session;
+    export async function load( ) {
 
-        const res1 = await supabase
+        const res = await supabase
                 .from('courses')
-                .select()
+                .select('*, problemSets(*)')
+                .eq('problemSets.published', true)
                 .order('name', {ascending: true});
-        const res2 = await supabase
-                .from('problemSets')
-                .select()
-                .eq('published', true);
+
+        const courses = res.data
+
+        for(let i in courses){
+            courses[i].problemSets = courses[i].problemSets.sort((a, b) => {return a.number - b.number});
+        }
 
         return {
             props: {
-                user: user,
-                courses: res1.data,
-                problemSets: res2.data,
+                courses
             }
         };
 
@@ -28,11 +28,10 @@
 
 <script>
 
-    import AuthModal from "$lib/components/modal-forms/AuthModal.svelte";
     import Course from "$lib/components/Course.svelte";
     import CourseModal from "$lib/components/modal-forms/CourseModal.svelte";
 
-    export let user, courses, problemSets;
+    export let courses = [];
 
 </script>
 
@@ -42,7 +41,7 @@
 
     {#each courses as course}
         <div class="mv4"></div>
-        <Course mode="browse" {user} {course} pSets={problemSets.filter(pSet => pSet.course_id == course.id).sort((a, b) => {return a.number - b.number})}/>
+        <Course mode="browse" {course} />
     {/each}
     
     

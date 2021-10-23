@@ -1,11 +1,10 @@
 <script>
     import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
     import {validity, parseLogStr, getLetterVars} from '$lib/logic.js';
     import {findChars, permutator} from '$lib/utils';
 
-    export let problem, number, isAdmin;
+    export let problem, submission;
     let logStr = problem.logStr;
     let sent = problem.sent;
     let sentSet = problem.sentSet;
@@ -18,13 +17,11 @@
     let studentConclusionLogStr = '';
     let implication;
 
-    let submission;
-
     //$: correctLogStrArr = [...logStrSet, conclusionLogStr];
     let correctLogStrArr = [...logStrSet, conclusionLogStr];
     $: studentLogStrArr = [...studentLogStrSet, studentConclusionLogStr];
 
-    function checkSubmission(){
+    submission.check = function(){
 
         // first, do basic check of number of letter vars in each logStr pair
         for(var i = 0; i < correctLogStrArr.length; i++){
@@ -36,7 +33,7 @@
                 if(i == (correctLogStrArr.length - 1)){
                     lineMarker = "(C)";
                 }
-                submission.log('warn', "Incorrect number of letters in your paraphrasing of "+lineMarker+".");
+                this.log('warn', "Incorrect number of letters in your paraphrasing of "+lineMarker+".");
                 return;
             }
         }
@@ -46,7 +43,7 @@
         var studentVars = getLetterVars(studentLogStrArr.join(' . '));
             
         if(correctVars.length != studentVars.length){
-            submission.log('warn', "Total number of letters used across paraphrased lines does not match correct total number.");
+            this.log('warn', "Total number of letters used across paraphrased lines does not match correct total number.");
             return;
         }
 
@@ -64,7 +61,7 @@
 
                 // Throw error if submitted logStr can't be parsed
                 if(!parseLogStr(studentStr)){
-                    submission.log('warn', "Schema "+lineMarker+" could not be understood.");
+                    this.log('warn', "Schema "+lineMarker+" could not be understood.");
                     return;
                 }
                 
@@ -102,7 +99,7 @@
             }
         }
         if(!allMatch){
-            submission.log('incorrect', "At least one paraphrase is incorrect.");
+            this.log('incorrect', "At least one paraphrase is incorrect.");
             return;
             //The reasons I *don't* provide the paraphrasing line that did not result in a match, is because earlier line may 'accidentally' match, meaning that we can't in principle find the exact line of mismatch. Ex: correct = p.r/q.-r & student = p.q/q.-r
         }
@@ -123,21 +120,21 @@
 
         if(!implication){
             if(!implies){
-                submission.log('correct', 'Correct');
+                this.log('correct');
                 return;
             }
             else{
-                submission.log('incorrect', 'Incorrect');
+                this.log('incorrect', 'Incorrect');
                 return;
             }
         }
         else if(implication){
             if(implies){
-                submission.log('correct', 'Correct');
+                this.log('correct');
                 return;
             }
             else{
-                submission.log('incorrect', 'Incorrect');
+                this.log('incorrect', 'Incorrect');
                 return;
             }
         }
@@ -145,38 +142,35 @@
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
-    <div slot="description">
-        <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
-        {#each sentSet as sentence, i}
-            <div class="description-line">
-                <span class="description-line-marker">{i+1}.</span> {sentence}
-            </div>
-        {/each}
+<div class="lh-copy">
+    <p>For the following argument, paraphrase the premises and conclusion and also determine whether the premises truth-functionally imply the conclusion.</p>
+    {#each sentSet as sentence, i}
         <div class="description-line">
-            <span class="description-line-marker">C.</span> {conclusionSent}
+            <span class="description-line-marker">{i+1}.</span> {sentence}
         </div>
+    {/each}
+    <div class="description-line">
+        <span class="description-line-marker">C.</span> {conclusionSent}
     </div>
-	
-    <div slot="submission-input">
-        {#each logStrSet as logStr, i}
-            <div class="relative submission-input-line">
-                <span class="description-line-marker mt2">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
-            </div>
-        {/each}
-        <div class="relative submission-input-line">
-            <span class="description-line-marker mt2">C.</span> <LogStrInput bind:logStr={studentConclusionLogStr}/>
-        </div>
-        <div class="submission-input-line">
-            <div class="mb2 mt4">
-                <input class="mr2" type=radio bind:group={implication} name="implies" value={true} />
-                <label for={true} class="lh-copy">Implies</label>
-            </div>
-            <div class="mb2">
-                <input class="mr2" type=radio bind:group={implication} name="implies" value={false} />
-                <label for={false} class="lh-copy">Does not imply</label>
-            </div>
-        </div>
-    </div>
+</div>
 
-</ProblemWrapper>
+<div class="submission-input">
+    {#each logStrSet as logStr, i}
+        <div class="relative submission-input-line">
+            <span class="description-line-marker mt2">{i+1}.</span> <LogStrInput bind:logStr={studentLogStrSet[i]}/>
+        </div>
+    {/each}
+    <div class="relative submission-input-line">
+        <span class="description-line-marker mt2">C.</span> <LogStrInput bind:logStr={studentConclusionLogStr}/>
+    </div>
+    <div class="submission-input-line">
+        <div class="mb2 mt4">
+            <input class="mr2" type=radio bind:group={implication} name="implies" value={true} />
+            <label for={true} class="lh-copy">Implies</label>
+        </div>
+        <div class="mb2">
+            <input class="mr2" type=radio bind:group={implication} name="implies" value={false} />
+            <label for={false} class="lh-copy">Does not imply</label>
+        </div>
+    </div>
+</div>

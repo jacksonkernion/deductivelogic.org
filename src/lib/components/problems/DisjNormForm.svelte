@@ -1,23 +1,20 @@
 <script>
 
 	import LogStrInput from '$lib/components/problems/sub-components/LogStrInput.svelte';
-    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
 
     import {tVal, parseLogStr, getLetterVars} from '$lib/logic.js';
 	import {dispLogStr} from '$lib/utils';
 	import {connectives} from '$lib/stores';
 
-	export let number, isAdmin;
 	export let problem;
+	export let submission;
 
     let studentLogStr = '';
-	
-	let submission;
 
-    function checkSubmission() {
+    submission.check = function() {
 
         if(studentLogStr.indexOf('>') !== -1 || studentLogStr.indexOf('<>') !== -1){
-			submission.log('warn', 'Provided schema is not in disjunctive normal form.');
+			this.log('warn', 'Provided schema is not in disjunctive normal form.');
             return;
 		}
 		
@@ -30,7 +27,7 @@
 				for(var j=i+1; j<studentLogStr.length; j++) {
 				
 					if(studentLogStr[j] == "|"){
-                        submission.log('warn', 'You should not have a disjunction within parentheses.');
+                        this.log('warn', 'You should not have a disjunction within parentheses.');
                         return;
                     }
 					if(studentLogStr[j] == "(" || studentLogStr[j] == "[" || studentLogStr[j] == "{")
@@ -99,7 +96,7 @@
 		//check that they have all the right assignments
 		for(var t of correctArr){
 			if(!studentArr.includes(t)){
-				submission.log('incorrect', "Incorrect");
+				this.log('incorrect', "Incorrect");
                 return;
 			}
 		}
@@ -107,22 +104,23 @@
 		//check that they have no extraneous assignments
 		for(var t of studentArr){
 			if(!correctArr.includes(t)){
-				submission.log('incorrect', "Incorrect");
+				this.log('incorrect', "Incorrect");
                 return;
 			}
 		}
-		submission.log('correct', "Correct");
+		this.log('correct');
         return;
     }
 
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
-    <div slot="description">
-        <p>Transform the following schema into disjunctive normal form:</p>
-        <div class="description-line logStr">{dispLogStr(problem.logStr, $connectives)}</div>
-    </div>
-	<div slot="submission-input" class="submission-input-line">
-        <LogStrInput bind:logStr={studentLogStr} />
-    </div>
-</ProblemWrapper>
+<div class="lh-copy">
+	<p>Transform the following schema into disjunctive normal form:</p>
+	<div class="description-line logStr">{dispLogStr(problem.logStr, $connectives)}</div>
+</div>
+
+<div class="submission-input">
+	<div class="submission-input-line">
+		<LogStrInput bind:logStr={studentLogStr} />
+	</div>
+</div>

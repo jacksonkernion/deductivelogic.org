@@ -1,12 +1,12 @@
 <script>
     import TruthTableInput from '$lib/components/problems/sub-components/TruthTableInput.svelte';
-    import ProblemWrapper from '$lib/components/problems/sub-components/ProblemWrapper.svelte';
     
     import {getLetterVars, parseLogStr, tVal} from '$lib/logic.js';
     import {dispLogStr} from '$lib/utils';
     import { connectives } from '$lib/stores';
 
-    export let problem, number, isAdmin;
+    export let problem;
+    export let submission;
     let logStr = problem.logStr;
     
     let logProp = parseLogStr(logStr);
@@ -19,9 +19,7 @@
         tAnswerRows: []
     };
 
-    let submission;
-
-    function checkSubmission() {
+    submission.check = function() {
 
         let submissionError = false;
         
@@ -30,7 +28,7 @@
             let answer = tTableData.tAnswerRows[i][tTableData.tAnswerRows[i].length-1];
             
             if(answer === null){
-                submission.log('warn', "Not all rows of the truth table have been completed.");
+                this.log('warn', "Not all rows of the truth table have been completed.");
                 submissionError = true;
                 return;
             }
@@ -44,23 +42,22 @@
             let correctResult = tVal(logProp, tValues);
             
 			if(answer != correctResult){
-                submission.log('incorrect', "Incorrect");
+                this.log('incorrect', "Incorrect");
                 submissionError = true;
                 return;
 			}
         }    
         if(!submissionError){
-            submission.log('correct', "Correct");
+            this.log('correct');
             return;
         }
     }
 </script>
 
-<ProblemWrapper bind:submission on:click={checkSubmission} {problem} {number} {isAdmin}>
-    <div slot="description">
-        <p>Construct a truth table for <span class='logStr'>{dispLogStr(logStr, $connectives)}</span></p>
-    </div>
-    <div slot="submission-input">
-        <TruthTableInput bind:tTableData />
-    </div>
-</ProblemWrapper>
+
+<div class="lh-copy">
+    <p>Construct a truth table for <span class='logStr'>{dispLogStr(logStr, $connectives)}</span></p>
+</div>
+<div class="submission-input">
+    <TruthTableInput bind:tTableData />
+</div>

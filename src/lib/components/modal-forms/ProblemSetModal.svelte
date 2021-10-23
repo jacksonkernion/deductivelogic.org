@@ -1,6 +1,6 @@
 <script>
 
-    import { problemSets } from '$lib/stores.js';
+    import { courses } from '$lib/stores.js';
     import supabase from "$lib/db";
     import Input from '$lib/components/atoms/Input.svelte';
     import Modal from '$lib/jui-components/Modal.svelte';
@@ -28,8 +28,8 @@
                 
             if (error) throw error;
             if (data){
-                $problemSets = [...$problemSets, ...data];
-                $problemSets[$problemSets.length - 1].correctSubmissions = 0;
+                let courseIndex = $courses.findIndex(c => c.id === courseId)
+                $courses[courseIndex].problemSets = [...$courses[courseIndex].problemSets, {...data[0], correctSubmissions: 0, problems: []} ];
                 toggleModal();
                 problemSet = {
                     name: null,
