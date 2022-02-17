@@ -6,16 +6,26 @@
     export async function load({page, session }) {
 
         const { user } = session;
-            
-        const res = await supabase
-                .from('courses')
-                .select('*, problemSets(*, problems(*, questions(*, replies(*)), submissions(*)))')
-                .eq('slug', page.params.courseSlug)
-                .eq("problemSets.number", page.params.num)
-                .eq("problemSets.problems.submissions.user_id", user.id)
-                .eq("problemSets.problems.submissions.verdict", "correct")
-                .single();
-
+        let res;
+        
+        if(!user.guest){
+            res = await supabase
+                    .from('courses')
+                    .select('*, problemSets(*, problems(*, questions(*, replies(*)), submissions(*)))')
+                    .eq('slug', page.params.courseSlug)
+                    .eq("problemSets.number", page.params.num)
+                    .eq("problemSets.problems.submissions.user_id", user.id)
+                    .eq("problemSets.problems.submissions.verdict", "correct")
+                    .single();
+        }
+        else{
+            res = await supabase
+                    .from('courses')
+                    .select('*, problemSets(*, problems(*, questions(*, replies(*))))')
+                    .eq('slug', page.params.courseSlug)
+                    .eq("problemSets.number", page.params.num)
+                    .single();
+        }
         if(!res.error){
 
             const course = res.data;
@@ -67,7 +77,7 @@
 
 
 <div class="mw7 center ph4 pb2">
-    <div class="divider ml3 ml0-ns w-75-ns"></div>
+    <div class="divider ml3 ml0-ns "></div>
     <ul class="list pl0 ma0"> 
         {#if $problems.length > 0}
             {#each $problems as problem, i (problem.id)}

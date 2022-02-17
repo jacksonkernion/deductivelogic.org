@@ -15,6 +15,10 @@
     export let active = null;
     export let size = 'normal';
     export let fullwidth = false;
+    export let hidden = false;
+
+    // For getting element node
+    export let button = null;
 </script>
 
 <style>
@@ -117,12 +121,15 @@
         href="{href}"
     >
         <button
-        class="button"
-        {disabled}
-        class:button-icon={icon}
-        class:button-disabled={disabled}
-        class:button-active={active}
-        class:button-small={size === 'small'}
+            class="button"
+            {disabled}
+            {hidden}
+            class:button-icon={icon}
+            class:button-disabled={disabled}
+            class:button-active={active}
+            class:button-small={size === 'small'}
+            class:fullwidth={fullwidth}
+            bind:this={button}
         >
             {#if icon}
                 <ion-icon name={icon}></ion-icon>
@@ -135,12 +142,14 @@
         <button
             type="submit"
             {disabled}
+            {hidden}
             class="button"
             class:button-icon={icon}
             class:button-disabled={disabled}
             class:button-active={active}
             class:button-small={size === 'small'}
             class:fullwidth={fullwidth}
+            bind:this={button}
         >
             {#if icon}
                 <ion-icon name={icon}></ion-icon>
@@ -151,12 +160,15 @@
         <button
             type="button"
             {disabled}
+            {hidden}
             class="button"
             class:button-icon={icon}
             class:button-disabled={disabled}
             class:button-active={active}
             class:button-small={size === 'small'}
+            class:fullwidth={fullwidth}
             on:submit|preventDefault on:click|preventDefault
+            bind:this={button}
         >
             {#if icon}
                 <ion-icon name={icon}></ion-icon>

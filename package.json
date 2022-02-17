@@ -26,6 +26,7 @@
 		"node-mailjet": "^3.0.5",
 		"sanitize-html": "^2.5.2",
 		"showdown": "^1.9.0",
-		"svelte-preprocess": "^4.7.4"
+		"svelte-preprocess": "^4.7.4",
+		"timeago.js": "^4.0.2"
 	}
 }

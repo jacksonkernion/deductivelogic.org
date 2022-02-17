@@ -5,7 +5,9 @@
     import supabase from "$lib/db";
     import sanitizeHtml from 'sanitize-html';
     import showdown from 'showdown';
+    import { format } from 'timeago.js';
     import {session, page} from "$app/stores";
+    import { tick } from 'svelte';
 
     var converter = new showdown.Converter();
 
@@ -13,11 +15,40 @@
     export let problem_id = null;
     export let isAdmin = false;
     export let number = null;
+    
+    let questionForm;
+    let questionButton;
+    let buttonHidden = true;
+    let replyForms = questions.map((q) => {
+        return {form: null, textarea: null, button: null, hidden: true, buttonHidden: true};
+    });
 
-    async function sendQuestion(e) {
 
-        const formData = new FormData(e.target);
-        e.target.reset();
+
+    function hideQuestionButton(){
+        // Make sure blur event isn't cause by submitting form
+        if (!questionButton.parentNode.matches(":hover")) {
+            buttonHidden = true;
+        }
+    }
+
+    function hideReplyButton(index){
+        // Make sure blur event isn't cause by submitting form
+        if (!replyForms[index].button.parentNode.matches(":hover")) {
+            replyForms[index].buttonHidden = true;
+        }
+    }
+
+    async function showReply(index){
+        replyForms[index].hidden = false;
+        await tick();
+        replyForms[index].textarea.focus();
+    }
+
+    async function sendQuestion() {
+        const formData = new FormData(questionForm);
+        questionForm.reset();
+        buttonHidden = true;
         const data = {};
         for (let field of formData) {
             const [key, value] = field;
@@ -27,6 +58,7 @@
         data.problem_id = problem_id;
         data.content = converter.makeHtml(data.content);
 
+        replyForms = [...replyForms, {form: null, textarea: null, button: null, hidden: true, buttonHidden: true}];
         questions = [...questions, {...data, replies:[]}];
         
         const res1 = await supabase
@@ -56,9 +88,10 @@
 
     }
 
-    async function sendReply(e, index) {
-        const formData = new FormData(e.target);
-        e.target.reset();
+    async function sendReply(index) {
+
+        const formData = new FormData(replyForms[index].form);
+        replyForms[index].form.reset();
         const data = {};
         for (let field of formData) {
             const [key, value] = field;
@@ -96,50 +129,66 @@
             })
         });
 
-    
     }
 
 </script>
 
-<div class="mt3 br3 bg-near-white">
+<style>
+    div :global(p) {
+        margin: .35rem 0;
+    }
+</style>
 
-    <div class="lh-title f6 fw5 pa2 black-60">Questions</div>
+<div class="mt3">
 
     {#if questions.length > 0}
 
-        <div classs="lh-copy w-100">
+        <div classs="lh-copy w-100 mt-1">
             {#each questions as question, i (question.id)}
-                <div class="f7 fw5 ph2 pb2">
-                    <div class="black-60">{@html sanitizeHtml(question.content)}</div>
+                <div class="f7 fw4 pb2 mb2 bb b--black-10">
+                    <div class="black-70">{@html sanitizeHtml(question.content)}</div>
+                    {#if isAdmin}
+                        <div class="black-40"><span class="fw5">{format(question.created_at)}</span> <span hidden={!replyForms[i].hidden}>・ <a on:click={showReply(i)}>Reply</a></span></div>
+                    {:else}
+                        <div class="black-40">{format(question.created_at)}</div>
+                    {/if}
                     {#if question.replies && question.replies.length > 0}
                         {#each question.replies as reply}
-                            <div class="black-40">{@html sanitizeHtml(reply.content)}</div>
+                            <div class="black-70 ml3">{@html sanitizeHtml(reply.content)}</div>
                         {/each}
-                    {/if}
-                    {#if isAdmin}           
-                        <form on:submit|preventDefault={(e) => sendReply(e, i)}>
-                            <textarea name="content" placeholder="Add a markdown-formatted reply..." class="input-reset br2 ba b--black-20 pa2 mb2 w-100"></textarea>
+                    {:else if isAdmin}
+                        <form bind:this={replyForms[i].form} class="cf" hidden={replyForms[i].hidden} on:submit|preventDefault={sendReply(i)}>
+                            <Textarea 
+                                bind:textarea={replyForms[i].textarea}
+                                name="content"
+                                placeholder="Add a reply..."
+                                on:focus={() => {replyForms[i].buttonHidden = false}}
+                                on:blur={hideReplyButton(i)} />
                             <input name="question_id" type="hidden" value={question.id}/>
-                            <Button type="submit" size="small" fullwidth>Add Reply</Button>
+                            <div class="fr" hidden={replyForms[i].buttonHidden}>
+                                <Button bind:button={replyForms[i].button} type="submit" size="small">Reply</Button>
+                            </div>
                         </form>
                     {/if}
                 </div>
             {/each}
         </div>
-
-    {:else}
-
-        <div class="lh-copy pv3 v-mid cf black-40 bg-near-white tc">
-            <p class="f6 fw4">No Questions</p>
-        </div>
-
     {/if}
+
+    {#if !$session.user.guest}
+        <div class="pv2 f7">
+            <form bind:this={questionForm} class="cf" on:submit|preventDefault={sendQuestion}>
+                <Textarea name="content" placeholder="Ask a question..." on:focus={() => {buttonHidden = false}} on:blur={hideQuestionButton} />
+                <div class="fr">
+                    <Button bind:button={questionButton} type="submit" size="small">Send</Button>
+                </div>
+            </form>
+        </div>
+    {/if}
+    
 </div>
 
-<div class="pa2 f7 ">
-    <form on:submit|preventDefault={sendQuestion}>
-        <Textarea name="content" placeholder="Ask a question..." />
-        <Button type="submit" size="small" fullwidth>Submit Question</Button>
-    </form>
-</div>
+
+
+
     

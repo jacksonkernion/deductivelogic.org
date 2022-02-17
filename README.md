@@ -11,6 +11,7 @@ Most of the important files in this project are Svelte components. But the one b
 - [SvelteKit](https://kit.svelte.dev)
 - [Tachyons](https://tachyons.io)
 - [Supabase](https://supabase.io)
+- [Mailjet] (https://www.mailjet.com)
 
 Deployed on [Vercel](https://vercel.com)
 

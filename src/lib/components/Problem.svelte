@@ -5,7 +5,7 @@
     import { fly } from 'svelte/transition';
     import { problems } from '$lib/stores';
     
-    import QuestionsPanel from '$lib/components/QuestionsPanel.svelte';
+    import QuestionsPanel2 from '$lib/components/QuestionsPanel2.svelte';
     import ProblemForm from '$lib/components/ProblemForm.svelte';
     import Modal from '$lib/jui-components/Modal.svelte'
     import Button from '$lib/components/atoms/Button.svelte';
@@ -33,7 +33,7 @@
         message: '',
     };
 
-    if(problem.submissions.length){
+    if(!$session.user.guest && problem.submissions.length){
         submission = problem.submissions[problem.submissions.length -1];
     }
 
@@ -271,10 +271,10 @@
 
     {#if !$session.user.guest}
         <div class="fl w-25-ns">
-            <QuestionsPanel bind:questions={problem.questions} problem_id={problem.id} {number} {isAdmin}/>
+            <QuestionsPanel2 bind:questions={problem.questions} problem_id={problem.id} {number} {isAdmin}/>
         </div>
     {/if}
 
 </li>
 
-<div class="divider ml3 ml0-ns w-75-ns"></div>
+<div class="divider ml3 ml0-ns"></div>
